@@ -1,0 +1,144 @@
+Goal:
+Create a modern, minimal, and professional website for Vita Talent, a global recruitment agency that connects businesses with exceptional talent from around the world.
+
+Brand Identity
+
+Name: Vita Talent
+
+Logo: A tree symbol (represents growth, trust, and integrity).
+
+Slogan: “Where integrity meets opportunity.”
+
+Accent line: “Empowering businesses with exceptional global talent.”
+
+Primary color: Dark green (deep, elegant tone).
+
+Style keywords: Clean · Minimal · Global · Professional · Elegant · Trustworthy
+
+Tone: Empathetic, confident, and human — focused on long-term partnerships.
+
+Website Structure
+1. Hero Section
+
+Prominent Vita Talent logo + slogan.
+
+Subheading: “Empowering businesses worldwide with the right people, wherever they are.”
+
+Include placeholder logos for companies that trust Vita Talent (to be replaced later).
+
+Two buttons:
+
+Hire Talent
+
+Join as Candidate
+
+2. Why Global Section
+
+Elegant section explaining the global approach:
+
+“Why limit yourself to one continent when the world is full of extraordinary talent?
+Vita Talent brings together skilled professionals from Africa, Latin America, Asia, and beyond — giving businesses the freedom to hire the best, no matter where they are.”
+
+Add a soft animated world map or subtle continent highlights to visualize the concept.
+
+3. Workflow / Process Section
+
+Visually explain Vita Talent’s process from A → Z in 5 clean, illustrated steps:
+
+Understanding client needs
+
+Sourcing top candidates globally
+
+Screening and vetting
+
+Matching and onboarding
+
+Ongoing support for both sides
+
+Include icons and a short sentence per step.
+
+Design it more engaging and fitting to Vita Talent’s brand (not identical to Virtual Latinos, but inspired by its clarity).
+
+4. Testimonials Section
+
+Inspired by HireLatam: simple, central, and powerful.
+
+Include:
+
+3 client video testimonials
+
+3 candidate video testimonials
+
+3 written client testimonials
+
+3 written candidate testimonials
+
+Layout example:
+
+Video testimonials in top rows (carousel or 2x3 grid).
+
+Written testimonials below with names, roles, and short blurbs.
+
+Below testimonials:
+“Read more on Google Reviews
+ or Trustpilot
+” — make these real hyperlinks.
+
+5. Care Section
+
+Title: “We care about people — and partnerships.”
+
+Subtext:
+“At Vita Talent, we believe great hiring is about balance.
+We care equally for our clients’ business success and our candidates’ wellbeing.
+Even if a match doesn’t work out, we continue to support both sides.”
+
+Include an illustration or friendly image (team, handshake, or balanced scale).
+
+6. Meet the Team
+
+Grid of team member cards with photo, name, and short role description.
+
+Clean and consistent layout similar to Virtual Latinos.
+
+7. Call to Action
+
+Simple contact area at the bottom with two CTAs:
+
+Hire Talent → opens inquiry form.
+
+Join as Candidate → opens candidate application form.
+
+Optional footer links: Home · About · Process · Testimonials · Contact
+
+Keep page short and scrollable — avoid unnecessary long sections or flashy animations.
+
+Technical Requirements
+
+Fully responsive design for desktop, tablet, and mobile.
+
+Use semantic HTML5, CSS (or Tailwind), and modern layout principles.
+
+Support easy content editing for testimonials, text, and company logos.
+
+Optimized for fast loading (no heavy animations).
+
+Include smooth scroll transitions and subtle hover effects.
+
+Design Notes
+
+Don’t make the page long or overloaded — prioritize clarity and user engagement.
+
+Use subtle graphics similar to HireLatam for visual appeal.
+
+Keep fonts simple and professional (e.g., Inter, Lato, or Open Sans).
+
+Include hyperlink icons for Google Reviews and Trustpilot at the end of testimonials.
+
+Ensure color contrast is accessible and consistent with the dark green theme.
+
+✅ Summary of Key Inspirations:
+
+HireLatam: simplicity, client/candidate testimonials in the middle of the page (video + text).
+
+Virtual Latinos: structure, green theme, process explanation, and team layout — but improved and more elegant.
