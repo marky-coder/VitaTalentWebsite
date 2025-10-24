@@ -1,4 +1,4 @@
-import { TreePine } from "lucide-react";
+import logoImage from "@assets/WhatsApp Image 2025-10-24 at 11.32.23 PM (1)_1761341009209.jpeg";
 
 export default function Footer() {
   const scrollToSection = (id: string) => {
@@ -9,11 +9,11 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-card border-t border-card-border py-12" data-testid="footer">
+    <footer className="bg-primary/10 border-t border-primary/20 py-12" data-testid="footer">
       <div className="container max-w-7xl mx-auto px-4">
         <div className="flex flex-col items-center gap-6">
-          <div className="flex items-center gap-2">
-            <TreePine className="w-8 h-8 text-primary" strokeWidth={1.5} />
+          <div className="flex items-center gap-3">
+            <img src={logoImage} alt="Vita Talent Logo" className="w-12 h-12 object-contain" />
             <span className="text-xl font-semibold text-foreground">Vita Talent</span>
           </div>
           

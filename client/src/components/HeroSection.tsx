@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
-import { TreePine } from "lucide-react";
 import heroBackground from "@assets/generated_images/Global_network_hero_background_3fc03fc7.png";
+import logoImage from "@assets/WhatsApp Image 2025-10-24 at 11.32.23 PM (1)_1761341009209.jpeg";
 
 interface HeroSectionProps {
   onHireTalent: () => void;
@@ -9,18 +9,17 @@ interface HeroSectionProps {
 
 export default function HeroSection({ onHireTalent, onJoinAsCandidate }: HeroSectionProps) {
   return (
-    <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden">
+    <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden bg-primary/5">
       <div 
-        className="absolute inset-0 bg-cover bg-center"
+        className="absolute inset-0 bg-cover bg-center opacity-30"
         style={{ backgroundImage: `url(${heroBackground})` }}
       >
-        <div className="absolute inset-0 bg-gradient-to-b from-background/95 via-background/90 to-background"></div>
       </div>
       
       <div className="relative z-10 container max-w-5xl mx-auto px-4 py-24 text-center">
         <div className="flex flex-col items-center gap-6">
           <div className="flex items-center gap-3">
-            <TreePine className="w-16 h-16 text-primary" strokeWidth={1.5} />
+            <img src={logoImage} alt="Vita Talent Logo" className="w-24 h-24 md:w-32 md:h-32 object-contain" />
           </div>
           
           <div className="space-y-2">
