@@ -8,7 +8,7 @@ interface CTASectionProps {
 
 export default function CTASection({ onHireTalent, onJoinAsCandidate }: CTASectionProps) {
   return (
-    <section className="py-24 bg-gradient-to-r from-primary/25 via-primary/20 to-primary/25" data-testid="section-cta">
+    <section className="py-24 bg-gradient-to-r from-primary/15 via-primary/12 to-primary/15" data-testid="section-cta">
       <div className="container max-w-7xl mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold text-foreground mb-4">
@@ -20,8 +20,8 @@ export default function CTASection({ onHireTalent, onJoinAsCandidate }: CTASecti
         </div>
         
         <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-          <div className="bg-gradient-to-br from-primary/30 to-primary/15 rounded-md p-8 border border-primary/40 text-center space-y-4">
-            <div className="w-16 h-16 rounded-full bg-primary/40 flex items-center justify-center mx-auto">
+          <div className="bg-gradient-to-br from-primary/20 to-primary/10 rounded-md p-8 border border-primary/25 text-center space-y-4">
+            <div className="w-16 h-16 rounded-full bg-primary/25 flex items-center justify-center mx-auto">
               <Briefcase className="w-8 h-8 text-primary" />
             </div>
             <h3 className="text-2xl font-semibold text-foreground">For Businesses</h3>
@@ -38,8 +38,8 @@ export default function CTASection({ onHireTalent, onJoinAsCandidate }: CTASecti
             </Button>
           </div>
           
-          <div className="bg-gradient-to-br from-primary/30 to-primary/15 rounded-md p-8 border border-primary/40 text-center space-y-4">
-            <div className="w-16 h-16 rounded-full bg-primary/40 flex items-center justify-center mx-auto">
+          <div className="bg-gradient-to-br from-primary/20 to-primary/10 rounded-md p-8 border border-primary/25 text-center space-y-4">
+            <div className="w-16 h-16 rounded-full bg-primary/25 flex items-center justify-center mx-auto">
               <UserPlus className="w-8 h-8 text-primary" />
             </div>
             <h3 className="text-2xl font-semibold text-foreground">For Candidates</h3>

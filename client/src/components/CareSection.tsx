@@ -2,7 +2,7 @@ import careIllustration from "@assets/generated_images/Balance_and_partnership_i
 
 export default function CareSection() {
   return (
-    <section className="py-24 bg-gradient-to-r from-primary/20 via-primary/25 to-primary/15" data-testid="section-care">
+    <section className="py-24 bg-gradient-to-r from-primary/12 via-primary/15 to-primary/10" data-testid="section-care">
       <div className="container max-w-5xl mx-auto px-4">
         <div className="text-center space-y-6">
           <h2 className="text-4xl font-bold text-foreground">

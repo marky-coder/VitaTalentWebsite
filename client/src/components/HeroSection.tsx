@@ -9,7 +9,7 @@ interface HeroSectionProps {
 
 export default function HeroSection({ onHireTalent, onJoinAsCandidate }: HeroSectionProps) {
   return (
-    <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-primary/20 via-primary/10 to-background">
+    <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-primary/12 via-primary/6 to-background">
       <div 
         className="absolute inset-0 bg-cover bg-center opacity-20"
         style={{ backgroundImage: `url(${heroBackground})` }}
@@ -57,10 +57,21 @@ export default function HeroSection({ onHireTalent, onJoinAsCandidate }: HeroSec
           
           <div className="mt-16 w-full">
             <p className="text-sm text-muted-foreground mb-6">Trusted by leading companies worldwide</p>
-            <div className="flex flex-wrap items-center justify-center gap-12 opacity-40 grayscale">
-              {['Company A', 'Company B', 'Company C', 'Company D'].map((company) => (
-                <div key={company} className="text-foreground font-semibold text-lg" data-testid={`logo-${company.toLowerCase().replace(' ', '-')}`}>
-                  {company}
+            <div className="flex flex-wrap items-center justify-center gap-8 md:gap-16 opacity-50">
+              {[
+                { name: 'TechFlow', tagline: 'Innovation Hub' },
+                { name: 'GlobalEdge', tagline: 'Worldwide Solutions' },
+                { name: 'NexaTech', tagline: 'Digital First' },
+                { name: 'Quantum Labs', tagline: 'Future Ready' },
+                { name: 'Synergy Co', tagline: 'Connected Growth' },
+              ].map((company) => (
+                <div 
+                  key={company.name} 
+                  className="flex flex-col items-center justify-center px-4 py-2 bg-card/50 rounded-md border border-border/50 min-w-[120px] hover-elevate" 
+                  data-testid={`logo-${company.name.toLowerCase().replace(' ', '-')}`}
+                >
+                  <div className="text-foreground font-bold text-sm md:text-base tracking-tight">{company.name}</div>
+                  <div className="text-muted-foreground text-xs mt-0.5">{company.tagline}</div>
                 </div>
               ))}
             </div>
