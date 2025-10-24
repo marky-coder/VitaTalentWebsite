@@ -30,7 +30,7 @@ export default function TestimonialsSection() {
   const [activeVideo, setActiveVideo] = useState<number | null>(null);
 
   return (
-    <section className="py-24 bg-gradient-to-br from-primary/8 via-primary/4 to-background" data-testid="section-testimonials">
+    <section className="py-24 bg-gradient-to-br from-primary/30 via-primary/15 to-background" data-testid="section-testimonials">
       <div className="container max-w-7xl mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-foreground mb-4">
@@ -70,7 +70,7 @@ export default function TestimonialsSection() {
             <h3 className="text-2xl font-semibold text-foreground mb-6 text-center">Client Testimonials</h3>
             <div className="grid md:grid-cols-3 gap-6">
               {writtenTestimonials.clients.map((testimonial, index) => (
-                <Card key={index} className="p-6 bg-gradient-to-br from-card to-primary/8" data-testid={`client-testimonial-${index}`}>
+                <Card key={index} className="p-6 bg-gradient-to-br from-card to-primary/20 border-primary/30" data-testid={`client-testimonial-${index}`}>
                   <div className="flex gap-1 mb-4">
                     {[...Array(5)].map((_, i) => (
                       <Star key={i} className="w-4 h-4 fill-primary text-primary" />
@@ -90,7 +90,7 @@ export default function TestimonialsSection() {
             <h3 className="text-2xl font-semibold text-foreground mb-6 text-center">Candidate Testimonials</h3>
             <div className="grid md:grid-cols-3 gap-6">
               {writtenTestimonials.candidates.map((testimonial, index) => (
-                <Card key={index} className="p-6 bg-gradient-to-br from-card to-primary/8" data-testid={`candidate-testimonial-${index}`}>
+                <Card key={index} className="p-6 bg-gradient-to-br from-card to-primary/20 border-primary/30" data-testid={`candidate-testimonial-${index}`}>
                   <div className="flex gap-1 mb-4">
                     {[...Array(5)].map((_, i) => (
                       <Star key={i} className="w-4 h-4 fill-primary text-primary" />

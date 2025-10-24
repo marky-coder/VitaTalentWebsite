@@ -20,7 +20,7 @@ export default function WhyGlobalSection() {
   }, []);
 
   return (
-    <section className="py-24 bg-gradient-to-br from-primary/10 via-background to-primary/5" data-testid="section-why-global">
+    <section className="py-24 bg-gradient-to-br from-primary/25 via-primary/15 to-background" data-testid="section-why-global">
       <div className="container max-w-7xl mx-auto px-4">
         <div className="grid md:grid-cols-5 gap-12 items-center">
           <div className="md:col-span-3 space-y-6">

@@ -9,7 +9,7 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-primary/10 border-t border-primary/20 py-12" data-testid="footer">
+    <footer className="bg-primary/20 border-t border-primary/30 py-12" data-testid="footer">
       <div className="container max-w-7xl mx-auto px-4">
         <div className="flex flex-col items-center gap-6">
           <div className="flex items-center gap-3">

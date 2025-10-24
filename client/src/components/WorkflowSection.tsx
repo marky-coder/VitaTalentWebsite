@@ -36,7 +36,7 @@ const steps = [
 
 export default function WorkflowSection() {
   return (
-    <section className="py-24 bg-primary/5" data-testid="section-workflow">
+    <section className="py-24 bg-gradient-to-bl from-primary/20 via-background to-primary/15" data-testid="section-workflow">
       <div className="container max-w-7xl mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-foreground mb-4">
@@ -50,9 +50,9 @@ export default function WorkflowSection() {
         <div className="hidden md:grid grid-cols-5 gap-6">
           {steps.map((step, index) => (
             <div key={step.number} className="relative">
-              <Card className="p-6 text-center h-full hover-elevate bg-gradient-to-br from-card to-primary/5" data-testid={`card-step-${step.number}`}>
+              <Card className="p-6 text-center h-full hover-elevate bg-gradient-to-br from-card to-primary/15 border-primary/30" data-testid={`card-step-${step.number}`}>
                 <div className="flex flex-col items-center gap-4">
-                  <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center">
+                  <div className="w-16 h-16 rounded-full bg-primary/30 flex items-center justify-center">
                     <step.icon className="w-8 h-8 text-primary" strokeWidth={1.5} />
                   </div>
                   <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm">
@@ -75,10 +75,10 @@ export default function WorkflowSection() {
         
         <div className="md:hidden space-y-4">
           {steps.map((step) => (
-            <Card key={step.number} className="p-6 bg-gradient-to-br from-card to-primary/5" data-testid={`card-step-mobile-${step.number}`}>
+            <Card key={step.number} className="p-6 bg-gradient-to-br from-card to-primary/15 border-primary/30" data-testid={`card-step-mobile-${step.number}`}>
               <div className="flex gap-4">
                 <div className="flex-shrink-0">
-                  <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
+                  <div className="w-12 h-12 rounded-full bg-primary/30 flex items-center justify-center">
                     <step.icon className="w-6 h-6 text-primary" strokeWidth={1.5} />
                   </div>
                 </div>

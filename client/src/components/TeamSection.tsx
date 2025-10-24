@@ -27,7 +27,7 @@ const team = [
 
 export default function TeamSection() {
   return (
-    <section className="py-24 bg-gradient-to-bl from-primary/10 via-primary/5 to-background" data-testid="section-team">
+    <section className="py-24 bg-gradient-to-bl from-primary/25 via-primary/18 to-background" data-testid="section-team">
       <div className="container max-w-7xl mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-foreground mb-4">
@@ -40,7 +40,7 @@ export default function TeamSection() {
         
         <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
           {team.map((member, index) => (
-            <Card key={index} className="p-6 text-center hover-elevate bg-gradient-to-br from-card to-primary/8" data-testid={`team-member-${index}`}>
+            <Card key={index} className="p-6 text-center hover-elevate bg-gradient-to-br from-card to-primary/20 border-primary/30" data-testid={`team-member-${index}`}>
               <div className="flex flex-col items-center gap-4">
                 <Avatar className="w-32 h-32">
                   <AvatarImage src={member.image} alt={member.name} />
