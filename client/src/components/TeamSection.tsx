@@ -33,7 +33,7 @@ export default function TeamSection() {
           <h2 className="text-4xl font-bold text-foreground mb-4">
             Meet the Team
           </h2>
-          <p className="text-lg text-muted-foreground">
+          <p className="text-lg font-medium text-muted-foreground">
             Dedicated professionals committed to your success
           </p>
         </div>
@@ -47,10 +47,10 @@ export default function TeamSection() {
                   <AvatarFallback className="text-2xl">{member.initials}</AvatarFallback>
                 </Avatar>
                 <div>
-                  <h3 className="font-semibold text-lg text-foreground mb-1">
+                  <h3 className="font-bold text-lg text-foreground mb-1">
                     {member.name}
                   </h3>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm font-medium text-muted-foreground">
                     {member.role}
                   </p>
                 </div>

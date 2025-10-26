@@ -1,4 +1,4 @@
-import { Users, Search, CheckCircle, HandshakeIcon, HeadphonesIcon } from "lucide-react";
+import { Users, Search, CheckCircle, HandshakeIcon, HeadphonesIcon, RefreshCw, Shield } from "lucide-react";
 import { Card } from "@/components/ui/card";
 
 const steps = [
@@ -18,7 +18,7 @@ const steps = [
     number: 3,
     icon: CheckCircle,
     title: "Screening and Vetting",
-    description: "Rigorous evaluation ensures only the most qualified candidates move forward.",
+    description: "Rigorous evaluation with AI interviews for tailored questions related to the role ensures only the most qualified candidates move forward.",
   },
   {
     number: 4,
@@ -32,6 +32,18 @@ const steps = [
     title: "Ongoing Support",
     description: "Continuous support for both clients and candidates ensures long-term success.",
   },
+  {
+    number: 6,
+    icon: RefreshCw,
+    title: "Replacement Process",
+    description: "We cover you for 30 days with our replacement guarantee.",
+  },
+  {
+    number: 7,
+    icon: Shield,
+    title: "Insurance Coverage",
+    description: "Subscribe to our insurance and gain unlimited replacement policy.",
+  },
 ];
 
 export default function WorkflowSection() {
@@ -42,12 +54,12 @@ export default function WorkflowSection() {
           <h2 className="text-4xl font-bold text-foreground mb-4">
             Our Process
           </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-lg font-medium text-muted-foreground max-w-2xl mx-auto">
             A proven approach to connecting exceptional talent with outstanding opportunities
           </p>
         </div>
         
-        <div className="hidden md:grid grid-cols-5 gap-6">
+        <div className="hidden md:grid grid-cols-7 gap-4">
           {steps.map((step, index) => (
             <div key={step.number} className="relative">
               <Card className="p-6 text-center h-full hover-elevate bg-gradient-to-br from-card to-primary/10 border-primary/20" data-testid={`card-step-${step.number}`}>
@@ -58,10 +70,10 @@ export default function WorkflowSection() {
                   <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm">
                     {step.number}
                   </div>
-                  <h3 className="font-semibold text-foreground text-sm leading-tight">
+                  <h3 className="font-bold text-foreground text-sm leading-tight">
                     {step.title}
                   </h3>
-                  <p className="text-xs text-muted-foreground leading-relaxed">
+                  <p className="text-sm text-muted-foreground leading-relaxed font-medium">
                     {step.description}
                   </p>
                 </div>
@@ -87,11 +99,11 @@ export default function WorkflowSection() {
                     <div className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-xs">
                       {step.number}
                     </div>
-                    <h3 className="font-semibold text-foreground">
+                    <h3 className="font-bold text-foreground">
                       {step.title}
                     </h3>
                   </div>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm font-medium text-muted-foreground">
                     {step.description}
                   </p>
                 </div>

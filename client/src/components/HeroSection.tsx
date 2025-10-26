@@ -56,22 +56,19 @@ export default function HeroSection({ onHireTalent, onJoinAsCandidate }: HeroSec
           </div>
           
           <div className="mt-16 w-full">
-            <p className="text-sm text-muted-foreground mb-6">Trusted by leading companies worldwide</p>
-            <div className="flex flex-wrap items-center justify-center gap-8 md:gap-16 opacity-50">
-              {[
-                { name: 'TechFlow', tagline: 'Innovation Hub' },
-                { name: 'GlobalEdge', tagline: 'Worldwide Solutions' },
-                { name: 'NexaTech', tagline: 'Digital First' },
-                { name: 'Quantum Labs', tagline: 'Future Ready' },
-                { name: 'Synergy Co', tagline: 'Connected Growth' },
-              ].map((company) => (
+            <p className="text-base font-medium text-muted-foreground mb-8">Trusted by leading companies worldwide</p>
+            <div className="flex flex-wrap items-center justify-center gap-8 md:gap-12">
+              {[1, 2, 3, 4, 5].map((index) => (
                 <div 
-                  key={company.name} 
-                  className="flex flex-col items-center justify-center px-4 py-2 bg-card/50 rounded-md border border-border/50 min-w-[120px] hover-elevate" 
-                  data-testid={`logo-${company.name.toLowerCase().replace(' ', '-')}`}
+                  key={index} 
+                  className="flex items-center justify-center opacity-70 hover:opacity-100 transition-opacity" 
+                  data-testid={`logo-company-${index}`}
                 >
-                  <div className="text-foreground font-bold text-sm md:text-base tracking-tight">{company.name}</div>
-                  <div className="text-muted-foreground text-xs mt-0.5">{company.tagline}</div>
+                  <img 
+                    src={logoImage} 
+                    alt="Partner Company Logo" 
+                    className="h-16 w-16 md:h-20 md:w-20 object-contain grayscale hover:grayscale-0 transition-all" 
+                  />
                 </div>
               ))}
             </div>

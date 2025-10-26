@@ -36,7 +36,7 @@ export default function TestimonialsSection() {
           <h2 className="text-4xl font-bold text-foreground mb-4">
             What Our Clients & Candidates Say
           </h2>
-          <p className="text-lg text-muted-foreground">
+          <p className="text-lg font-medium text-muted-foreground">
             Real stories from businesses and professionals we've helped
           </p>
         </div>
@@ -58,8 +58,8 @@ export default function TestimonialsSection() {
                 </div>
               </div>
               <div className="p-4">
-                <p className="font-semibold text-foreground">{video.name}</p>
-                <p className="text-sm text-muted-foreground">{video.role}</p>
+                <p className="font-bold text-foreground">{video.name}</p>
+                <p className="text-sm font-medium text-muted-foreground">{video.role}</p>
               </div>
             </Card>
           ))}
@@ -67,7 +67,7 @@ export default function TestimonialsSection() {
         
         <div className="space-y-12">
           <div>
-            <h3 className="text-2xl font-semibold text-foreground mb-6 text-center">Client Testimonials</h3>
+            <h3 className="text-2xl font-bold text-foreground mb-6 text-center">Client Testimonials</h3>
             <div className="grid md:grid-cols-3 gap-6">
               {writtenTestimonials.clients.map((testimonial, index) => (
                 <Card key={index} className="p-6 bg-gradient-to-br from-card to-primary/12 border-primary/20" data-testid={`client-testimonial-${index}`}>
@@ -76,10 +76,10 @@ export default function TestimonialsSection() {
                       <Star key={i} className="w-4 h-4 fill-primary text-primary" />
                     ))}
                   </div>
-                  <p className="text-foreground mb-4 leading-relaxed">"{testimonial.quote}"</p>
+                  <p className="text-base font-medium text-foreground mb-4 leading-relaxed">"{testimonial.quote}"</p>
                   <div className="border-t border-border pt-4">
-                    <p className="font-semibold text-foreground text-sm">{testimonial.name}</p>
-                    <p className="text-xs text-muted-foreground">{testimonial.role}</p>
+                    <p className="font-bold text-foreground text-sm">{testimonial.name}</p>
+                    <p className="text-sm font-medium text-muted-foreground">{testimonial.role}</p>
                   </div>
                 </Card>
               ))}
@@ -87,7 +87,7 @@ export default function TestimonialsSection() {
           </div>
           
           <div>
-            <h3 className="text-2xl font-semibold text-foreground mb-6 text-center">Candidate Testimonials</h3>
+            <h3 className="text-2xl font-bold text-foreground mb-6 text-center">Candidate Testimonials</h3>
             <div className="grid md:grid-cols-3 gap-6">
               {writtenTestimonials.candidates.map((testimonial, index) => (
                 <Card key={index} className="p-6 bg-gradient-to-br from-card to-primary/12 border-primary/20" data-testid={`candidate-testimonial-${index}`}>
@@ -96,10 +96,10 @@ export default function TestimonialsSection() {
                       <Star key={i} className="w-4 h-4 fill-primary text-primary" />
                     ))}
                   </div>
-                  <p className="text-foreground mb-4 leading-relaxed">"{testimonial.quote}"</p>
+                  <p className="text-base font-medium text-foreground mb-4 leading-relaxed">"{testimonial.quote}"</p>
                   <div className="border-t border-border pt-4">
-                    <p className="font-semibold text-foreground text-sm">{testimonial.name}</p>
-                    <p className="text-xs text-muted-foreground">{testimonial.role}</p>
+                    <p className="font-bold text-foreground text-sm">{testimonial.name}</p>
+                    <p className="text-sm font-medium text-muted-foreground">{testimonial.role}</p>
                   </div>
                 </Card>
               ))}
@@ -108,7 +108,7 @@ export default function TestimonialsSection() {
         </div>
         
         <div className="mt-12 text-center">
-          <p className="text-muted-foreground mb-4">Read more reviews on</p>
+          <p className="text-base font-medium text-muted-foreground mb-4">Read more reviews on</p>
           <div className="flex items-center justify-center gap-6">
             <Button variant="outline" asChild data-testid="link-google-reviews">
               <a href="https://www.google.com/search?q=reviews" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">

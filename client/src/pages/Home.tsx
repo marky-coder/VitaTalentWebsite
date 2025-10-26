@@ -8,6 +8,7 @@ import TeamSection from "@/components/TeamSection";
 import CTASection from "@/components/CTASection";
 import Footer from "@/components/Footer";
 import InquiryDialog from "@/components/InquiryDialog";
+import DecorativeSidebars from "@/components/DecorativeSidebars";
 
 export default function Home() {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -25,6 +26,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen">
+      <DecorativeSidebars />
       <div id="hero">
         <HeroSection 
           onHireTalent={handleHireTalent} 

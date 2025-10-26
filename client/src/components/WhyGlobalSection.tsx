@@ -27,10 +27,10 @@ export default function WhyGlobalSection() {
             <h2 className="text-4xl font-bold text-foreground">
               Why Global?
             </h2>
-            <p className="text-lg text-foreground leading-relaxed">
+            <p className="text-lg font-medium text-foreground leading-relaxed">
               Why limit yourself to one continent when the world is full of extraordinary talent?
             </p>
-            <p className="text-lg text-muted-foreground leading-relaxed">
+            <p className="text-lg font-medium text-muted-foreground leading-relaxed">
               Vita Talent brings together skilled professionals from Africa, Latin America, Asia, and beyond — giving businesses the freedom to hire the best, no matter where they are.
             </p>
           </div>

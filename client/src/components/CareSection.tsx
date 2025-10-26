@@ -9,10 +9,10 @@ export default function CareSection() {
             We care about people — and partnerships.
           </h2>
           <div className="max-w-3xl mx-auto space-y-4">
-            <p className="text-lg text-foreground leading-relaxed">
+            <p className="text-lg font-medium text-foreground leading-relaxed">
               At Vita Talent, we believe great hiring is about balance.
             </p>
-            <p className="text-lg text-muted-foreground leading-relaxed">
+            <p className="text-lg font-medium text-muted-foreground leading-relaxed">
               We care equally for our clients' business success and our candidates' wellbeing. Even if a match doesn't work out, we continue to support both sides.
             </p>
           </div>

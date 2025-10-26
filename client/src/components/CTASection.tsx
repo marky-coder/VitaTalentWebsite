@@ -14,7 +14,7 @@ export default function CTASection({ onHireTalent, onJoinAsCandidate }: CTASecti
           <h2 className="text-4xl font-bold text-foreground mb-4">
             Ready to Get Started?
           </h2>
-          <p className="text-lg text-muted-foreground">
+          <p className="text-lg font-medium text-muted-foreground">
             Whether you're looking to hire or seeking your next opportunity, we're here to help.
           </p>
         </div>
@@ -24,8 +24,8 @@ export default function CTASection({ onHireTalent, onJoinAsCandidate }: CTASecti
             <div className="w-16 h-16 rounded-full bg-primary/25 flex items-center justify-center mx-auto">
               <Briefcase className="w-8 h-8 text-primary" />
             </div>
-            <h3 className="text-2xl font-semibold text-foreground">For Businesses</h3>
-            <p className="text-muted-foreground">
+            <h3 className="text-2xl font-bold text-foreground">For Businesses</h3>
+            <p className="text-base font-medium text-muted-foreground">
               Find exceptional talent from around the world to grow your team.
             </p>
             <Button 
@@ -42,8 +42,8 @@ export default function CTASection({ onHireTalent, onJoinAsCandidate }: CTASecti
             <div className="w-16 h-16 rounded-full bg-primary/25 flex items-center justify-center mx-auto">
               <UserPlus className="w-8 h-8 text-primary" />
             </div>
-            <h3 className="text-2xl font-semibold text-foreground">For Candidates</h3>
-            <p className="text-muted-foreground">
+            <h3 className="text-2xl font-bold text-foreground">For Candidates</h3>
+            <p className="text-base font-medium text-muted-foreground">
               Connect with opportunities that align with your skills and values.
             </p>
             <Button 
