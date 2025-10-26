@@ -19,7 +19,7 @@ export default function HeroSection({ onHireTalent, onJoinAsCandidate }: HeroSec
       <div className="relative z-10 container max-w-5xl mx-auto px-4 py-24 text-center">
         <div className="flex flex-col items-center gap-6">
           <div className="flex items-center gap-3">
-            <img src={logoImage} alt="Vita Talent Logo" className="w-24 h-24 md:w-32 md:h-32 object-contain" />
+            <img src={logoImage} alt="Vita Talent Logo" className="w-40 h-40 md:w-48 md:h-48 object-contain" />
           </div>
           
           <div className="space-y-2">

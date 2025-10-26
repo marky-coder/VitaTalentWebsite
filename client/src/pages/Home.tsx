@@ -26,7 +26,10 @@ export default function Home() {
 
   return (
     <div className="min-h-screen">
-      <DecorativeSidebars />
+      <DecorativeSidebars 
+        onHireTalent={handleHireTalent}
+        onJoinAsCandidate={handleJoinAsCandidate}
+      />
       <div id="hero">
         <HeroSection 
           onHireTalent={handleHireTalent} 
