@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import heroBackground from "@assets/generated_images/Global_network_hero_background_3fc03fc7.png";
-import logoImage from "@assets/WhatsApp Image 2025-10-24 at 11.32.23 PM (1)_1761341009209.jpeg";
+import logoImage from "@assets/WhatsApp_Image_2025-10-24_at_11.32.23_PM-removebg-preview_1761482028519.png";
 
 interface HeroSectionProps {
   onHireTalent: () => void;

@@ -1,4 +1,4 @@
-import logoImage from "@assets/WhatsApp Image 2025-10-24 at 11.32.23 PM (1)_1761341009209.jpeg";
+import logoImage from "@assets/WhatsApp_Image_2025-10-24_at_11.32.23_PM-removebg-preview_1761482028519.png";
 
 export default function Footer() {
   const scrollToSection = (id: string) => {
