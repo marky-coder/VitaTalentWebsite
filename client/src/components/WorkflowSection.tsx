@@ -50,7 +50,7 @@ export default function WorkflowSection() {
   return (
     <section className="py-24 bg-gradient-to-bl from-primary/12 via-background to-primary/8" data-testid="section-workflow">
       <div className="container max-w-7xl mx-auto px-4">
-        <div className="text-center mb-16">
+        <div className="text-center mb-20">
           <h2 className="text-4xl font-bold text-foreground mb-4">
             Our Process
           </h2>
@@ -59,57 +59,93 @@ export default function WorkflowSection() {
           </p>
         </div>
         
-        <div className="hidden md:grid grid-cols-7 gap-4">
-          {steps.map((step, index) => (
-            <div key={step.number} className="relative">
-              <Card className="p-6 text-center h-full hover-elevate bg-gradient-to-br from-card to-primary/10 border-primary/20" data-testid={`card-step-${step.number}`}>
-                <div className="flex flex-col items-center gap-4">
-                  <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center">
-                    <step.icon className="w-8 h-8 text-primary" strokeWidth={1.5} />
-                  </div>
-                  <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm">
-                    {step.number}
-                  </div>
-                  <h3 className="font-bold text-foreground text-sm leading-tight">
-                    {step.title}
-                  </h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed font-medium">
-                    {step.description}
-                  </p>
-                </div>
-              </Card>
-              {index < steps.length - 1 && (
-                <div className="absolute top-1/3 -right-3 w-6 h-0.5 bg-border hidden lg:block"></div>
-              )}
-            </div>
-          ))}
-        </div>
-        
-        <div className="md:hidden space-y-4">
-          {steps.map((step) => (
-            <Card key={step.number} className="p-6 bg-gradient-to-br from-card to-primary/10 border-primary/20" data-testid={`card-step-mobile-${step.number}`}>
-              <div className="flex gap-4">
-                <div className="flex-shrink-0">
-                  <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
-                    <step.icon className="w-6 h-6 text-primary" strokeWidth={1.5} />
-                  </div>
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-xs">
+        {/* Desktop: Alternating Timeline Layout */}
+        <div className="hidden md:block relative">
+          {/* Central vertical line */}
+          <div className="absolute left-1/2 top-0 bottom-0 w-1 bg-gradient-to-b from-primary/20 via-primary/40 to-primary/20 -translate-x-1/2" />
+          
+          <div className="space-y-16">
+            {steps.map((step, index) => {
+              const isEven = index % 2 === 0;
+              return (
+                <div key={step.number} className="relative">
+                  {/* Timeline dot */}
+                  <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
+                    <div className="w-14 h-14 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-xl shadow-lg border-4 border-background">
                       {step.number}
                     </div>
-                    <h3 className="font-bold text-foreground">
-                      {step.title}
-                    </h3>
                   </div>
-                  <p className="text-sm font-medium text-muted-foreground">
-                    {step.description}
-                  </p>
+                  
+                  {/* Connecting line to card */}
+                  <div className={`absolute top-1/2 w-12 h-0.5 bg-primary/30 ${isEven ? 'left-1/2 ml-7' : 'right-1/2 mr-7'}`} />
+                  
+                  {/* Card */}
+                  <div className={`flex ${isEven ? 'justify-start' : 'justify-end'}`}>
+                    <Card 
+                      className="w-[45%] p-6 hover-elevate bg-gradient-to-br from-card to-primary/10 border-primary/20"
+                      data-testid={`card-step-${step.number}`}
+                    >
+                      <div className={`flex gap-4 ${isEven ? 'flex-row' : 'flex-row-reverse'}`}>
+                        <div className="flex-shrink-0">
+                          <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center">
+                            <step.icon className="w-8 h-8 text-primary" strokeWidth={1.5} />
+                          </div>
+                        </div>
+                        <div className={`flex-1 ${isEven ? 'text-left' : 'text-right'}`}>
+                          <h3 className="font-bold text-foreground text-lg mb-2">
+                            {step.title}
+                          </h3>
+                          <p className="text-sm font-medium text-muted-foreground leading-relaxed">
+                            {step.description}
+                          </p>
+                        </div>
+                      </div>
+                    </Card>
+                  </div>
                 </div>
+              );
+            })}
+          </div>
+        </div>
+        
+        {/* Mobile: Vertical Timeline */}
+        <div className="md:hidden relative pl-8">
+          {/* Left vertical line */}
+          <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-gradient-to-b from-primary/20 via-primary/40 to-primary/20" />
+          
+          <div className="space-y-8">
+            {steps.map((step) => (
+              <div key={step.number} className="relative">
+                {/* Timeline dot */}
+                <div className="absolute -left-[1.65rem] top-4">
+                  <div className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm shadow-lg border-2 border-background">
+                    {step.number}
+                  </div>
+                </div>
+                
+                <Card 
+                  className="p-5 bg-gradient-to-br from-card to-primary/10 border-primary/20"
+                  data-testid={`card-step-mobile-${step.number}`}
+                >
+                  <div className="flex gap-3">
+                    <div className="flex-shrink-0">
+                      <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
+                        <step.icon className="w-6 h-6 text-primary" strokeWidth={1.5} />
+                      </div>
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-bold text-foreground mb-1">
+                        {step.title}
+                      </h3>
+                      <p className="text-sm font-medium text-muted-foreground leading-relaxed">
+                        {step.description}
+                      </p>
+                    </div>
+                  </div>
+                </Card>
               </div>
-            </Card>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </section>
