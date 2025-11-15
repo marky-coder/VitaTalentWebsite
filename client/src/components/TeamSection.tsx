@@ -68,15 +68,14 @@ export default function TeamSection() {
           </p>
         </div>
 
-        {/* Responsive Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 
-                        gap-8 justify-items-center justify-center">
+        {/* Centered, wrapping layout */}
+        <div className="flex flex-wrap justify-center gap-8">
           {team.map((member, index) => (
             <Card
               key={index}
               className="group overflow-hidden bg-gradient-to-br from-card via-card to-primary/8 
                 border border-primary/20 shadow-md hover:shadow-lg hover:border-primary/40 
-                transition-all duration-500 hover:-translate-y-1 max-w-[240px]"
+                transition-all duration-500 hover:-translate-y-1 flex-none w-[240px]"
               data-testid={`team-member-${index}`}
             >
               <div className="flex flex-col h-full">
