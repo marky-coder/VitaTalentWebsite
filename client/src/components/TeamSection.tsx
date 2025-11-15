@@ -68,54 +68,56 @@ export default function TeamSection() {
           </p>
         </div>
 
-        {/* Flex layout so last row (3 cards) is centered under first row (4 cards) */}
-        <div className="flex flex-wrap justify-center gap-8">
+        {/* Responsive Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 justify-items-center">
           {team.map((member, index) => (
-            <div
+            <Card
               key={index}
-              className="w-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4 max-w-xs flex justify-center"
+              className="group overflow-hidden bg-gradient-to-br from-card via-card to-primary/8 
+                border border-primary/20 shadow-md hover:shadow-lg hover:border-primary/40 
+                transition-all duration-500 hover:-translate-y-1 max-w-[240px]"
+              data-testid={`team-member-${index}`}
             >
-              <Card
-                className="group w-full overflow-hidden bg-gradient-to-br from-card via-card to-primary/8 border border-primary/20 shadow-md hover:shadow-2xl hover:border-primary/40 transition-all duration-500 hover:-translate-y-1"
-                data-testid={`team-member-${index}`}
-              >
-                <div className="flex flex-col h-full">
-                  <div className="relative w-full aspect-[3/4] overflow-hidden bg-gradient-to-br from-muted to-muted/50">
-                    {member.image ? (
-                      <>
-                        <img
-                          src={member.image}
-                          alt={member.name}
-                          className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 ${
-                            member.name === "Ivy Baker"
-                              ? "object-center scale-100"
-                              : member.name === "Mo Alaa"
-                              ? "object-top scale-110"
-                              : "object-center scale-125"
-                          }`}
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-primary/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                        <div className="absolute inset-0 ring-2 ring-primary/0 group-hover:ring-primary/30 transition-all duration-500 rounded-t-xl" />
-                      </>
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/10 to-primary/5">
-                        <span className="text-4xl font-bold text-primary/60">
-                          {member.initials}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                  <div className="flex-1 p-5 text-center bg-gradient-to-b from-card to-primary/5 border-t border-primary/10 flex flex-col justify-center">
-                    <h3 className="font-semibold text-base text-foreground tracking-tight group-hover:text-primary transition-colors duration-300 mb-1">
-                      {member.name}
-                    </h3>
-                    <p className="text-sm font-medium text-muted-foreground">
-                      {member.role}
-                    </p>
-                  </div>
+              <div className="flex flex-col h-full">
+
+                {/* Image */}
+                <div className="relative w-full aspect-[3/4] overflow-hidden bg-gradient-to-br from-muted to-muted/50">
+                  {member.image ? (
+                    <>
+                      <img
+                        src={member.image}
+                        alt={member.name}
+                        className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 ${
+                          member.name === "Ivy Baker"
+                            ? "object-center scale-100"
+                            : member.name === "Mo Alaa"
+                            ? "object-top scale-110"
+                            : "object-center scale-110"
+                        }`}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-primary/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    </>
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/10 to-primary/5">
+                      <span className="text-4xl font-bold text-primary/60">
+                        {member.initials}
+                      </span>
+                    </div>
+                  )}
                 </div>
-              </Card>
-            </div>
+
+                {/* Text */}
+                <div className="flex-1 p-5 text-center bg-gradient-to-b from-card to-primary/5 border-t border-primary/10 flex flex-col justify-center">
+                  <h3 className="font-semibold text-base text-foreground tracking-tight group-hover:text-primary transition-colors duration-300 mb-1">
+                    {member.name}
+                  </h3>
+                  <p className="text-sm font-medium text-muted-foreground">
+                    {member.role}
+                  </p>
+                </div>
+
+              </div>
+            </Card>
           ))}
         </div>
       </div>
