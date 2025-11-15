@@ -68,30 +68,16 @@ export default function TeamSection() {
           </p>
         </div>
 
-        {/* UPDATED GRID: bigger cards, responsive layout */}
-        <div
-          className="
-            grid
-            grid-cols-1
-            sm:grid-cols-2
-            md:grid-cols-3
-            lg:grid-cols-4
-            xl:grid-cols-5
-            2xl:grid-cols-6
-            gap-10
-            justify-items-center
-            max-w-9xl
-            mx-auto
-          "
-        >
+        {/* 1 col mobile, 2 on small screens, 3 on tablet, 4 on laptop/desktop */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 justify-items-center">
           {team.map((member, index) => (
             <Card
               key={index}
-              className="group overflow-hidden bg-gradient-to-br from-card via-card to-primary/8 border border-primary/20 shadow-md hover:shadow-2xl hover:border-primary/40 transition-all duration-500 hover:-translate-y-1"
+              className="group w-full max-w-xs overflow-hidden bg-gradient-to-br from-card via-card to-primary/8 border border-primary/20 shadow-md hover:shadow-2xl hover:border-primary/40 transition-all duration-500 hover:-translate-y-1"
               data-testid={`team-member-${index}`}
             >
               <div className="flex flex-col h-full">
-                <div className="relative w-full aspect-square overflow-hidden bg-gradient-to-br from-muted to-muted/50">
+                <div className="relative w-full aspect-[3/4] overflow-hidden bg-gradient-to-br from-muted to-muted/50">
                   {member.image ? (
                     <>
                       <img
