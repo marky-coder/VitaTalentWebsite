@@ -2,81 +2,82 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>VitaTalent – Hire Top Talent Fast</title>
+    <title>VitaTalent – Global Talent Without the Hiring Chaos</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
-      /* ====== BASIC PAGE RESET ====== */
       * {
         box-sizing: border-box;
         margin: 0;
         padding: 0;
       }
 
+      html,
+      body {
+        height: 100%;
+      }
+
       body {
         font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
           sans-serif;
-        line-height: 1.5;
+        line-height: 1.6;
         color: #0f172a;
-        background: #f1f5f9;
+        background: radial-gradient(circle at top, #e0f2fe 0, #f8fafc 40%);
       }
 
       a {
-        text-decoration: none;
         color: inherit;
+        text-decoration: none;
       }
 
-      /* ====== LAYOUT WRAPPER ====== */
       .page {
-        max-width: 1100px;
+        max-width: 1120px;
         margin: 0 auto;
-        padding: 24px 16px 64px;
+        padding: 20px 16px 60px;
       }
 
       header {
         display: flex;
-        align-items: center;
         justify-content: space-between;
-        margin-bottom: 32px;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 24px;
       }
 
       .logo {
         font-weight: 800;
         font-size: 1.4rem;
-        letter-spacing: 0.04em;
+        letter-spacing: 0.06em;
       }
 
       .logo span {
-        color: #6366f1;
+        color: #4f46e5;
       }
 
       .nav-links {
         display: flex;
-        gap: 20px;
-        font-size: 0.95rem;
+        gap: 18px;
+        font-size: 0.9rem;
       }
 
-      /* ====== HERO SECTION ====== */
-      .hero {
-        background: white;
-        border-radius: 18px;
-        padding: 32px 24px;
-        box-shadow: 0 18px 45px rgba(15, 23, 42, 0.12);
-        display: grid;
-        grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
-        gap: 32px;
-        align-items: center;
-        margin-bottom: 32px;
+      .nav-links a {
+        opacity: 0.8;
       }
 
-      @media (max-width: 800px) {
-        .hero {
-          grid-template-columns: 1fr;
-        }
+      .nav-links a:hover {
+        opacity: 1;
+      }
 
+      .nav-cta {
+        padding: 7px 14px;
+        border-radius: 999px;
+        border: 1px solid rgba(148, 163, 184, 0.5);
+        font-size: 0.85rem;
+      }
+
+      @media (max-width: 760px) {
         header {
           flex-direction: column;
           align-items: flex-start;
-          gap: 12px;
         }
 
         .nav-links {
@@ -84,134 +85,230 @@
         }
       }
 
+      .hero {
+        position: relative;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 22px;
+        padding: 26px 22px;
+        margin-bottom: 32px;
+        box-shadow: 0 18px 45px rgba(15, 23, 42, 0.15);
+        display: grid;
+        grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+        gap: 26px;
+      }
+
+      @media (max-width: 880px) {
+        .hero {
+          grid-template-columns: 1fr;
+        }
+      }
+
       .hero-tag {
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        font-size: 0.8rem;
+        font-size: 0.7rem;
         text-transform: uppercase;
-        letter-spacing: 0.08em;
-        color: #4f46e5;
+        letter-spacing: 0.11em;
         padding: 4px 10px;
         border-radius: 999px;
         background: #eef2ff;
-        margin-bottom: 16px;
+        color: #4f46e5;
+        margin-bottom: 12px;
+      }
+
+      .hero-tag span {
+        width: 7px;
+        height: 7px;
+        border-radius: 999px;
+        background: #22c55e;
       }
 
       .hero h1 {
-        font-size: 2.4rem;
+        font-size: 2.25rem;
         margin-bottom: 12px;
       }
 
       .hero p {
-        font-size: 1rem;
+        font-size: 0.98rem;
         color: #475569;
-        margin-bottom: 20px;
+        margin-bottom: 18px;
       }
 
       .hero-buttons {
         display: flex;
         flex-wrap: wrap;
         gap: 12px;
-        margin-bottom: 12px;
+        margin-bottom: 10px;
+      }
+
+      .btn {
+        border-radius: 999px;
+        padding: 10px 18px;
+        font-size: 0.92rem;
+        cursor: pointer;
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
       }
 
       .btn-primary {
         background: linear-gradient(135deg, #4f46e5, #6366f1);
         color: white;
-        border: none;
-        padding: 10px 18px;
-        border-radius: 999px;
-        font-size: 0.95rem;
-        cursor: pointer;
+        box-shadow: 0 12px 30px rgba(79, 70, 229, 0.4);
         font-weight: 600;
-        box-shadow: 0 10px 25px rgba(79, 70, 229, 0.35);
       }
 
       .btn-secondary {
         background: white;
-        color: #0f172a;
         border: 1px solid #e2e8f0;
-        padding: 10px 18px;
-        border-radius: 999px;
-        font-size: 0.95rem;
-        cursor: pointer;
+        color: #0f172a;
         font-weight: 500;
       }
 
       .hero-footnote {
-        font-size: 0.8rem;
+        font-size: 0.78rem;
         color: #64748b;
       }
 
-      .hero-card {
-        background: #0f172a;
+      .hero-sidecard {
+        background: #020617;
+        border-radius: 18px;
+        padding: 18px 16px;
         color: white;
-        border-radius: 16px;
-        padding: 20px 18px;
         display: flex;
         flex-direction: column;
         gap: 14px;
+        overflow: hidden;
       }
 
-      .hero-metric {
+      .hero-sidecard-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.8rem;
+        opacity: 0.9;
+      }
+
+      .hero-metric-row {
         display: flex;
         justify-content: space-between;
         align-items: baseline;
       }
 
-      .hero-metric h3 {
-        font-size: 1.8rem;
+      .hero-metric-main {
+        font-size: 1.7rem;
+        font-weight: 700;
       }
 
-      .hero-metric span {
-        font-size: 0.85rem;
-        color: #e2e8f0;
+      .hero-metric-label {
+        font-size: 0.78rem;
+        color: #cbd5f5;
+        max-width: 140px;
+        text-align: right;
       }
 
       .hero-divider {
         height: 1px;
-        background: rgba(148, 163, 184, 0.4);
+        background: radial-gradient(circle, rgba(148, 163, 184, 0.9), transparent);
+        margin: 6px 0;
       }
 
       .hero-note {
-        font-size: 0.8rem;
+        font-size: 0.78rem;
         color: #e2e8f0;
       }
 
-      /* ====== SECTIONS ====== */
+      .sidebar {
+        position: fixed;
+        top: 30%;
+        left: 0;
+        transform: translateY(-50%);
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding-left: 4px;
+        pointer-events: none;
+      }
+
+      .sidebar-right {
+        left: auto;
+        right: 0;
+        padding-left: 0;
+        padding-right: 4px;
+        align-items: flex-end;
+      }
+
+      .sidebar-pill {
+        pointer-events: auto;
+        background: rgba(15, 23, 42, 0.92);
+        color: white;
+        border-radius: 999px;
+        padding: 7px 12px;
+        font-size: 0.78rem;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
+        box-shadow: 0 10px 25px rgba(15, 23, 42, 0.65);
+      }
+
+      .sidebar-pill span.dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 999px;
+        background: #22c55e;
+      }
+
+      @media (max-width: 900px) {
+        .sidebar,
+        .sidebar-right {
+          display: none;
+        }
+      }
+
       .section {
         margin-bottom: 32px;
       }
 
-      .section h2 {
+      .section-heading {
         font-size: 1.4rem;
-        margin-bottom: 12px;
+        margin-bottom: 8px;
       }
 
-      .section p {
-        font-size: 0.95rem;
+      .section-subtitle {
+        font-size: 0.9rem;
         color: #64748b;
         max-width: 640px;
       }
 
       .grid {
         display: grid;
-        gap: 16px;
+        gap: 14px;
         margin-top: 16px;
       }
 
-      @media (min-width: 800px) {
-        .grid-3 {
-          grid-template-columns: repeat(3, minmax(0, 1fr));
+      .grid-3 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .grid-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      @media (max-width: 840px) {
+        .grid-3,
+        .grid-2 {
+          grid-template-columns: 1fr;
         }
       }
 
       .card {
-        background: white;
+        background: rgba(255, 255, 255, 0.96);
         border-radius: 14px;
-        padding: 16px 14px;
-        box-shadow: 0 10px 25px rgba(15, 23, 42, 0.06);
+        padding: 14px 13px;
+        box-shadow: 0 14px 35px rgba(15, 23, 42, 0.08);
       }
 
       .card h3 {
@@ -219,153 +316,631 @@
         margin-bottom: 6px;
       }
 
-      .card p {
-        font-size: 0.85rem;
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.75rem;
+        padding: 3px 9px;
+        border-radius: 999px;
+        background: #ecfeff;
+        color: #0e7490;
+        margin-bottom: 6px;
       }
 
-      /* ====== FOOTER ====== */
-      footer {
-        margin-top: 40px;
+      .pill span.dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 999px;
+        background: #22c55e;
+      }
+
+      .testimonial-quote {
+        font-size: 0.9rem;
+        color: #0f172a;
+        margin-bottom: 10px;
+      }
+
+      .testimonial-meta {
+        font-size: 0.78rem;
+        color: #64748b;
+      }
+
+      .care-list {
+        list-style: none;
+        margin-top: 10px;
+        font-size: 0.9rem;
+        color: #0f172a;
+      }
+
+      .care-list li {
+        margin-bottom: 6px;
+        display: flex;
+        gap: 8px;
+      }
+
+      .care-list span.icon {
+        margin-top: 3px;
+      }
+
+      .team-grid {
+        margin-top: 16px;
+      }
+
+      .team-card {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+      }
+
+      .team-name {
+        font-weight: 600;
+        font-size: 0.96rem;
+      }
+
+      .team-role {
+        font-size: 0.82rem;
+        color: #64748b;
+      }
+
+      .team-note {
         font-size: 0.8rem;
         color: #94a3b8;
+      }
+
+      .cta {
+        background: linear-gradient(135deg, #0f172a, #111827);
+        border-radius: 18px;
+        padding: 22px 18px;
+        color: white;
+        display: grid;
+        grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+        gap: 20px;
+        align-items: center;
+      }
+
+      @media (max-width: 840px) {
+        .cta {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .cta h2 {
+        font-size: 1.4rem;
+        margin-bottom: 6px;
+      }
+
+      .cta p {
+        font-size: 0.9rem;
+        color: #e5e7eb;
+      }
+
+      .cta-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .cta-small {
+        font-size: 0.78rem;
+        color: #9ca3af;
+        margin-top: 6px;
+      }
+
+      footer {
+        margin-top: 34px;
+        font-size: 0.78rem;
+        color: #94a3b8;
         text-align: center;
+      }
+
+      footer a {
+        text-decoration: underline;
+      }
+
+      .dialog-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.55);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+        z-index: 40;
+      }
+
+      .dialog-backdrop.show {
+        display: flex;
+      }
+
+      .dialog {
+        max-width: 420px;
+        width: 100%;
+        background: #020617;
+        color: white;
+        border-radius: 18px;
+        padding: 18px 18px 16px;
+        box-shadow: 0 24px 60px rgba(15, 23, 42, 0.75);
+        position: relative;
+      }
+
+      .dialog-close {
+        position: absolute;
+        top: 10px;
+        right: 12px;
+        border: none;
+        background: transparent;
+        color: #9ca3af;
+        cursor: pointer;
+        font-size: 1.1rem;
+      }
+
+      .dialog h3 {
+        font-size: 1.1rem;
+        margin-bottom: 6px;
+      }
+
+      .dialog p {
+        font-size: 0.86rem;
+        color: #e5e7eb;
+        margin-bottom: 12px;
+      }
+
+      .dialog-form {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .dialog-label {
+        font-size: 0.78rem;
+        color: #9ca3af;
+      }
+
+      .dialog-input,
+      .dialog-textarea,
+      .dialog-select {
+        width: 100%;
+        border-radius: 10px;
+        border: 1px solid #1f2937;
+        padding: 7px 9px;
+        font-size: 0.86rem;
+        background: #020617;
+        color: white;
+      }
+
+      .dialog-textarea {
+        min-height: 70px;
+      }
+
+      .dialog-input:focus,
+      .dialog-textarea:focus,
+      .dialog-select:focus {
+        outline: none;
+        border-color: #4f46e5;
+      }
+
+      .dialog-helper {
+        font-size: 0.75rem;
+        color: #9ca3af;
+      }
+
+      .dialog-actions {
+        margin-top: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .dialog-secondary {
+        font-size: 0.75rem;
+        color: #9ca3af;
       }
     </style>
   </head>
   <body>
+    <!-- Decorative sidebar actions (similar idea to DecorativeSidebars.tsx) -->
+    <div class="sidebar">
+      <button
+        class="sidebar-pill"
+        onclick="openDialog('hire')"
+        type="button"
+      >
+        <span class="dot"></span>
+        Hire global talent
+      </button>
+      <button
+        class="sidebar-pill"
+        onclick="openDialog('candidate')"
+        type="button"
+      >
+        Join as candidate
+      </button>
+    </div>
+
+    <div class="sidebar-right">
+      <div class="sidebar-pill" onclick="document.getElementById('hero').scrollIntoView({behavior:'smooth'});">
+        Back to top ↑
+      </div>
+    </div>
+
     <div class="page">
       <header>
         <div class="logo">VITA<span>TALENT</span></div>
         <nav class="nav-links">
-          <a href="#how">How it works</a>
-          <a href="#for-companies">For companies</a>
-          <a href="#for-talent">For talent</a>
-          <a href="#contact">Contact</a>
+          <a href="#why-global">Why global</a>
+          <a href="#process">Process</a>
+          <a href="#testimonials">Results</a>
+          <a href="#team">Team</a>
+          <a href="#contact" class="nav-cta">Talk to us</a>
         </nav>
       </header>
 
+      <!-- HERO ~ HeroSection -->
       <main>
-        <!-- HERO -->
-        <section class="hero">
+        <section id="hero" class="hero">
           <div>
-            <div class="hero-tag">Smart hiring, less chaos</div>
-            <h1>Hire vetted talent without drowning in applications.</h1>
-            <p>
-              VitaTalent pre–screens candidates, runs the process, and brings
-              you the top few people worth your time — so you can make better
-              hires, faster.
-            </p>
-
-            <div class="hero-buttons">
-              <!-- Change these links to your actual funnels -->
-              <a href="https://apply.vitatalent.co">
-                <button class="btn-primary">Apply as talent</button>
-              </a>
-              <a href="https://hire.vitatalent.co">
-                <button class="btn-secondary">Hire with VitaTalent</button>
-              </a>
+            <div class="hero-tag">
+              <span></span>
+              Global talent, curated for you
             </div>
-
+            <h1>Hire world-class remote talent without drowning in applications.</h1>
+            <p>
+              VitaTalent plugs into your hiring flow, screens candidates for you,
+              and sends only a short list of people who are truly worth your time.
+            </p>
+            <div class="hero-buttons">
+              <button class="btn btn-primary" type="button" onclick="openDialog('hire')">
+                I want to hire talent →
+              </button>
+              <button class="btn btn-secondary" type="button" onclick="openDialog('candidate')">
+                I’m a candidate →
+              </button>
+            </div>
             <div class="hero-footnote">
-              Connected to your existing funnels at
-              <strong>apply.vitatalent.co</strong> and
-              <strong>hire.vitatalent.co</strong>.
+              Prefer your funnels?
+              <a href="https://hire.vitatalent.co" target="_blank" rel="noreferrer"
+                >Hire: hire.vitatalent.co</a
+              >
+              ·
+              <a href="https://apply.vitatalent.co" target="_blank" rel="noreferrer"
+                >Apply: apply.vitatalent.co</a
+              >
             </div>
           </div>
 
-          <aside class="hero-card">
-            <div class="hero-metric">
-              <h3>3–5</h3>
-              <span>finalists per role</span>
+          <aside class="hero-sidecard">
+            <div class="hero-sidecard-header">
+              <span>Active roles this month</span>
+              <span>Updated <span id="hero-updated">today</span></span>
+            </div>
+            <div class="hero-metric-row">
+              <div class="hero-metric-main">3–5</div>
+              <div class="hero-metric-label">Shortlisted candidates per role, on average.</div>
             </div>
             <div class="hero-divider"></div>
             <p class="hero-note">
-              Instead of 200 unqualified resumes, you see a short list of
-              candidates who are pre–screened and actually ready to interview.
+              Instead of 200 unqualified CVs in your inbox, you get a tight list of people who match
+              your must-haves and are ready to interview.
             </p>
 
-            <div class="hero-metric">
-              <h3>70%</h3>
-              <span>time saved on hiring</span>
+            <div class="hero-metric-row">
+              <div class="hero-metric-main">70%</div>
+              <div class="hero-metric-label">Time saved on screening & coordination.</div>
             </div>
             <p class="hero-note">
-              We handle sourcing, vetting, and coordination so your team can
-              focus on closing the right people.
+              We handle sourcing, async screening, and communication so your team can focus on closing
+              the right hire.
             </p>
           </aside>
         </section>
 
-        <!-- HOW IT WORKS -->
-        <section id="how" class="section">
-          <h2>How VitaTalent fits into your hiring flow</h2>
-          <p>
-            We plug into your existing tools and funnels, and take over the
-            messy middle of hiring: sourcing, screening, and shortlisting.
+        <!-- WHY GLOBAL ~ WhyGlobalSection -->
+        <section id="why-global" class="section">
+          <h2 class="section-heading">Why global talent?</h2>
+          <p class="section-subtitle">
+            The best people aren’t always sitting in your city. We help you tap into global talent
+            while keeping quality, culture, and communication non-negotiable.
           </p>
 
           <div class="grid grid-3">
-            <div class="card">
-              <h3>1. Intake</h3>
+            <article class="card">
+              <div class="pill"><span class="dot"></span> Higher bar, not higher volume</div>
+              <h3>Only serious, pre-screened candidates</h3>
               <p>
-                We align on the role, your non-negotiables, and what a great
-                hire looks like — beyond just a job description.
+                We filter for skills, mindset, and communication — not just keyword-matching resumes.
+                You see the top slice of the market, not the whole haystack.
               </p>
-            </div>
-            <div class="card">
-              <h3>2. Sourcing & screening</h3>
+            </article>
+            <article class="card">
+              <div class="pill"><span class="dot"></span> Time zone aware</div>
+              <h3>Built for async & remote teams</h3>
               <p>
-                Candidates apply through your funnels. We pre–screen, run
-                assessments, and remove obvious misfits.
+                We prioritize candidates who can thrive in remote, async environments, and who fit the
+                collaboration style your team actually uses.
               </p>
-            </div>
-            <div class="card">
-              <h3>3. Shortlist & interviews</h3>
+            </article>
+            <article class="card">
+              <div class="pill"><span class="dot"></span> Fair & transparent</div>
+              <h3>Win–win for company and candidate</h3>
               <p>
-                You get a tight shortlist with profiles, notes, and next steps.
-                You choose who to interview and move forward.
+                We care about fit on both sides. That leads to better retention, stronger relationships,
+                and fewer painful re-hires.
               </p>
-            </div>
+            </article>
           </div>
         </section>
 
-        <!-- FOR COMPANIES / FOR TALENT -->
-        <section id="for-companies" class="section">
-          <h2>For companies</h2>
-          <p>
-            Stop context-switching between job boards, inboxes, and random
-            spreadsheets. We centralize your pipeline and send you only the
-            people worth talking to.
+        <!-- PROCESS ~ WorkflowSection -->
+        <section id="process" class="section">
+          <h2 class="section-heading">How the VitaTalent workflow works</h2>
+          <p class="section-subtitle">
+            We plug into your current stack (or your funnels at hire/apply) and take over the messy
+            part of hiring: sourcing, screening, and shortlisting.
           </p>
+
+          <div class="grid grid-3">
+            <article class="card">
+              <h3>1. Role intake & calibration</h3>
+              <p>
+                We align on the role, your non-negotiables, examples of great versus bad hires, and
+                what “success in 90 days” looks like.
+              </p>
+            </article>
+            <article class="card">
+              <h3>2. Sourcing & async screening</h3>
+              <p>
+                Candidates flow in through your funnels or our network. We run structured screening so
+                you don’t have to sit through dozens of calls.
+              </p>
+            </article>
+            <article class="card">
+              <h3>3. Shortlist & decision support</h3>
+              <p>
+                You receive a concise shortlist with notes, recordings (if applicable), and clear next
+                steps. You pick who to interview and move to offer.
+              </p>
+            </article>
+          </div>
         </section>
 
-        <section id="for-talent" class="section">
-          <h2>For talent</h2>
-          <p>
-            One application with VitaTalent unlocks multiple matched roles. We
-            care about fit on both sides — not just filling seats.
+        <!-- TESTIMONIALS ~ TestimonialsSection -->
+        <section id="testimonials" class="section">
+          <h2 class="section-heading">Teams that care about hiring care about process.</h2>
+          <p class="section-subtitle">
+            A small sample of the outcomes that happen when hiring stops being an emergency and starts
+            being a system.
           </p>
+
+          <div class="grid grid-2">
+            <article class="card">
+              <p class="testimonial-quote">
+                “Instead of 180 random applicants, we got 4 people we would’ve happily hired. The whole
+                process felt calm, structured, and fast.”
+              </p>
+              <p class="testimonial-meta">
+                Founder, early-stage SaaS company · Hired remote Product Marketing Manager
+              </p>
+            </article>
+            <article class="card">
+              <p class="testimonial-quote">
+                “We’ve tried agencies and job boards. This is the first time someone actually filtered
+                for culture and communication, not just skills.”
+              </p>
+              <p class="testimonial-meta">
+                COO, distributed agency · Hired multiple account and operations roles
+              </p>
+            </article>
+          </div>
         </section>
 
-        <!-- CONTACT -->
+        <!-- CARE ~ CareSection -->
+        <section class="section">
+          <h2 class="section-heading">We care about humans, not just headcount.</h2>
+          <p class="section-subtitle">
+            Candidates remember how your hiring process feels. We help you run a process that is
+            respectful, clear, and honest — without adding work to your plate.
+          </p>
+
+          <ul class="care-list">
+            <li>
+              <span class="icon">✓</span>
+              <span>Clear expectations for candidates at every step.</span>
+            </li>
+            <li>
+              <span class="icon">✓</span>
+              <span>Honest feedback loops so people aren’t left hanging.</span>
+            </li>
+            <li>
+              <span class="icon">✓</span>
+              <span>
+                Emphasis on long-term fit instead of quick “bums on seats” placements.
+              </span>
+            </li>
+          </ul>
+        </section>
+
+        <!-- TEAM ~ TeamSection -->
+        <section id="team" class="section">
+          <h2 class="section-heading">Who’s behind VitaTalent?</h2>
+          <p class="section-subtitle">
+            A small, focused team obsessed with doing hiring properly — combining recruiting chops with
+            operational thinking and empathy for both sides of the table.
+          </p>
+
+          <div class="grid grid-2 team-grid">
+            <article class="card team-card">
+              <div class="team-name">Your team</div>
+              <div class="team-role">Operators, recruiters, and builders</div>
+              <div class="team-note">
+                You bring the vision, context, and standards. We bring structure, systems, and the
+                extra hands you wish you had.
+              </div>
+            </article>
+            <article class="card team-card">
+              <div class="team-name">Our network</div>
+              <div class="team-role">Global talent pool</div>
+              <div class="team-note">
+                Candidates across time zones and disciplines who value thoughtful companies and are
+                ready to do deep work — not just chase their next gig.
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <!-- CTA / CONTACT ~ CTASection -->
         <section id="contact" class="section">
-          <h2>Contact</h2>
-          <p>
-            Ready to hire or want to join the talent pool? Reach out at
-            <a href="mailto:hello@vitatalent.co">hello@vitatalent.co</a> or use
-            the funnels at <strong>apply.vitatalent.co</strong> and
-            <strong>hire.vitatalent.co</strong>.
-          </p>
+          <div class="cta">
+            <div>
+              <h2>Ready to make your next hire feel calm instead of chaotic?</h2>
+              <p>
+                Share what you’re hiring for and we’ll tell you if we can help. No spam, no pressure,
+                just a clear next step.
+              </p>
+            </div>
+            <div>
+              <div class="cta-buttons">
+                <button class="btn btn-primary" type="button" onclick="openDialog('hire')">
+                  Talk about a role →
+                </button>
+                <button class="btn btn-secondary" type="button" onclick="openDialog('candidate')">
+                  Join talent pool →
+                </button>
+              </div>
+              <div class="cta-small">
+                Prefer email? Reach us at
+                <a href="mailto:hello@vitatalent.co">hello@vitatalent.co</a>.
+              </div>
+            </div>
+          </div>
         </section>
       </main>
 
       <footer>
-        © <span id="year"></span> VitaTalent. All rights reserved.
+        © <span id="year"></span> VitaTalent. All rights reserved. · Funnels:
+        <a href="https://hire.vitatalent.co" target="_blank" rel="noreferrer">Hire</a> ·
+        <a href="https://apply.vitatalent.co" target="_blank" rel="noreferrer">Apply</a>
       </footer>
     </div>
 
+    <!-- InquiryDialog equivalent -->
+    <div id="inquiry-backdrop" class="dialog-backdrop" role="dialog" aria-modal="true">
+      <div class="dialog">
+        <button
+          class="dialog-close"
+          type="button"
+          onclick="closeDialog()"
+          aria-label="Close"
+        >
+          ×
+        </button>
+        <h3 id="dialog-title">Hire global talent</h3>
+        <p id="dialog-description">
+          Tell us what you’re hiring for and we’ll follow up with a short Loom or email with next
+          steps.
+        </p>
+
+        <form
+          class="dialog-form"
+          onsubmit="handleDialogSubmit(event)"
+        >
+          <label class="dialog-label">
+            Name
+            <input class="dialog-input" name="name" required />
+          </label>
+
+          <label class="dialog-label">
+            Email
+            <input
+              class="dialog-input"
+              name="email"
+              type="email"
+              required
+            />
+          </label>
+
+          <label class="dialog-label">
+            What are you looking for?
+            <select
+              class="dialog-select"
+              name="intent"
+              id="dialog-intent"
+            >
+              <option value="hire">I want to hire talent</option>
+              <option value="candidate">I want to join as a candidate</option>
+            </select>
+          </label>
+
+          <label class="dialog-label">
+            Context (optional but helpful)
+            <textarea
+              class="dialog-textarea"
+              name="message"
+              placeholder="Example: We're a remote SaaS company hiring a PMM for a 3–6 month engagement..."
+            ></textarea>
+          </label>
+
+          <div class="dialog-actions">
+            <button class="btn btn-primary" type="submit">
+              Send &amp; we’ll follow up
+            </button>
+            <div class="dialog-secondary">
+              This form doesn’t magically send anywhere yet — you can replace it later with your GHL
+              forms or tools like Tally, Typeform, or HubSpot.
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
     <script>
-      // tiny script to keep the year up-to-date
+      let dialogType = "hire";
+
+      function openDialog(type) {
+        dialogType = type || "hire";
+
+        const backdrop = document.getElementById("inquiry-backdrop");
+        const title = document.getElementById("dialog-title");
+        const description = document.getElementById("dialog-description");
+        const intentSelect = document.getElementById("dialog-intent");
+
+        if (dialogType === "candidate") {
+          title.textContent = "Join VitaTalent as a candidate";
+          description.textContent =
+            "Share a few details and we’ll keep you in mind when there’s a strong match with roles we’re working on.";
+          intentSelect.value = "candidate";
+        } else {
+          title.textContent = "Hire global talent with VitaTalent";
+          description.textContent =
+            "Tell us about the role and team. We’ll follow up with a short Loom or email outlining how we’d approach it.";
+          intentSelect.value = "hire";
+        }
+
+        backdrop.classList.add("show");
+      }
+
+      function closeDialog() {
+        document.getElementById("inquiry-backdrop").classList.remove("show");
+      }
+
+      function handleDialogSubmit(event) {
+        event.preventDefault();
+        alert(
+          "Form submitted! In a real setup this would send to your CRM, email, or GHL form. For now it’s just a placeholder so no data is being sent."
+        );
+        closeDialog();
+      }
+
       document.getElementById("year").textContent = new Date().getFullYear();
+      document.getElementById("hero-updated").textContent = "today";
+
+      document
+        .getElementById("inquiry-backdrop")
+        .addEventListener("click", function (event) {
+          if (event.target === this) {
+            closeDialog();
+          }
+        });
     </script>
   </body>
 </html>
