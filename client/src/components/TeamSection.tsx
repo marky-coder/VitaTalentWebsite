@@ -7,48 +7,66 @@ import ivyBakerImage from "@assets/ivy-baker-photo.png";
 import markAnthonyImage from "@assets/Mark Anthony.jpeg";
 import linaHossamImage from "@assets/lina-hossam-photo.png";
 
-const team = [
+type TeamMember = {
+  name: string;
+  role: string;
+  initials: string;
+  image?: string;
+  imageScale?: string; // extra per-person image tuning
+};
+
+const team: TeamMember[] = [
   {
     name: "Nathaniel Brimlow",
     role: "Founder/CEO",
     initials: "NB",
     image: nathanielImage,
+    // Zoom in a bit more and crop from the top so he matches Mohamed
+    imageScale: "scale-[1.35] object-top",
   },
   {
     name: "Mohamed Ayman",
     role: "President",
     initials: "MA",
     image: mohamedAymanImage,
+    // Default crop works well, no override needed
   },
   {
     name: "Mo Alaa",
     role: "COO",
     initials: "MA",
     image: moAlaaImage,
+    // Slight top emphasis
+    imageScale: "scale-125 object-top",
   },
   {
     name: "Hannah Alaa",
     role: "Social Media Manager",
     initials: "HA",
     image: hanaAboubakrImage,
+    imageScale: "scale-125 object-center",
   },
   {
     name: "Mark Anthony",
     role: "Automation Expert",
     initials: "MA",
     image: markAnthonyImage,
+    imageScale: "scale-[1.2] object-center",
   },
   {
     name: "Ivy Baker",
     role: "Recruiter",
     initials: "IB",
     image: ivyBakerImage,
+    // Her photo is already tight, so don’t zoom too much
+    imageScale: "scale-100 object-center",
   },
   {
     name: "Lina Hossam",
     role: "Recruiter",
     initials: "LH",
     image: linaHossamImage,
+    imageScale: "scale-125 object-center",
   },
 ];
 
@@ -59,6 +77,7 @@ export default function TeamSection() {
       data-testid="section-team"
     >
       <div className="container max-w-7xl mx-auto px-4">
+        {/* Heading */}
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-foreground mb-4">
             Meet the Team
@@ -68,35 +87,25 @@ export default function TeamSection() {
           </p>
         </div>
 
-        {/* Centered, wrapping layout */}
-        <div className="flex flex-wrap justify-center gap-8">
+        {/* Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 md:gap-8 max-w-5xl mx-auto">
           {team.map((member, index) => (
             <Card
               key={index}
-              className="group overflow-hidden bg-gradient-to-br from-card via-card to-primary/8 
-                border border-primary/20 shadow-md hover:shadow-lg hover:border-primary/40 
-                transition-all duration-500 hover:-translate-y-1 flex-none w-[240px]"
+              className="group overflow-hidden bg-gradient-to-br from-card via-card to-primary/8 border border-primary/20 shadow-md hover:shadow-2xl hover:border-primary/40 transition-all duration-500 hover:-translate-y-1"
               data-testid={`team-member-${index}`}
             >
               <div className="flex flex-col h-full">
-
                 {/* Image */}
                 <div className="relative w-full aspect-[3/4] overflow-hidden bg-gradient-to-br from-muted to-muted/50">
                   {member.image ? (
-                    <>
-                      <img
-                        src={member.image}
-                        alt={member.name}
-                        className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 ${
-                          member.name === "Ivy Baker"
-                            ? "object-center scale-100"
-                            : member.name === "Mo Alaa"
-                            ? "object-top scale-110"
-                            : "object-center scale-110"
-                        }`}
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-primary/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                    </>
+                    <img
+                      src={member.image}
+                      alt={member.name}
+                      className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${
+                        member.imageScale ?? "scale-125 object-center"
+                      }`}
+                    />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/10 to-primary/5">
                       <span className="text-4xl font-bold text-primary/60">
@@ -115,7 +124,6 @@ export default function TeamSection() {
                     {member.role}
                   </p>
                 </div>
-
               </div>
             </Card>
           ))}
