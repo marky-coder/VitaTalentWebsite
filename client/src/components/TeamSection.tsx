@@ -21,22 +21,20 @@ const team: TeamMember[] = [
     role: "Founder/CEO",
     initials: "NB",
     image: nathanielImage,
-    // Zoom in a bit more and crop from the top so he matches Mohamed
-    imageScale: "scale-[1.35] object-top",
+    // Zoom in a bit more and pull the image up slightly
+    imageScale: "scale-[1.6] -translate-y-1 object-top",
   },
   {
     name: "Mohamed Ayman",
     role: "President",
     initials: "MA",
     image: mohamedAymanImage,
-    // Default crop works well, no override needed
   },
   {
     name: "Mo Alaa",
     role: "COO",
     initials: "MA",
     image: moAlaaImage,
-    // Slight top emphasis
     imageScale: "scale-125 object-top",
   },
   {
@@ -58,7 +56,6 @@ const team: TeamMember[] = [
     role: "Recruiter",
     initials: "IB",
     image: ivyBakerImage,
-    // Her photo is already tight, so don’t zoom too much
     imageScale: "scale-100 object-center",
   },
   {
@@ -87,12 +84,12 @@ export default function TeamSection() {
           </p>
         </div>
 
-        {/* Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 md:gap-8 max-w-5xl mx-auto">
+        {/* Cards (flex so last row is centered) */}
+        <div className="flex flex-wrap justify-center gap-6 md:gap-8 max-w-5xl mx-auto">
           {team.map((member, index) => (
             <Card
               key={index}
-              className="group overflow-hidden bg-gradient-to-br from-card via-card to-primary/8 border border-primary/20 shadow-md hover:shadow-2xl hover:border-primary/40 transition-all duration-500 hover:-translate-y-1"
+              className="group w-full sm:w-1/2 md:w-1/3 lg:w-1/4 max-w-xs overflow-hidden bg-gradient-to-br from-card via-card to-primary/8 border border-primary/20 shadow-md hover:shadow-2xl hover:border-primary/40 transition-all duration-500 hover:-translate-y-1"
               data-testid={`team-member-${index}`}
             >
               <div className="flex flex-col h-full">
