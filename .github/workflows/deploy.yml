@@ -28,7 +28,6 @@ jobs:
           cache: npm
 
       - name: Install dependencies & build
-        working-directory: client
         run: |
           npm install
           npm run build
@@ -36,7 +35,9 @@ jobs:
       - name: Upload build artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: client/dist
+          # Vite config says: outDir = path.resolve(import.meta.dirname, "dist/public")
+          # so the static site ends up here:
+          path: dist/public
 
   deploy:
     needs: build
