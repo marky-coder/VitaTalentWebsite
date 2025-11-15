@@ -10,7 +10,7 @@ import linaHossamImage from "@assets/lina-hossam-photo.png";
 const team = [
   {
     name: "Nathaniel Brimlow",
-    role: "CEO",
+    role: "Founder/CEO",
     initials: "NB",
     image: nathanielImage,
   },
