@@ -69,7 +69,8 @@ export default function TeamSection() {
         </div>
 
         {/* Responsive Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 justify-items-center">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 
+                        gap-8 justify-items-center justify-center">
           {team.map((member, index) => (
             <Card
               key={index}
