@@ -4,7 +4,7 @@ import mohamedAymanImage from "@assets/Mohamed Ayman.jpeg";
 import moAlaaImage from "@assets/Mo Alaa.jpeg";
 import hanaAboubakrImage from "@assets/hana-aboubakr-photo.png";
 import ivyBakerImage from "@assets/ivy-baker-photo.png";
-import markAnthonyImage from "@assets/Mark Anthony.jpeg";
+import markAnthonyImage from "@assets/Mark Anthony.png";
 import linaHossamImage from "@assets/lina-hossam-photo.png";
 
 type TeamMember = {
