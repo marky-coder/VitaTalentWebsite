@@ -6,7 +6,7 @@ export default function CareSection() {
       <div className="container max-w-5xl mx-auto px-4">
         <div className="text-center space-y-6">
           <h2 className="text-4xl font-bold text-foreground">
-            We care about people — and partnerships.
+            We care about people and partnerships.
           </h2>
           <div className="max-w-3xl mx-auto space-y-4">
             <p className="text-lg font-medium text-foreground leading-relaxed">
