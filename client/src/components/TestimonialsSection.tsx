@@ -2,7 +2,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Play, Star } from "lucide-react";
 import { SiGoogle, SiTrustpilot } from "react-icons/si";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const videoTestimonials = [
   { id: 1, name: "Sarah Johnson", role: "CEO, TechCorp", type: "client", thumbnail: "https://placehold.co/400x300/1a5336/ffffff?text=Video+1" },
@@ -28,6 +28,13 @@ const writtenTestimonials = {
 
 export default function TestimonialsSection() {
   const [activeVideo, setActiveVideo] = useState<number | null>(null);
+
+  useEffect(() => {
+    // Load Trustpilot widget after component mounts
+    if (window.Trustpilot) {
+      window.Trustpilot.loadFromElement(document.getElementById('trustpilot-widget'), true);
+    }
+  }, []);
 
   return (
     <section className="py-24 bg-gradient-to-br from-primary/18 via-primary/10 to-background" data-testid="section-testimonials">
@@ -107,17 +114,35 @@ export default function TestimonialsSection() {
           </div>
         </div>
         
-        <div className="mt-12 text-center">
+        {/* Trustpilot Review Collector Widget */}
+        <div className="mt-12 flex justify-center">
+          <div 
+            id="trustpilot-widget"
+            className="trustpilot-widget" 
+            data-locale="en-US" 
+            data-template-id="56278e9abfbbba0bdcd568bc" 
+            data-businessunit-id="691ca8b32408924b2b23f79f" 
+            data-style-height="52px" 
+            data-style-width="100%" 
+            data-token="ba538c5f-fb1d-4e8d-82db-b65274099e34"
+          >
+            <a href="https://www.trustpilot.com/review/vitatalent.co" target="_blank" rel="noopener noreferrer">
+              Trustpilot
+            </a>
+          </div>
+        </div>
+        
+        <div className="mt-8 text-center">
           <p className="text-base font-medium text-muted-foreground mb-4">Read more reviews on</p>
           <div className="flex items-center justify-center gap-6">
             <Button variant="outline" asChild data-testid="link-google-reviews">
-              <a href="https://www.google.com/search?q=reviews" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
+              <a href="https://www.google.com/search?q=Vita+Talent+reviews" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
                 <SiGoogle className="w-5 h-5" />
                 <span>Google Reviews</span>
               </a>
             </Button>
             <Button variant="outline" asChild data-testid="link-trustpilot">
-              <a href="https://www.trustpilot.com" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
+              <a href="https://www.trustpilot.com/review/vitatalent.co" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
                 <SiTrustpilot className="w-5 h-5" />
                 <span>Trustpilot</span>
               </a>
