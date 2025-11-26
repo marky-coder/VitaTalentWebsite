@@ -12,7 +12,7 @@ import videoXimena from "@assets/WhatsApp Video 2025-11-25 at 10.45.54.mp4";
 import videoHesham from "@assets/WhatsApp Video 2025-11-25 at 10.46.13.mp4";
 import videoSherif from "@assets/WhatsApp Video 2025-11-25 at 10.47.09.mp4";
 
-/* Client testimonial videos (the two new client videos) */
+/* Client testimonial videos (Kevin & Sam) */
 import videoKevin from "@assets/Kevin's Testimonial.mp4";
 import videoSam from "@assets/Sam's Testimonial .mov";
 
@@ -151,7 +151,7 @@ const videoTestimonials = [
   },
 ];
 
-/* Client video testimonials (the two new client videos) */
+/* Client video testimonials (Kevin & Sam) */
 const clientVideoTestimonials = [
   {
     id: 1,
@@ -164,6 +164,28 @@ const clientVideoTestimonials = [
     name: "Sam",
     role: "Client",
     src: videoSam,
+  },
+];
+
+/* Candidate video testimonials (same WhatsApp videos reused for candidate cards) */
+const candidateVideoTestimonials = [
+  {
+    id: 1,
+    name: "Ximena Jimenez",
+    role: "Lead Manager",
+    src: videoXimena,
+  },
+  {
+    id: 2,
+    name: "Sherif Daoud",
+    role: "Acquisition Manager",
+    src: videoSherif,
+  },
+  {
+    id: 3,
+    name: "Hesham Salama",
+    role: "Acquisition Manager",
+    src: videoHesham,
   },
 ];
 
@@ -273,10 +295,32 @@ export default function TestimonialsSection() {
           </div>
         </div>
 
-        {/* Candidate testimonials (unchanged) */}
+        {/* Candidate testimonials: videos first, then written testimonials */}
         <div className="space-y-12 mt-12">
           <div>
             <h3 className="text-2xl font-bold text-foreground mb-6 text-center">Candidate Testimonials</h3>
+
+            {/* Candidate video grid (three videos) */}
+            <div className="grid md:grid-cols-3 gap-6 mb-8">
+              {candidateVideoTestimonials.map((video) => (
+                <Card key={video.id} className="relative overflow-hidden group cursor-pointer hover-elevate" onClick={() => setActiveVideo(video.src)} data-testid={`candidate-video-testimonial-${video.id}`}>
+                  <div className="aspect-video bg-muted relative">
+                    <VideoThumbnail src={video.src} alt={video.name} />
+                    <div className="absolute inset-0 bg-background/60 flex items-center justify-center pointer-events-none">
+                      <div className="w-16 h-16 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
+                        <Play className="w-8 h-8 ml-1" fill="currentColor" />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="p-4">
+                    <p className="font-bold text-foreground">{video.name}</p>
+                    <p className="text-sm font-medium text-muted-foreground">{video.role}</p>
+                  </div>
+                </Card>
+              ))}
+            </div>
+
+            {/* Written candidate testimonials (preserved) */}
             <div className="grid md:grid-cols-3 gap-6">
               {writtenTestimonials.candidates.map((testimonial, index) => (
                 <Card key={index} className="p-6 bg-gradient-to-br from-card to-primary/12 border-primary/20" data-testid={`candidate-testimonial-${index}`}>
@@ -295,7 +339,7 @@ export default function TestimonialsSection() {
         </div>
 
         <div className="mt-12 text-center">
-          <p className="text-base font-medium text-muted-foreground mb-4">Leave us a review on</p>
+          <p className="text-base font-medium text-muted-foreground mb-4">Read more reviews on</p>
           <div className="flex items-center justify-center gap-6">
             <Button variant="outline" asChild data-testid="link-trustpilot">
               <a href="https://www.trustpilot.com/review/vitatalent.co" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
