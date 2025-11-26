@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Phone, Mail, Briefcase, UserPlus, MessageSquare } from "lucide-react";
+import { Phone, Mail, Briefcase, UserPlus } from "lucide-react";
 import { motion } from "framer-motion";
 import {
   Tooltip,
@@ -25,8 +25,9 @@ export default function DecorativeSidebars({
     }
   };
 
+  // updated email
   const copyEmailToClipboard = async () => {
-    const email = "contact@vitatalent.com";
+    const email = "info@vitatalent.co";
     try {
       await navigator.clipboard.writeText(email);
       toast({
@@ -36,7 +37,7 @@ export default function DecorativeSidebars({
     } catch (err) {
       toast({
         title: "Failed to copy",
-        description: "Please copy the email manually: contact@vitatalent.com",
+        description: `Please copy the email manually: ${email}`,
         variant: "destructive",
       });
     }
@@ -44,7 +45,7 @@ export default function DecorativeSidebars({
 
   return (
     <>
-      {/* Left Sidebar - Quick Actions */}
+      {/* Left Sidebar - Quick Actions (Contact button removed) */}
       <motion.div
         className="hidden xl:flex fixed left-0 top-1/2 -translate-y-1/2 z-50 flex-col gap-3 pl-4"
         initial={{ x: -100, opacity: 0 }}
@@ -74,6 +75,7 @@ export default function DecorativeSidebars({
               </p>
             </TooltipContent>
           </Tooltip>
+
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
@@ -96,33 +98,10 @@ export default function DecorativeSidebars({
               </p>
             </TooltipContent>
           </Tooltip>
-          <div className="w-full h-px bg-border my-1" />
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                size="icon"
-                variant="ghost"
-                className="hover-elevate"
-                onClick={scrollToContact}
-                data-testid="sidebar-contact"
-              >
-                <MessageSquare className="w-5 h-5 text-primary" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent
-              side="right"
-              className="bg-primary/95 backdrop-blur-sm text-primary-foreground border-primary/50 shadow-lg"
-            >
-              <p className="font-medium">Contact Us</p>
-              <p className="text-xs opacity-90 mt-0.5">
-                Get in touch with our team
-              </p>
-            </TooltipContent>
-          </Tooltip>
         </div>
       </motion.div>
 
-      {/* Right Sidebar - Contact Info */}
+      {/* Right Sidebar - Contact Info (phone and email updated) */}
       <motion.div
         className="hidden xl:flex fixed right-0 top-1/2 -translate-y-1/2 z-50 flex-col gap-3 pr-4"
         initial={{ x: 100, opacity: 0 }}
@@ -132,7 +111,8 @@ export default function DecorativeSidebars({
         <div className="flex flex-col gap-2 bg-card/80 backdrop-blur-sm rounded-l-lg border border-border/50 p-2 shadow-lg">
           <Tooltip>
             <TooltipTrigger asChild>
-              <a href="tel:+1234567890" data-testid="sidebar-phone">
+              {/* updated tel: link to the requested phone number */}
+              <a href="tel:+13604018427" data-testid="sidebar-phone">
                 <Button size="icon" variant="ghost" className="hover-elevate">
                   <Phone className="w-5 h-5 text-primary" />
                 </Button>
@@ -146,6 +126,7 @@ export default function DecorativeSidebars({
               <p className="text-xs opacity-90 mt-0.5">Speak with our team</p>
             </TooltipContent>
           </Tooltip>
+
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
