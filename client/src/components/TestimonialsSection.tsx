@@ -6,46 +6,37 @@ import { SiTrustpilot } from "react-icons/si";
 import { useState } from "react";
 
 /**
- * Local video imports — make sure you placed the files into attached_assets/
- * as testimonial-1.mp4, testimonial-2.mp4, testimonial-3.mp4
+ * Imported videos — match the exact filenames you uploaded to attached_assets/
+ * Note: imports reference the uploaded WhatsApp filenames (spaces included).
  */
-import video1 from "@assets/testimonial-1.mp4";
-import video2 from "@assets/testimonial-2.mp4";
-import video3 from "@assets/testimonial-3.mp4";
-
-/**
- * (Optional) If you add poster JPGs next to the mp4s, import them and set
- * poster: poster1, poster2, etc. Otherwise the thumbnails fall back to placeholders.
- */
-// import poster1 from "@assets/testimonial-1.jpg";
-// import poster2 from "@assets/testimonial-2.jpg";
-// import poster3 from "@assets/testimonial-3.jpg";
+import videoXimena from "@assets/WhatsApp Video 2025-11-25 at 10.45.54.mp4";
+import videoHesham from "@assets/WhatsApp Video 2025-11-25 at 10.46.13.mp4";
+import videoSherif from "@assets/WhatsApp Video 2025-11-25 at 10.47.09.mp4";
 
 const videoTestimonials = [
   {
     id: 1,
-    name: "Sarah Johnson",
-    role: "CEO, TechCorp",
+    name: "Ximena Jimenez",
+    role: "Lead Manager",
     type: "client",
-    // thumbnail: poster1 ?? fallback
-    thumbnail: "https://placehold.co/400x300/1a5336/ffffff?text=Video+1",
-    src: video1,
+    thumbnail: "https://placehold.co/400x300/1a5336/ffffff?text=Ximena+Jimenez",
+    src: videoXimena,
   },
   {
     id: 2,
-    name: "Michael Chen",
-    role: "VP Engineering, DataFlow",
+    name: "Sherif Daoud",
+    role: "Acquisition Manager",
     type: "client",
-    thumbnail: "https://placehold.co/400x300/1a5336/ffffff?text=Video+2",
-    src: video2,
+    thumbnail: "https://placehold.co/400x300/1a5336/ffffff?text=Sherif+Daoud",
+    src: videoSherif,
   },
   {
     id: 3,
-    name: "Emily Rodriguez",
-    role: "HR Director, GlobalTech",
+    name: "Hesham Salama",
+    role: "Acquisition Manager",
     type: "client",
-    thumbnail: "https://placehold.co/400x300/1a5336/ffffff?text=Video+3",
-    src: video3,
+    thumbnail: "https://placehold.co/400x300/1a5336/ffffff?text=Hesham+Salama",
+    src: videoHesham,
   },
 ];
 
@@ -93,7 +84,7 @@ const writtenTestimonials = {
 };
 
 export default function TestimonialsSection() {
-  // activeVideo holds the src of the currently open video (or null)
+  // activeVideo stores the src string of the currently playing video
   const [activeVideo, setActiveVideo] = useState<string | null>(null);
 
   return (
@@ -111,7 +102,7 @@ export default function TestimonialsSection() {
           </p>
         </div>
 
-        {/* Video cards */}
+        {/* Video testimonial cards */}
         <div className="grid md:grid-cols-3 gap-6 mb-12">
           {videoTestimonials.map((video) => (
             <Card
@@ -230,7 +221,7 @@ export default function TestimonialsSection() {
         </div>
       </div>
 
-      {/* Video modal overlay */}
+      {/* Video modal */}
       {activeVideo && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4"
@@ -252,7 +243,6 @@ export default function TestimonialsSection() {
                 controls
                 preload="metadata"
                 className="w-full h-auto bg-black"
-                // playsInline is useful for mobile UX
                 playsInline
               >
                 Your browser does not support the video tag.
