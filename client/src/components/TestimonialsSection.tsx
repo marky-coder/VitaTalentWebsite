@@ -129,28 +129,6 @@ function VideoThumbnail({ src, alt }: { src: string; alt?: string }) {
   );
 }
 
-/* Top (existing) video testimonials */
-const videoTestimonials = [
-  {
-    id: 1,
-    name: "Ximena Jimenez",
-    role: "Lead Manager",
-    src: videoXimena,
-  },
-  {
-    id: 2,
-    name: "Sherif Daoud",
-    role: "Acquisition Manager",
-    src: videoSherif,
-  },
-  {
-    id: 3,
-    name: "Hesham Salama",
-    role: "Acquisition Manager",
-    src: videoHesham,
-  },
-];
-
 /* Client video testimonials (Kevin & Sam) */
 const clientVideoTestimonials = [
   {
@@ -167,7 +145,7 @@ const clientVideoTestimonials = [
   },
 ];
 
-/* Candidate video testimonials (same WhatsApp videos reused for candidate cards) */
+/* Candidate video testimonials (WhatsApp videos moved here) */
 const candidateVideoTestimonials = [
   {
     id: 1,
@@ -229,32 +207,13 @@ export default function TestimonialsSection() {
   return (
     <section className="py-24 bg-gradient-to-br from-primary/18 via-primary/10 to-background" data-testid="section-testimonials">
       <div className="container max-w-7xl mx-auto px-4">
+        {/* Header */}
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-foreground mb-4">What Our Clients & Candidates Say</h2>
           <p className="text-lg font-medium text-muted-foreground">Real stories from businesses and professionals we've helped</p>
         </div>
 
-        {/* Top video grid (existing) */}
-        <div className="grid md:grid-cols-3 gap-6 mb-12">
-          {videoTestimonials.map((video) => (
-            <Card key={video.id} className="relative overflow-hidden group cursor-pointer hover-elevate" onClick={() => setActiveVideo(video.src)} data-testid={`video-testimonial-${video.id}`}>
-              <div className="aspect-video bg-muted relative">
-                <VideoThumbnail src={video.src} alt={video.name} />
-                <div className="absolute inset-0 bg-background/60 flex items-center justify-center pointer-events-none">
-                  <div className="w-16 h-16 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
-                    <Play className="w-8 h-8 ml-1" fill="currentColor" />
-                  </div>
-                </div>
-              </div>
-              <div className="p-4">
-                <p className="font-bold text-foreground">{video.name}</p>
-                <p className="text-sm font-medium text-muted-foreground">{video.role}</p>
-              </div>
-            </Card>
-          ))}
-        </div>
-
-        {/* Client Testimonials section */}
+        {/* Client Testimonials */}
         <div>
           <h3 className="text-2xl font-bold text-foreground mb-6 text-center">Client Testimonials</h3>
 
@@ -295,12 +254,12 @@ export default function TestimonialsSection() {
           </div>
         </div>
 
-        {/* Candidate testimonials: videos first, then written testimonials */}
+        {/* Candidate Testimonials: videos first, then written testimonials */}
         <div className="space-y-12 mt-12">
           <div>
             <h3 className="text-2xl font-bold text-foreground mb-6 text-center">Candidate Testimonials</h3>
 
-            {/* Candidate video grid (three videos) */}
+            {/* Candidate video grid (three videos moved here) */}
             <div className="grid md:grid-cols-3 gap-6 mb-8">
               {candidateVideoTestimonials.map((video) => (
                 <Card key={video.id} className="relative overflow-hidden group cursor-pointer hover-elevate" onClick={() => setActiveVideo(video.src)} data-testid={`candidate-video-testimonial-${video.id}`}>
@@ -320,7 +279,7 @@ export default function TestimonialsSection() {
               ))}
             </div>
 
-            {/* Written candidate testimonials (preserved) */}
+            {/* Written candidate testimonials (preserved below the videos) */}
             <div className="grid md:grid-cols-3 gap-6">
               {writtenTestimonials.candidates.map((testimonial, index) => (
                 <Card key={index} className="p-6 bg-gradient-to-br from-card to-primary/12 border-primary/20" data-testid={`candidate-testimonial-${index}`}>
