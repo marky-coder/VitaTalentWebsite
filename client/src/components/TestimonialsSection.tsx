@@ -2,7 +2,7 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Play, Star, X } from "lucide-react";
-import { SiTrustpilot } from "react-icons/si";
+import { SiTrustpilot, SiGoogle } from "react-icons/si";
 import { useState, useEffect } from "react";
 
 /**
@@ -12,7 +12,7 @@ import videoXimena from "@assets/WhatsApp Video 2025-11-25 at 10.45.54.mp4";
 import videoHesham from "@assets/WhatsApp Video 2025-11-25 at 10.46.13.mp4";
 import videoSherif from "@assets/WhatsApp Video 2025-11-25 at 10.47.09.mp4";
 
-/* Client testimonial videos (the two you just uploaded) */
+/* Client testimonial videos (the two new client videos) */
 import videoKevin from "@assets/Kevin's Testimonial.mp4";
 import videoSam from "@assets/Sam's Testimonial .mov";
 
@@ -201,6 +201,9 @@ export default function TestimonialsSection() {
     };
   }, [activeVideo]);
 
+  // Google Reviews link (GBP)
+  const googleReviewUrl = "https://g.page/r/CXjNZjj4Vu59EBM/review";
+
   return (
     <section className="py-24 bg-gradient-to-br from-primary/18 via-primary/10 to-background" data-testid="section-testimonials">
       <div className="container max-w-7xl mx-auto px-4">
@@ -298,6 +301,14 @@ export default function TestimonialsSection() {
               <a href="https://www.trustpilot.com/review/vitatalent.co" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
                 <SiTrustpilot className="w-5 h-5" />
                 <span>Trustpilot</span>
+              </a>
+            </Button>
+
+            {/* Google Business Profile (GBP) review link */}
+            <Button variant="outline" asChild data-testid="link-google-reviews">
+              <a href={googleReviewUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
+                <SiGoogle className="w-5 h-5" />
+                <span>Google Reviews</span>
               </a>
             </Button>
           </div>
