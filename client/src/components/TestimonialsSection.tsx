@@ -295,7 +295,7 @@ export default function TestimonialsSection() {
         </div>
 
         <div className="mt-12 text-center">
-          <p className="text-base font-medium text-muted-foreground mb-4">Read more reviews on</p>
+          <p className="text-base font-medium text-muted-foreground mb-4">Leave us a review on</p>
           <div className="flex items-center justify-center gap-6">
             <Button variant="outline" asChild data-testid="link-trustpilot">
               <a href="https://www.trustpilot.com/review/vitatalent.co" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
