@@ -9,9 +9,9 @@ import logoImage from "@assets/WhatsApp_Image_2025-10-24_at_11.32.23_PM-removebg
  */
 import partner1 from "@assets/IMG_6617.jpg";
 import partner2 from "@assets/IMG_6614.png";
-import partner3 from "@assets/IMG_6615.png";
+import partner3 from "@assets/IMG_6618.png";
 import partner4 from "@assets/IMG_6616.png";
-import partner5 from "@assets/IMG_6618.png";
+import partner5 from "@assets/IMG_6615.png";
 
 interface HeroSectionProps {
   onHireTalent: () => void;
