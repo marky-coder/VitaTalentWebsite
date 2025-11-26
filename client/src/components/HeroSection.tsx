@@ -5,13 +5,13 @@ import logoImage from "@assets/WhatsApp_Image_2025-10-24_at_11.32.23_PM-removebg
 /**
  * Partner logos:
  * - Add your partner logo files into `attached_assets/` (that's the @assets alias)
- * - Filenames used here match the screenshot you provided; rename imports if your files are different.
+ * - Filenames used here match the screenshot you provided.
  */
 import partner1 from "@assets/IMG_6617.jpg";
 import partner2 from "@assets/IMG_6614.png";
-import partner3 from "@assets/IMG_6618.png";
+import partner3 from "@assets/IMG_6615.png";
 import partner4 from "@assets/IMG_6616.png";
-import partner5 from "@assets/IMG_6615.png";
+import partner5 from "@assets/IMG_6618.png";
 
 interface HeroSectionProps {
   onHireTalent: () => void;
@@ -19,13 +19,13 @@ interface HeroSectionProps {
 }
 
 export default function HeroSection({ onHireTalent, onJoinAsCandidate }: HeroSectionProps) {
-  // Keep existing logoImage as a safe fallback in case a partner file is missing.
+  // Swapped the 3rd and 5th entries so the middle logo is now IMG_6618.png
   const partnerLogos: string[] = [
-    partner1,
-    partner2,
-    partner3,
-    partner4,
-    partner5,
+    partner1, // IMG_6617.jpg
+    partner2, // IMG_6614.png
+    partner5, // IMG_6618.png  <-- now in the middle
+    partner4, // IMG_6616.png
+    partner3, // IMG_6615.png  <-- moved to last position
   ];
 
   return (
