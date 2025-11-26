@@ -25,7 +25,7 @@ export default function DecorativeSidebars({
     }
   };
 
-  // updated email
+  // updated email copy behavior
   const copyEmailToClipboard = async () => {
     const email = "info@vitatalent.co";
     try {
@@ -42,6 +42,11 @@ export default function DecorativeSidebars({
       });
     }
   };
+
+  // WhatsApp number (international format, no '+' or dashes)
+  const whatsappNumberRaw = "13604018427"; // +1 360-401-8427
+  const whatsappDisplay = "360-401-8427";
+  const whatsappLink = `https://wa.me/${whatsappNumberRaw}`;
 
   return (
     <>
@@ -101,7 +106,7 @@ export default function DecorativeSidebars({
         </div>
       </motion.div>
 
-      {/* Right Sidebar - Contact Info (phone and email updated) */}
+      {/* Right Sidebar - Contact Info (phone -> WhatsApp; email unchanged) */}
       <motion.div
         className="hidden xl:flex fixed right-0 top-1/2 -translate-y-1/2 z-50 flex-col gap-3 pr-4"
         initial={{ x: 100, opacity: 0 }}
@@ -111,8 +116,14 @@ export default function DecorativeSidebars({
         <div className="flex flex-col gap-2 bg-card/80 backdrop-blur-sm rounded-l-lg border border-border/50 p-2 shadow-lg">
           <Tooltip>
             <TooltipTrigger asChild>
-              {/* updated tel: link to the requested phone number */}
-              <a href="tel:+13604018427" data-testid="sidebar-phone">
+              {/* WhatsApp link opens in a new tab/window; wa.me works for mobile and desktop */}
+              <a
+                href={whatsappLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`Chat on WhatsApp ${whatsappDisplay}`}
+                data-testid="sidebar-phone"
+              >
                 <Button size="icon" variant="ghost" className="hover-elevate">
                   <Phone className="w-5 h-5 text-primary" />
                 </Button>
@@ -122,8 +133,10 @@ export default function DecorativeSidebars({
               side="left"
               className="bg-primary/95 backdrop-blur-sm text-primary-foreground border-primary/50 shadow-lg"
             >
-              <p className="font-medium">Call Us</p>
-              <p className="text-xs opacity-90 mt-0.5">Speak with our team</p>
+              <p className="font-medium">WhatsApp</p>
+              <p className="text-xs opacity-90 mt-0.5">
+                Chat with our team: {whatsappDisplay}
+              </p>
             </TooltipContent>
           </Tooltip>
 
