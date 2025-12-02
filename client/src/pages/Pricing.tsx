@@ -3,6 +3,7 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
 import { Link } from "wouter";
+import Footer from "@/components/Footer";
 
 type Plan = {
   id: string;
@@ -241,6 +242,9 @@ export default function Pricing(): JSX.Element {
           All prices are indicative. For Enterprise pricing and custom quotes, please contact our sales team.
         </div>
       </div>
+
+      {/* shared Footer from the Home page */}
+      <Footer />
     </div>
   );
 }
