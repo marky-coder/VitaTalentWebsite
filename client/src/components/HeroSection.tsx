@@ -1,3 +1,4 @@
+// client/src/components/HeroSection.tsx
 import { Button } from "@/components/ui/button";
 import heroBackground from "@assets/generated_images/Global_network_hero_background_3fc03fc7.png";
 import logoImage from "@assets/WhatsApp_Image_2025-10-24_at_11.32.23_PM-removebg-preview_1761482028519.png";
@@ -12,6 +13,8 @@ import partner2 from "@assets/IMG_6614.png";
 import partner3 from "@assets/IMG_6615.png";
 import partner4 from "@assets/IMG_6616.png";
 import partner5 from "@assets/IMG_6618.png";
+
+import { Link } from "wouter";
 
 interface HeroSectionProps {
   onHireTalent: () => void;
@@ -55,6 +58,7 @@ export default function HeroSection({ onHireTalent, onJoinAsCandidate }: HeroSec
             Empowering businesses worldwide with the right people, wherever they are.
           </p>
 
+          {/* existing two buttons */}
           <div className="flex flex-col sm:flex-row gap-4 mt-8">
             <Button
               size="lg"
@@ -72,6 +76,13 @@ export default function HeroSection({ onHireTalent, onJoinAsCandidate }: HeroSec
               className="text-base px-8"
             >
               Join as Candidate
+            </Button>
+          </div>
+
+          {/* NEW: Pricing button directly below the two buttons and centered */}
+          <div className="mt-4 flex justify-center w-full">
+            <Button size="lg" variant="outline" asChild>
+              <Link href="/pricing">Pricing</Link>
             </Button>
           </div>
 
