@@ -1,75 +1,82 @@
-// client/src/components/InquiryDialog.tsx
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { useEffect } from "react";
+// client/src/pages/Home.tsx
+import { useState, useEffect } from "react";
+import HeroSection from "@/components/HeroSection";
+import WhyGlobalSection from "@/components/WhyGlobalSection";
+import WorkflowSection from "@/components/WorkflowSection";
+import TestimonialsSection from "@/components/TestimonialsSection";
+import CareSection from "@/components/CareSection";
+import TeamSection from "@/components/TeamSection";
+import CTASection from "@/components/CTASection";
+import Footer from "@/components/Footer";
+import InquiryDialog from "@/components/InquiryDialog";
+import DecorativeSidebars from "@/components/DecorativeSidebars";
 
-interface InquiryDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  type: "hire" | "candidate";
-  selectedPack?: string | undefined;
-}
+export default function Home() {
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogType, setDialogType] = useState<"hire" | "candidate">("hire");
+  const [selectedPack, setSelectedPack] = useState<string | undefined>(undefined);
 
-export default function InquiryDialog({
-  open,
-  onOpenChange,
-  type,
-  selectedPack,
-}: InquiryDialogProps) {
-  const hireFormId = "WQGFK4J2ChAmAACrEQPC";
-  const candidateFormId = "pzE6wXP4PmwKwZqN6iRw";
-  const formId = type === "hire" ? hireFormId : candidateFormId;
+  const handleHireTalent = (packId?: string) => {
+    setDialogType("hire");
+    if (packId) setSelectedPack(packId);
+    setDialogOpen(true);
+  };
 
+  const handleJoinAsCandidate = () => {
+    setDialogType("candidate");
+    setDialogOpen(true);
+  };
+
+  // Open dialog if user navigated here with ?openHire=true and optional &pack=
   useEffect(() => {
-    if (open) {
-      const existingScript = document.querySelector(
-        'script[src="https://link.msgsndr.com/js/form_embed.js"]'
-      );
-      if (!existingScript) {
-        const script = document.createElement("script");
-        script.src = "https://link.msgsndr.com/js/form_embed.js";
-        script.async = true;
-        document.body.appendChild(script);
-      }
-    }
-  }, [open]);
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const openHire = params.get("openHire");
+      const pack = params.get("pack") ?? undefined;
+      if (openHire === "1" || openHire === "true") {
+        setDialogType("hire");
+        if (pack) setSelectedPack(pack);
+        setDialogOpen(true);
 
-  // append selected pack to the iframe src so the form/widget can pick it up if needed
-  const iframeSrc =
-    `https://api.leadconnectorhq.com/widget/survey/${formId}` +
-    (selectedPack ? `?pack=${encodeURIComponent(selectedPack)}` : "");
+        // remove query params so refresh doesn't reopen the dialog
+        const cleanUrl = window.location.pathname + (window.location.hash || "");
+        window.history.replaceState(null, "", cleanUrl);
+      }
+    } catch (e) {
+      // ignore parsing errors
+    }
+  }, []);
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        className="sm:max-w-[600px] max-h-[90vh] flex flex-col"
-        data-testid={`dialog-${type}`}
-      >
-        <DialogHeader className="flex-shrink-0">
-          <DialogTitle>{type === "hire" ? "Hire Talent" : "Job Application Form"}</DialogTitle>
-          <DialogDescription>
-            {type === "hire"
-              ? "Tell us about your hiring needs and we'll connect you with exceptional talent."
-              : "Share your information and we'll help you find your next opportunity."}
-          </DialogDescription>
-        </DialogHeader>
+    <div className="min-h-screen">
+      <DecorativeSidebars onHireTalent={() => handleHireTalent()} onJoinAsCandidate={handleJoinAsCandidate} />
+      <div id="hero">
+        <HeroSection onHireTalent={() => handleHireTalent()} onJoinAsCandidate={handleJoinAsCandidate} />
+      </div>
 
-        <div className="mt-4 overflow-y-auto flex-1 min-h-0">
-          <iframe
-            src={iframeSrc}
-            style={{ border: "none", width: "100%" }}
-            scrolling="yes"
-            id={formId}
-            title="survey"
-            className="w-full"
-          />
-        </div>
-      </DialogContent>
-    </Dialog>
+      <div id="why-global">
+        <WhyGlobalSection />
+      </div>
+
+      <div id="process">
+        <WorkflowSection />
+      </div>
+
+      <div id="testimonials">
+        <TestimonialsSection />
+      </div>
+
+      <CareSection />
+
+      <TeamSection />
+
+      <div id="contact">
+        <CTASection onHireTalent={() => handleHireTalent()} onJoinAsCandidate={handleJoinAsCandidate} />
+      </div>
+
+      <Footer />
+
+      <InquiryDialog open={dialogOpen} onOpenChange={setDialogOpen} type={dialogType} selectedPack={selectedPack} />
+    </div>
   );
 }
