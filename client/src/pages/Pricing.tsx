@@ -20,7 +20,6 @@ const PLANS: Plan[] = [
     category: "Individuals",
     title: "1 Hiring Pack",
     priceLabel: "$750.00",
-    subtitle: "",
     features: [
       "Single hire included",
       "Basic screening and shortlist",
@@ -33,7 +32,6 @@ const PLANS: Plan[] = [
     category: "Individuals",
     title: "2 Hiring Pack",
     priceLabel: "$1,250.00",
-    subtitle: "",
     features: [
       "Two hires included",
       "Priority shortlisting",
@@ -46,21 +44,19 @@ const PLANS: Plan[] = [
     category: "Individuals",
     title: "3 Hiring Pack",
     priceLabel: "$1,750.00",
-    subtitle: "",
     features: [
       "Three hires included",
       "Dedicated sourcer",
       "3 months candidate follow-up",
       "Phone & email support",
     ],
-    highlight: true, // make this the highlighted tile (adjust as you prefer)
+    highlight: true,
   },
   {
     id: "5",
     category: "Teams",
     title: "5 Hiring Pack",
     priceLabel: "$2,500.00",
-    subtitle: "",
     features: [
       "Five hires included",
       "Team onboarding session",
@@ -73,7 +69,6 @@ const PLANS: Plan[] = [
     category: "Organizations",
     title: "One Year Hiring Pack (12 Hires)",
     priceLabel: "$6,000.00",
-    subtitle: "",
     features: [
       "12 hires over 12 months",
       "Dedicated account manager",
@@ -95,6 +90,9 @@ function Feature({ text }: { text: string }) {
 }
 
 export default function Pricing(): JSX.Element {
+  const firstRow = PLANS.slice(0, 3);
+  const secondRow = PLANS.slice(3);
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-50 via-purple-100 to-blue-50">
       <div className="max-w-7xl mx-auto px-6 py-20">
@@ -107,9 +105,9 @@ export default function Pricing(): JSX.Element {
           </p>
         </div>
 
-        {/* grid tiles */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {PLANS.map((p) => {
+        {/* top row: 3-up on large screens */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {firstRow.map((p) => {
             const highlighted = !!p.highlight;
             return (
               <div
@@ -121,12 +119,10 @@ export default function Pricing(): JSX.Element {
                     : "border-slate-200 shadow-sm")
                 }
               >
-                {/* header area */}
                 <div className="p-6">
                   <div className="flex items-center justify-between">
                     <div className="text-xs text-slate-500">{p.category}</div>
                     <div className="text-yellow-500">
-                      {/* crown */}
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
                         <path d="M12 6l2 3h3l-2 2 1 5-5-3-5 3 1-5-2-2h3l2-3z" fill="#F59E0B" />
                       </svg>
@@ -162,7 +158,6 @@ export default function Pricing(): JSX.Element {
                   </div>
                 </div>
 
-                {/* features block */}
                 <div className="mt-auto p-6 border-t bg-slate-50">
                   <ul className="space-y-3">
                     {p.features.map((f, i) => (
@@ -173,6 +168,73 @@ export default function Pricing(): JSX.Element {
               </div>
             );
           })}
+        </div>
+
+        {/* bottom row: center two cards */}
+        <div className="mt-6 flex justify-center">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full max-w-4xl">
+            {secondRow.map((p) => {
+              const highlighted = !!p.highlight;
+              return (
+                <div
+                  key={p.id}
+                  className={
+                    "flex flex-col rounded-2xl overflow-hidden bg-white border " +
+                    (highlighted
+                      ? "ring-2 ring-indigo-300/60 shadow-xl border-transparent"
+                      : "border-slate-200 shadow-sm")
+                  }
+                >
+                  <div className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div className="text-xs text-slate-500">{p.category}</div>
+                      <div className="text-yellow-500">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
+                          <path d="M12 6l2 3h3l-2 2 1 5-5-3-5 3 1-5-2-2h3l2-3z" fill="#F59E0B" />
+                        </svg>
+                      </div>
+                    </div>
+
+                    <div className="mt-6">
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-xl font-semibold text-slate-900">{p.title}</h3>
+                        {highlighted && (
+                          <div className="ml-2 inline-block bg-indigo-600 text-white text-xs px-2 py-1 rounded-full">
+                            Intro price
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="mt-4">
+                        <div className="flex items-baseline gap-3">
+                          <div className="text-3xl md:text-4xl font-bold text-slate-900">
+                            {p.priceLabel}
+                          </div>
+                          {p.subtitle && <div className="text-sm text-slate-500">{p.subtitle}</div>}
+                        </div>
+                      </div>
+
+                      <div className="mt-6">
+                        <Button size="lg" className="w-full bg-slate-900 text-white" asChild>
+                          <Link href={`/?openHire=true&pack=${encodeURIComponent(p.id)}`}>
+                            Start Hiring
+                          </Link>
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mt-auto p-6 border-t bg-slate-50">
+                    <ul className="space-y-3">
+                      {p.features.map((f, i) => (
+                        <Feature key={i} text={f} />
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
 
         <div className="text-center mt-10 text-sm text-slate-500">
