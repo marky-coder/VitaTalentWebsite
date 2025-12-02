@@ -1,0 +1,18 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Redirecting…</title>
+    <meta name="robots" content="noindex" />
+    <script>
+      // When GitHub Pages serves this 404 for an SPA route (e.g. /pricing),
+      // rewrite to /#/<original-path> so the SPA can recover the path and render correctly.
+      (function () {
+        var path = location.pathname + location.search + location.hash;
+        // put original path into the hash so the SPA can read it and navigate
+        location.replace('/#' + path);
+      })();
+    </script>
+  </head>
+  <body></body>
+</html>
