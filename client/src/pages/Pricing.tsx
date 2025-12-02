@@ -11,6 +11,7 @@ type Plan = {
   title: string;
   priceLabel: string;
   subtitle?: string;
+  paymentNote?: string;
   features: string[];
   highlight?: boolean;
 };
@@ -20,7 +21,9 @@ const PLANS: Plan[] = [
     id: "1",
     category: "Individuals",
     title: "1 Hiring Pack",
-    priceLabel: "$750.00",
+    priceLabel: "$1,500.00",
+    paymentNote:
+      "Payment separated in 2: First half is paid before hiring begins. Once you hired someone, you pay the last half.",
     features: [
       "Single hire included",
       "Basic screening and shortlist",
@@ -32,7 +35,9 @@ const PLANS: Plan[] = [
     id: "2",
     category: "Individuals",
     title: "2 Hiring Pack",
-    priceLabel: "$1,250.00",
+    priceLabel: "$2,500.00",
+    paymentNote:
+      "Payment separated in 2: First half is paid before hiring begins. Once you hired someone, you pay the last half.",
     features: [
       "Two hires included",
       "Priority shortlisting",
@@ -44,7 +49,9 @@ const PLANS: Plan[] = [
     id: "3",
     category: "Individuals",
     title: "3 Hiring Pack",
-    priceLabel: "$1,750.00",
+    priceLabel: "$3,500.00",
+    paymentNote:
+      "Payment separated in 2: First half is paid before hiring begins. Once you hired someone, you pay the last half.",
     features: [
       "Three hires included",
       "Dedicated sourcer",
@@ -57,7 +64,9 @@ const PLANS: Plan[] = [
     id: "5",
     category: "Teams",
     title: "5 Hiring Pack",
-    priceLabel: "$2,500.00",
+    priceLabel: "$5,000.00",
+    paymentNote:
+      "Payment separated in 2: First half is paid before hiring begins. Once you hired someone, you pay the last half.",
     features: [
       "Five hires included",
       "Team onboarding session",
@@ -69,7 +78,9 @@ const PLANS: Plan[] = [
     id: "12",
     category: "Organizations",
     title: "One Year Hiring Pack (12 Hires)",
-    priceLabel: "$6,000.00",
+    priceLabel: "$12,000.00",
+    paymentNote:
+      "Payment separated in 2: First half is paid before hiring begins. Once you hired someone, you pay the last half.",
     features: [
       "12 hires over 12 months",
       "Dedicated account manager",
@@ -123,8 +134,8 @@ export default function Pricing(): JSX.Element {
                 <div className="p-6">
                   <div className="flex items-center justify-between">
                     <div className="text-xs text-slate-500">{p.category}</div>
-                    <div className="text-yellow-500">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
+                    <div className="text-yellow-500" aria-hidden>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                         <path d="M12 6l2 3h3l-2 2 1 5-5-3-5 3 1-5-2-2h3l2-3z" fill="#F59E0B" />
                       </svg>
                     </div>
@@ -147,6 +158,12 @@ export default function Pricing(): JSX.Element {
                         </div>
                         {p.subtitle && <div className="text-sm text-slate-500">{p.subtitle}</div>}
                       </div>
+
+                      {p.paymentNote && (
+                        <div className="mt-3 text-sm text-slate-500">
+                          {p.paymentNote}
+                        </div>
+                      )}
                     </div>
 
                     <div className="mt-6">
@@ -189,8 +206,8 @@ export default function Pricing(): JSX.Element {
                   <div className="p-6">
                     <div className="flex items-center justify-between">
                       <div className="text-xs text-slate-500">{p.category}</div>
-                      <div className="text-yellow-500">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
+                      <div className="text-yellow-500" aria-hidden>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
                           <path d="M12 6l2 3h3l-2 2 1 5-5-3-5 3 1-5-2-2h3l2-3z" fill="#F59E0B" />
                         </svg>
                       </div>
@@ -213,6 +230,12 @@ export default function Pricing(): JSX.Element {
                           </div>
                           {p.subtitle && <div className="text-sm text-slate-500">{p.subtitle}</div>}
                         </div>
+
+                        {p.paymentNote && (
+                          <div className="mt-3 text-sm text-slate-500">
+                            {p.paymentNote}
+                          </div>
+                        )}
                       </div>
 
                       <div className="mt-6">
