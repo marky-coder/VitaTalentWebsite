@@ -1,4 +1,5 @@
-import { useState } from "react";
+// client/src/pages/Home.tsx
+import { useState, useEffect } from "react";
 import HeroSection from "@/components/HeroSection";
 import WhyGlobalSection from "@/components/WhyGlobalSection";
 import WorkflowSection from "@/components/WorkflowSection";
@@ -24,48 +25,65 @@ export default function Home() {
     setDialogOpen(true);
   };
 
+  // Open dialog if user navigated here with ?openHire=true
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const openHire = params.get("openHire");
+      if (openHire === "1" || openHire === "true") {
+        setDialogType("hire");
+        setDialogOpen(true);
+        // remove the query param from the URL so reloading doesn't reopen the dialog
+        const cleanUrl = window.location.pathname + window.location.hash;
+        window.history.replaceState(null, "", cleanUrl);
+      }
+    } catch (e) {
+      // ignore parsing errors
+    }
+  }, []);
+
   return (
     <div className="min-h-screen">
-      <DecorativeSidebars 
+      <DecorativeSidebars
         onHireTalent={handleHireTalent}
         onJoinAsCandidate={handleJoinAsCandidate}
       />
       <div id="hero">
-        <HeroSection 
-          onHireTalent={handleHireTalent} 
-          onJoinAsCandidate={handleJoinAsCandidate} 
+        <HeroSection
+          onHireTalent={handleHireTalent}
+          onJoinAsCandidate={handleJoinAsCandidate}
         />
       </div>
-      
+
       <div id="why-global">
         <WhyGlobalSection />
       </div>
-      
+
       <div id="process">
         <WorkflowSection />
       </div>
-      
+
       <div id="testimonials">
         <TestimonialsSection />
       </div>
-      
+
       <CareSection />
-      
+
       <TeamSection />
-      
+
       <div id="contact">
-        <CTASection 
-          onHireTalent={handleHireTalent} 
-          onJoinAsCandidate={handleJoinAsCandidate} 
+        <CTASection
+          onHireTalent={handleHireTalent}
+          onJoinAsCandidate={handleJoinAsCandidate}
         />
       </div>
-      
+
       <Footer />
-      
-      <InquiryDialog 
-        open={dialogOpen} 
-        onOpenChange={setDialogOpen} 
-        type={dialogType} 
+
+      <InquiryDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        type={dialogType}
       />
     </div>
   );
