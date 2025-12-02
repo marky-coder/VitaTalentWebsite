@@ -28,17 +28,37 @@ export default function Home() {
   };
 
   // Open dialog if user navigated here with ?openHire=true and optional &pack=
+  // Also support ?scrollTo=<id> which will scroll to a section after navigation.
   useEffect(() => {
     try {
       const params = new URLSearchParams(window.location.search);
       const openHire = params.get("openHire");
       const pack = params.get("pack") ?? undefined;
+      const scrollTo = params.get("scrollTo") ?? undefined;
+
       if (openHire === "1" || openHire === "true") {
         setDialogType("hire");
         if (pack) setSelectedPack(pack);
         setDialogOpen(true);
+      }
 
-        // remove query params so refresh doesn't reopen the dialog
+      if (scrollTo) {
+        // try to scroll to the element; if not present yet, retry a few times
+        let attempts = 0;
+        const tryScroll = () => {
+          const el = document.getElementById(scrollTo);
+          if (el) {
+            el.scrollIntoView({ behavior: "smooth" });
+          } else if (attempts < 20) {
+            attempts++;
+            setTimeout(tryScroll, 100);
+          }
+        };
+        tryScroll();
+      }
+
+      if (openHire || scrollTo || pack) {
+        // remove the query params from the URL so refresh doesn't reopen or re-scroll
         const cleanUrl = window.location.pathname + (window.location.hash || "");
         window.history.replaceState(null, "", cleanUrl);
       }
