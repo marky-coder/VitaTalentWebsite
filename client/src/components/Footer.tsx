@@ -13,7 +13,7 @@ export default function Footer() {
         element.scrollIntoView({ behavior: "smooth" });
         return;
       }
-      // If not found immediately, try a couple times (in case layout is still painting).
+      // If not found immediately, retry a few times (in case layout is still painting).
       let attempts = 0;
       const tryScroll = () => {
         const el = document.getElementById(id);
@@ -49,6 +49,18 @@ export default function Footer() {
             >
               Home
             </button>
+
+            {/* Pricing button shown only when footer is on the Home page */}
+            {location === "/" && (
+              <button
+                onClick={() => setLocation("/pricing")}
+                className="text-muted-foreground hover:text-foreground transition-colors"
+                data-testid="link-pricing"
+              >
+                Pricing
+              </button>
+            )}
+
             <button
               onClick={() => scrollToSection("why-global")}
               className="text-muted-foreground hover:text-foreground transition-colors"
