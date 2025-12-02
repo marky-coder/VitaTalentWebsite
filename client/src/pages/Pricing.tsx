@@ -1,7 +1,8 @@
 // client/src/pages/Pricing.tsx
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { Check, Crown } from "lucide-react";
+import { Check } from "lucide-react";
+import { Link } from "wouter";
 
 type Plan = {
   id: string;
@@ -9,8 +10,6 @@ type Plan = {
   title: string;
   priceLabel: string;
   subtitle?: string;
-  ctaPrimary: string;
-  ctaSecondary?: string;
   features: string[];
   highlight?: boolean;
 };
@@ -22,7 +21,6 @@ const PLANS: Plan[] = [
     title: "Free",
     priceLabel: "₱0",
     subtitle: "/month for one person",
-    ctaPrimary: "Get started",
     features: [
       "Easy drag-and-drop editor and 1,000+ design types",
       "1.6M+ templates to get started fast",
@@ -37,7 +35,6 @@ const PLANS: Plan[] = [
     title: "Pro",
     priceLabel: "₱300",
     subtitle: "/month for one person",
-    ctaPrimary: "Start a free trial",
     features: [
       "Premium tools to create faster (resize, remove background)",
       "3.6M+ premium templates",
@@ -52,8 +49,6 @@ const PLANS: Plan[] = [
     title: "Business",
     priceLabel: "₱400",
     subtitle: "/month per person",
-    ctaPrimary: "Start a free trial",
-    ctaSecondary: "Contact Sales",
     highlight: true,
     features: [
       "Collaboration, integrations and centralized assets",
@@ -69,8 +64,6 @@ const PLANS: Plan[] = [
     title: "Enterprise",
     priceLabel: "Let's talk",
     subtitle: "Get in touch to learn more",
-    ctaPrimary: "Contact Sales",
-    ctaSecondary: "Book a demo",
     features: [
       "Enterprise-level security and controls",
       "SSO and SCIM provisioning",
@@ -111,21 +104,7 @@ export default function Pricing() {
           </div>
         </div>
 
-        {/* toggle + save badge */}
-        <div className="flex items-center justify-center mb-10 gap-4">
-          <div className="flex items-center gap-3 text-sm text-slate-700">
-            <span>Monthly</span>
-            <div className="relative">
-              <div className="w-12 h-6 rounded-full bg-slate-200" />
-              <div className="absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white border shadow-sm" />
-            </div>
-            <span>Yearly</span>
-          </div>
-
-          <div className="rounded-full bg-slate-800/10 px-3 py-1 text-xs text-slate-700">
-            Save from 16%
-          </div>
-        </div>
+        {/* NOTE: Monthly/Yearly toggle removed as requested */}
 
         {/* cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -142,8 +121,8 @@ export default function Pricing() {
                 <div className="p-6">
                   <div className="flex items-center justify-between">
                     <div className="text-xs text-slate-500">{p.category}</div>
-                    {/* crown or badge */}
                     <div className="text-yellow-500">
+                      {/* small crown icon */}
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
                         <path d="M12 6l2 3h3l-2 2 1 5-5-3-5 3 1-5-2-2h3l2-3z" fill="#F59E0B" />
                       </svg>
@@ -165,16 +144,12 @@ export default function Pricing() {
                       {p.subtitle && <div className="text-sm text-slate-500">{p.subtitle}</div>}
                     </div>
 
-                    <div className="mt-6 flex gap-3">
-                      <Button size="lg" className="flex-1">
-                        {p.ctaPrimary}
+                    {/* Single button only: "Start Hiring" */}
+                    <div className="mt-6">
+                      <Button size="lg" className="w-full">
+                        {/* uses wouter Link to navigate to home with query param that opens the dialog */}
+                        <Link href="/?openHire=true">Start Hiring</Link>
                       </Button>
-
-                      {p.ctaSecondary && (
-                        <Button size="lg" variant="outline" className="flex-1">
-                          {p.ctaSecondary}
-                        </Button>
-                      )}
                     </div>
                   </div>
                 </div>
