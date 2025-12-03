@@ -137,7 +137,7 @@ const clientVideoTestimonials = [
   {
     id: 1,
     name: "Kevin",
-    role: "Client",
+    role: "Private Realtor",
     src: videoKevin,
   },
   {
@@ -148,8 +148,8 @@ const clientVideoTestimonials = [
   },
   {
     id: 3,
-    name: "New Client",
-    role: "Client",
+    name: "Nick Staley",
+    role: "Land Growth Capital",
     src: videoNewClient,
   },
 ];
