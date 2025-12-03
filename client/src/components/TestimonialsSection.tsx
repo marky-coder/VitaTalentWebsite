@@ -137,13 +137,13 @@ const clientVideoTestimonials = [
   {
     id: 1,
     name: "Kevin",
-    role: "Private Realtor",
+    role: "White Stone",
     src: videoKevin,
   },
   {
     id: 2,
     name: "Sam",
-    role: "Client",
+    role: "Private Realtor",
     src: videoSam,
   },
   {
@@ -226,8 +226,8 @@ export default function TestimonialsSection() {
         <div>
           <h3 className="text-2xl font-bold text-foreground mb-6 text-center">Client Testimonials</h3>
 
-          {/* Client video grid (two videos) */}
-          <div className="grid md:grid-cols-2 gap-6 mb-8">
+          {/* Client video grid (three videos centered like the candidates) */}
+          <div className="grid md:grid-cols-3 gap-6 mb-8">
             {clientVideoTestimonials.map((video) => (
               <Card key={video.id} className="relative overflow-hidden group cursor-pointer hover-elevate" onClick={() => setActiveVideo(video.src)} data-testid={`client-video-testimonial-${video.id}`}>
                 <div className="aspect-video bg-muted relative">
