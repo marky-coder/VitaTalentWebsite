@@ -16,6 +16,9 @@ import videoSherif from "@assets/WhatsApp Video 2025-11-25 at 10.47.09.mp4";
 import videoKevin from "@assets/Kevin's Testimonial.mp4";
 import videoSam from "@assets/Sam's Testimonial .mov";
 
+/* New client testimonial video supplied by you */
+import videoNewClient from "@assets/4030993537cf451ca9872ad031c744b9-1764688585496.mp4";
+
 /**
  * VideoThumbnail: captures a frame from the provided video URL on the client,
  * and returns an <img> with that data URL. Falls back to a subtle placeholder.
@@ -129,7 +132,7 @@ function VideoThumbnail({ src, alt }: { src: string; alt?: string }) {
   );
 }
 
-/* Client video testimonials (Kevin & Sam) */
+/* Client video testimonials (Kevin, Sam, and the newly added client) */
 const clientVideoTestimonials = [
   {
     id: 1,
@@ -142,6 +145,12 @@ const clientVideoTestimonials = [
     name: "Sam",
     role: "Client",
     src: videoSam,
+  },
+  {
+    id: 3,
+    name: "New Client",
+    role: "Client",
+    src: videoNewClient,
   },
 ];
 
