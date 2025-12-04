@@ -6,8 +6,8 @@ import { SiTrustpilot, SiGoogle } from "react-icons/si";
 import { useState, useEffect } from "react";
 
 /**
- * Imported videos — exact filenames as uploaded to attached_assets/
- * (these are the files you referenced in the screenshot)
+ * Imported videos — exact filenames as uploaded to attached_assets / @assets
+ * (If your build fails due to spaces, rename the files and update the imports.)
  */
 import videoXimena from "@assets/WhatsApp Video 2025-11-25 at 10.45.54.mp4";
 import videoHesham from "@assets/WhatsApp Video 2025-11-25 at 10.46.13.mp4";
@@ -17,13 +17,17 @@ import videoSherif from "@assets/WhatsApp Video 2025-11-25 at 10.47.09.mp4";
 import videoKevin from "@assets/Kevin's Testimonial.mp4";
 import videoSam from "@assets/Sam's Testimonial .mov";
 
-/* New client testimonial video supplied by you */
+/* New client testimonial video supplied earlier */
 import videoNewClient from "@assets/4030993537cf451ca9872ad031c744b9-1764688585496.mp4";
 
-/* NEW candidate videos you uploaded (filenames match your screenshot) */
+/* Candidate videos you previously added */
 import videoRuben from "@assets/Ruben.mp4";
 import videoAshleyMark from "@assets/Ashley Mark.mp4";
 import videoMary from "@assets/Mary.mp4";
+
+/* NEW: the two files you just supplied */
+import videoHadeer from "@assets/Hadeer Ezz.mp4";
+import videoMohamed from "@assets/Mohamed Sobhy.mp4";
 
 /**
  * VideoThumbnail: captures a frame from the provided video URL on the client,
@@ -160,7 +164,7 @@ const clientVideoTestimonials = [
   },
 ];
 
-/* Candidate video testimonials — added the three new videos (Ruben, Ashley, Mary) */
+/* Candidate video testimonials — existing + previous additions + NEW two entries */
 const candidateVideoTestimonials = [
   {
     id: 1,
@@ -180,8 +184,6 @@ const candidateVideoTestimonials = [
     role: "Acquisition Manager",
     src: videoHesham,
   },
-
-  // NEW testimonials added below:
   {
     id: 4,
     name: "Ruben",
@@ -200,6 +202,20 @@ const candidateVideoTestimonials = [
     role: "Lead Manager",
     src: videoMary,
   },
+
+  // NEW two candidates requested:
+  {
+    id: 7,
+    name: "Hadeer Ezz",
+    role: "Acquisition Manager",
+    src: videoHadeer,
+  },
+  {
+    id: 8,
+    name: "Mohamed Sobhy",
+    role: "Land Acquisition Manager",
+    src: videoMohamed,
+  },
 ];
 
 const writtenTestimonials = {
@@ -214,6 +230,15 @@ const writtenTestimonials = {
     { name: "Sophie Dubois", role: "Marketing Manager", quote: "They matched me with a company that perfectly aligns with my values and career goals." },
   ],
 };
+
+/** Utility: chunk an array into rows of size n */
+function chunkRows<T>(arr: T[], size: number) {
+  const rows: T[][] = [];
+  for (let i = 0; i < arr.length; i += size) {
+    rows.push(arr.slice(i, i + size));
+  }
+  return rows;
+}
 
 export default function TestimonialsSection() {
   const [activeVideo, setActiveVideo] = useState<string | null>(null);
@@ -239,6 +264,10 @@ export default function TestimonialsSection() {
   // Google Reviews link (GBP)
   const googleReviewUrl = "https://g.page/r/CXjNZjj4Vu59EBM/review";
 
+  // Prepare rows of 3; we'll render full rows normally,
+  // and center any final row with 2 items so it visually aligns with the 3-up rows.
+  const rows = chunkRows(candidateVideoTestimonials, 3);
+
   return (
     <section className="py-24 bg-gradient-to-br from-primary/18 via-primary/10 to-background" data-testid="section-testimonials">
       <div className="container max-w-7xl mx-auto px-4">
@@ -252,7 +281,7 @@ export default function TestimonialsSection() {
         <div>
           <h3 className="text-2xl font-bold text-foreground mb-6 text-center">Client Testimonials</h3>
 
-          {/* Client video grid (three videos centered like the candidates) */}
+          {/* Client video grid */}
           <div className="grid md:grid-cols-3 gap-6 mb-8">
             {clientVideoTestimonials.map((video) => (
               <Card key={video.id} className="relative overflow-hidden group cursor-pointer hover-elevate" onClick={() => setActiveVideo(video.src)} data-testid={`client-video-testimonial-${video.id}`}>
@@ -294,24 +323,57 @@ export default function TestimonialsSection() {
           <div>
             <h3 className="text-2xl font-bold text-foreground mb-6 text-center">Candidate Testimonials</h3>
 
-            {/* Candidate video grid */}
-            <div className="grid md:grid-cols-3 gap-6 mb-8">
-              {candidateVideoTestimonials.map((video) => (
-                <Card key={video.id} className="relative overflow-hidden group cursor-pointer hover-elevate" onClick={() => setActiveVideo(video.src)} data-testid={`candidate-video-testimonial-${video.id}`}>
-                  <div className="aspect-video bg-muted relative">
-                    <VideoThumbnail src={video.src} alt={video.name} />
-                    <div className="absolute inset-0 bg-background/60 flex items-center justify-center pointer-events-none">
-                      <div className="w-16 h-16 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
-                        <Play className="w-8 h-8 ml-1" fill="currentColor" />
-                      </div>
+            {/* Candidate video rows — render row-by-row so we can center a 2-up final row */}
+            <div className="mb-8 space-y-6">
+              {rows.map((row, rowIndex) => {
+                if (row.length === 3) {
+                  // full row with 3 items
+                  return (
+                    <div key={rowIndex} className="grid md:grid-cols-3 gap-6">
+                      {row.map((video) => (
+                        <Card key={video.id} className="relative overflow-hidden group cursor-pointer hover-elevate" onClick={() => setActiveVideo(video.src)} data-testid={`candidate-video-testimonial-${video.id}`}>
+                          <div className="aspect-video bg-muted relative">
+                            <VideoThumbnail src={video.src} alt={video.name} />
+                            <div className="absolute inset-0 bg-background/60 flex items-center justify-center pointer-events-none">
+                              <div className="w-16 h-16 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
+                                <Play className="w-8 h-8 ml-1" fill="currentColor" />
+                              </div>
+                            </div>
+                          </div>
+                          <div className="p-4">
+                            <p className="font-bold text-foreground">{video.name}</p>
+                            <p className="text-sm font-medium text-muted-foreground">{video.role}</p>
+                          </div>
+                        </Card>
+                      ))}
+                    </div>
+                  );
+                }
+
+                // row length 1 or 2 — center them and size to match a row of 3
+                return (
+                  <div key={rowIndex} className="flex justify-center">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full max-w-4xl">
+                      {row.map((video) => (
+                        <Card key={video.id} className="relative overflow-hidden group cursor-pointer hover-elevate" onClick={() => setActiveVideo(video.src)} data-testid={`candidate-video-testimonial-${video.id}`}>
+                          <div className="aspect-video bg-muted relative">
+                            <VideoThumbnail src={video.src} alt={video.name} />
+                            <div className="absolute inset-0 bg-background/60 flex items-center justify-center pointer-events-none">
+                              <div className="w-16 h-16 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
+                                <Play className="w-8 h-8 ml-1" fill="currentColor" />
+                              </div>
+                            </div>
+                          </div>
+                          <div className="p-4">
+                            <p className="font-bold text-foreground">{video.name}</p>
+                            <p className="text-sm font-medium text-muted-foreground">{video.role}</p>
+                          </div>
+                        </Card>
+                      ))}
                     </div>
                   </div>
-                  <div className="p-4">
-                    <p className="font-bold text-foreground">{video.name}</p>
-                    <p className="text-sm font-medium text-muted-foreground">{video.role}</p>
-                  </div>
-                </Card>
-              ))}
+                );
+              })}
             </div>
 
             {/* Written candidate testimonials */}
