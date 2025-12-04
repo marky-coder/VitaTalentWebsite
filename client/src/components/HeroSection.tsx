@@ -5,20 +5,23 @@ import logoImage from "@assets/WhatsApp_Image_2025-10-24_at_11.32.23_PM-removebg
 
 /**
  * Partner logos:
- * - The Land Growth Capital logo lives in your repo as:
- *   attached_assets/Land Growth Capital.png
- * - We import it here using the @assets alias and the exact filename (including spaces).
+ * - Ensure the following files exist under your @assets alias (attached_assets):
+ *   IMG_6617.jpg
+ *   IMG_6614.png
+ *   IMG_6615.png
+ *   IMG_6616.png
+ *   IMG_6618.png
+ *   Land Growth Capital.png   (the file you uploaded)
  *
- * If your build tool has issues with spaces in filenames, rename the file to:
- *   client/src/assets/land-growth-capital.png
- * and change the import below to: import partner6 from "@assets/land-growth-capital.png";
+ * If your build tool has issues with spaces in filenames, rename "Land Growth Capital.png"
+ * to "land-growth-capital.png" and update the import below.
  */
 import partner1 from "@assets/IMG_6617.jpg";
 import partner2 from "@assets/IMG_6614.png";
 import partner3 from "@assets/IMG_6615.png";
 import partner4 from "@assets/IMG_6616.png";
 import partner5 from "@assets/IMG_6618.png";
-import partner6 from "@assets/Land Growth Capital.png"; // <- exact filename from attached_assets
+import partner6 from "@assets/Land Growth Capital.png"; // your uploaded logo
 
 import { Link } from "wouter";
 
@@ -28,13 +31,14 @@ interface HeroSectionProps {
 }
 
 export default function HeroSection({ onHireTalent, onJoinAsCandidate }: HeroSectionProps) {
-  // Put the new logo in the middle for visibility
+  // 6 logos — arranged for visual balance. Change order here if you want a different visual order.
   const partnerLogos: string[] = [
-    partner1,
-    partner2,
-    partner6, // Land Growth Capital (NEW)
-    partner5,
-    partner3,
+    partner1, // Whitestone (example)
+    partner2, // eXp
+    partner6, // Land Growth Capital (uploaded)
+    partner5, // RE/MAX
+    partner3, // Higher Ground (example)
+    partner4, // another partner to make 6
   ];
 
   return (
