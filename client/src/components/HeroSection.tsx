@@ -5,14 +5,15 @@ import logoImage from "@assets/WhatsApp_Image_2025-10-24_at_11.32.23_PM-removebg
 
 /**
  * Partner logos:
- * - Add your partner logo files into `attached_assets/` (that's the @assets alias)
- * - Filenames used here match the screenshot you provided.
+ * - Add your partner logo files into `client/src/assets/` (that's the @assets alias).
+ * - The new logo should be saved as `land-growth-capital.png`.
  */
 import partner1 from "@assets/IMG_6617.jpg";
 import partner2 from "@assets/IMG_6614.png";
 import partner3 from "@assets/IMG_6615.png";
 import partner4 from "@assets/IMG_6616.png";
 import partner5 from "@assets/IMG_6618.png";
+import partner6 from "@assets/land-growth-capital.png"; // <-- NEW logo
 
 import { Link } from "wouter";
 
@@ -22,13 +23,13 @@ interface HeroSectionProps {
 }
 
 export default function HeroSection({ onHireTalent, onJoinAsCandidate }: HeroSectionProps) {
-  // Swapped the 3rd and 5th entries so the middle logo is now IMG_6618.png
+  // Include the new logo in the partner logos — place it in the middle for visibility.
   const partnerLogos: string[] = [
-    partner1, // IMG_6617.jpg
-    partner2, // IMG_6614.png
-    partner5, // IMG_6618.png  <-- now in the middle
-    partner4, // IMG_6616.png
-    partner3, // IMG_6615.png  <-- moved to last position
+    partner1, // left
+    partner2,
+    partner6, // Land Growth Capital (NEW) — shown in the middle
+    partner5,
+    partner3, // right-most
   ];
 
   return (
@@ -36,9 +37,7 @@ export default function HeroSection({ onHireTalent, onJoinAsCandidate }: HeroSec
       <div
         className="absolute inset-0 bg-cover bg-center opacity-20"
         style={{ backgroundImage: `url(${heroBackground})` }}
-      >
-      </div>
-
+      />
       <div className="relative z-10 container max-w-5xl mx-auto px-4 py-24 text-center">
         <div className="flex flex-col items-center gap-6">
           <div className="flex items-center gap-3">
@@ -58,7 +57,7 @@ export default function HeroSection({ onHireTalent, onJoinAsCandidate }: HeroSec
             Empowering businesses worldwide with the right people, wherever they are.
           </p>
 
-          {/* existing two buttons */}
+          {/* CTA buttons */}
           <div className="flex flex-col sm:flex-row gap-4 mt-8">
             <Button
               size="lg"
@@ -68,6 +67,7 @@ export default function HeroSection({ onHireTalent, onJoinAsCandidate }: HeroSec
             >
               Hire Talent
             </Button>
+
             <Button
               size="lg"
               variant="outline"
@@ -79,27 +79,31 @@ export default function HeroSection({ onHireTalent, onJoinAsCandidate }: HeroSec
             </Button>
           </div>
 
-          {/* NEW: Pricing button directly below the two buttons and centered */}
+          {/* Pricing button under CTAs */}
           <div className="mt-4 flex justify-center w-full">
             <Button size="lg" variant="outline" asChild>
               <Link href="/pricing">Pricing</Link>
             </Button>
           </div>
 
+          {/* Trusted by logos — centered */}
           <div className="mt-16 w-full">
-            <p className="text-base font-medium text-muted-foreground mb-8">Trusted by leading companies worldwide</p>
+            <p className="text-base font-medium text-muted-foreground mb-8">
+              Trusted by leading companies worldwide
+            </p>
 
             <div className="flex flex-wrap items-center justify-center gap-8 md:gap-12">
               {partnerLogos.map((logo, index) => (
                 <div
                   key={index}
-                  className="flex items-center justify-center opacity-70 hover:opacity-100 transition-opacity"
+                  className="flex items-center justify-center transition-opacity"
                   data-testid={`logo-company-${index + 1}`}
+                  style={{ minWidth: 80 }}
                 >
                   <img
                     src={logo ?? logoImage}
                     alt={`Partner Company ${index + 1}`}
-                    className="h-16 w-16 md:h-20 md:w-20 object-contain grayscale hover:grayscale-0 transition-all"
+                    className="h-16 w-auto md:h-20 object-contain"
                   />
                 </div>
               ))}
