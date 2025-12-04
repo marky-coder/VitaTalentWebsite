@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 
 /**
  * Imported videos — exact filenames as uploaded to attached_assets/
+ * (these are the files you referenced in the screenshot)
  */
 import videoXimena from "@assets/WhatsApp Video 2025-11-25 at 10.45.54.mp4";
 import videoHesham from "@assets/WhatsApp Video 2025-11-25 at 10.46.13.mp4";
@@ -18,6 +19,11 @@ import videoSam from "@assets/Sam's Testimonial .mov";
 
 /* New client testimonial video supplied by you */
 import videoNewClient from "@assets/4030993537cf451ca9872ad031c744b9-1764688585496.mp4";
+
+/* NEW candidate videos you uploaded (filenames match your screenshot) */
+import videoRuben from "@assets/Ruben.mp4";
+import videoAshleyMark from "@assets/Ashley Mark.mp4";
+import videoMary from "@assets/Mary.mp4";
 
 /**
  * VideoThumbnail: captures a frame from the provided video URL on the client,
@@ -154,7 +160,7 @@ const clientVideoTestimonials = [
   },
 ];
 
-/* Candidate video testimonials (WhatsApp videos moved here) */
+/* Candidate video testimonials — added the three new videos (Ruben, Ashley, Mary) */
 const candidateVideoTestimonials = [
   {
     id: 1,
@@ -173,6 +179,26 @@ const candidateVideoTestimonials = [
     name: "Hesham Salama",
     role: "Acquisition Manager",
     src: videoHesham,
+  },
+
+  // NEW testimonials added below:
+  {
+    id: 4,
+    name: "Ruben",
+    role: "Sales Closer",
+    src: videoRuben,
+  },
+  {
+    id: 5,
+    name: "Ashley Mark",
+    role: "Appointment Setter",
+    src: videoAshleyMark,
+  },
+  {
+    id: 6,
+    name: "Mary Jane",
+    role: "Lead Manager",
+    src: videoMary,
   },
 ];
 
@@ -268,7 +294,7 @@ export default function TestimonialsSection() {
           <div>
             <h3 className="text-2xl font-bold text-foreground mb-6 text-center">Candidate Testimonials</h3>
 
-            {/* Candidate video grid (three videos moved here) */}
+            {/* Candidate video grid */}
             <div className="grid md:grid-cols-3 gap-6 mb-8">
               {candidateVideoTestimonials.map((video) => (
                 <Card key={video.id} className="relative overflow-hidden group cursor-pointer hover-elevate" onClick={() => setActiveVideo(video.src)} data-testid={`candidate-video-testimonial-${video.id}`}>
@@ -288,7 +314,7 @@ export default function TestimonialsSection() {
               ))}
             </div>
 
-            {/* Written candidate testimonials (preserved below the videos) */}
+            {/* Written candidate testimonials */}
             <div className="grid md:grid-cols-3 gap-6">
               {writtenTestimonials.candidates.map((testimonial, index) => (
                 <Card key={index} className="p-6 bg-gradient-to-br from-card to-primary/12 border-primary/20" data-testid={`candidate-testimonial-${index}`}>
@@ -316,28 +342,30 @@ export default function TestimonialsSection() {
               </a>
             </Button>
 
-            {/* Google Business Profile (GBP) review link */}
-            <Button variant="outline" asChild data-testid="link-google-reviews">
+            <Button variant="outline" asChild data-testid="link-google">
               <a href={googleReviewUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2">
                 <SiGoogle className="w-5 h-5" />
-                <span>Google Reviews</span>
+                <span>Google</span>
               </a>
             </Button>
           </div>
         </div>
       </div>
 
-      {/* Video modal overlay */}
+      {/* Video modal / overlay */}
       {activeVideo && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4" role="dialog" aria-modal="true" onClick={() => setActiveVideo(null)}>
-          <div className="bg-background rounded-md max-w-4xl w-full overflow-hidden shadow-xl" onClick={(e) => e.stopPropagation()}>
-            <div className="relative">
-              <button aria-label="Close video" onClick={() => setActiveVideo(null)} className="absolute top-3 right-3 z-20 inline-flex items-center justify-center rounded-full bg-muted/80 hover:bg-muted p-2">
-                <X className="w-5 h-5" />
-              </button>
-              <video src={activeVideo} controls preload="metadata" className="w-full h-auto bg-black" playsInline>
-                Your browser does not support the video tag.
-              </video>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
+          <div className="relative w-full max-w-3xl bg-transparent">
+            <button
+              onClick={() => setActiveVideo(null)}
+              aria-label="Close video"
+              className="absolute -top-8 right-0 text-white bg-transparent p-2 rounded-md hover:opacity-80"
+            >
+              <X className="w-6 h-6" />
+            </button>
+
+            <div className="aspect-video bg-black rounded-md overflow-hidden">
+              <video src={activeVideo} controls autoPlay style={{ width: "100%", height: "100%" }} />
             </div>
           </div>
         </div>
