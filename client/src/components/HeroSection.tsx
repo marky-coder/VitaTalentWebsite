@@ -5,15 +5,20 @@ import logoImage from "@assets/WhatsApp_Image_2025-10-24_at_11.32.23_PM-removebg
 
 /**
  * Partner logos:
- * - Add your partner logo files into `client/src/assets/` (that's the @assets alias).
- * - The new logo should be saved as `land-growth-capital.png`.
+ * - The Land Growth Capital logo lives in your repo as:
+ *   attached_assets/Land Growth Capital.png
+ * - We import it here using the @assets alias and the exact filename (including spaces).
+ *
+ * If your build tool has issues with spaces in filenames, rename the file to:
+ *   client/src/assets/land-growth-capital.png
+ * and change the import below to: import partner6 from "@assets/land-growth-capital.png";
  */
 import partner1 from "@assets/IMG_6617.jpg";
 import partner2 from "@assets/IMG_6614.png";
 import partner3 from "@assets/IMG_6615.png";
 import partner4 from "@assets/IMG_6616.png";
 import partner5 from "@assets/IMG_6618.png";
-import partner6 from "@assets/land-growth-capital.png"; // <-- NEW logo
+import partner6 from "@assets/Land Growth Capital.png"; // <- exact filename from attached_assets
 
 import { Link } from "wouter";
 
@@ -23,13 +28,13 @@ interface HeroSectionProps {
 }
 
 export default function HeroSection({ onHireTalent, onJoinAsCandidate }: HeroSectionProps) {
-  // Include the new logo in the partner logos — place it in the middle for visibility.
+  // Put the new logo in the middle for visibility
   const partnerLogos: string[] = [
-    partner1, // left
+    partner1,
     partner2,
-    partner6, // Land Growth Capital (NEW) — shown in the middle
+    partner6, // Land Growth Capital (NEW)
     partner5,
-    partner3, // right-most
+    partner3,
   ];
 
   return (
