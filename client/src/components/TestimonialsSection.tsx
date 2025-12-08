@@ -29,6 +29,9 @@ import videoMary from "@assets/Mary.mp4";
 import videoHadeer from "@assets/Hadeer Ezz.mp4";
 import videoMohamed from "@assets/Mohamed Sobhy.mp4";
 
+/* NEW: Nina Hadidi (uploaded) */
+import videoNina from "@assets/Nina Hadidi - Acquisition Manager.mp4";
+
 /**
  * VideoThumbnail: captures a frame from the provided video URL on the client,
  * and returns an <img> with that data URL. Falls back to a subtle placeholder.
@@ -164,7 +167,7 @@ const clientVideoTestimonials = [
   },
 ];
 
-/* Candidate video testimonials — existing + previous additions + NEW two entries */
+/* Candidate video testimonials — existing + previous additions + NEW entries */
 const candidateVideoTestimonials = [
   {
     id: 1,
@@ -215,6 +218,14 @@ const candidateVideoTestimonials = [
     name: "Mohamed Sobhy",
     role: "Land Acquisition Manager",
     src: videoMohamed,
+  },
+
+  // NEW: Nina Hadidi - Acquisition Manager
+  {
+    id: 9,
+    name: "Nina Hadidi",
+    role: "Acquisition Manager",
+    src: videoNina,
   },
 ];
 
