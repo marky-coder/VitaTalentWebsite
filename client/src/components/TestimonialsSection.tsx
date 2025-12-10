@@ -25,7 +25,11 @@ import videoRuben from "@assets/Ruben.mp4";
 import videoAshleyMark from "@assets/Ashley Mark.mp4";
 import videoMary from "@assets/Mary.mp4";
 
-/* NEW: the two files you just supplied */
+/* NEW: the two files you just supplied (add these exact files to @assets / attached_assets) */
+import videoDaniel from "@assets/Daniel Slobodyan - Land Creative Solutions.mp4";
+import videoZach from "@assets/Zach Nahas - CEO of Clear Path Land.mp4";
+
+/* NEW: the two candidates requested earlier */
 import videoHadeer from "@assets/Hadeer Ezz.mp4";
 import videoMohamed from "@assets/Mohamed Sobhy.mp4";
 
@@ -145,7 +149,7 @@ function VideoThumbnail({ src, alt }: { src: string; alt?: string }) {
   );
 }
 
-/* Client video testimonials (Kevin, Sam, and the newly added client) */
+/* Client video testimonials (Kevin, Sam, Nick + Daniel + Zach) */
 const clientVideoTestimonials = [
   {
     id: 1,
@@ -164,6 +168,18 @@ const clientVideoTestimonials = [
     name: "Nick Staley",
     role: "Land Growth Capital",
     src: videoNewClient,
+  },
+  {
+    id: 4,
+    name: "Daniel Slobodyan",
+    role: "Land Creative Solutions",
+    src: videoDaniel,
+  },
+  {
+    id: 5,
+    name: "Zach Nahas",
+    role: "CEO of Clear Path Land",
+    src: videoZach,
   },
 ];
 
