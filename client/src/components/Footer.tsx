@@ -6,14 +6,12 @@ export default function Footer() {
   const [location, setLocation] = useLocation();
 
   const scrollToSection = (id: string) => {
-    // If we're already on the home page, scroll directly.
     if (location === "/") {
       const element = document.getElementById(id);
       if (element) {
         element.scrollIntoView({ behavior: "smooth" });
         return;
       }
-      // If not found immediately, retry a few times (in case layout is still painting).
       let attempts = 0;
       const tryScroll = () => {
         const el = document.getElementById(id);
@@ -28,7 +26,6 @@ export default function Footer() {
       return;
     }
 
-    // Otherwise navigate to home with a query param instructing Home to scroll.
     setLocation(`/?scrollTo=${encodeURIComponent(id)}`);
   };
 
@@ -50,14 +47,14 @@ export default function Footer() {
               Home
             </button>
 
-            {/* Pricing button shown only when footer is on the Home page */}
+            {/* Replace Pricing with Schedule CTA (keeps the same conditional placement as before) */}
             {location === "/" && (
               <button
-                onClick={() => setLocation("/pricing")}
+                onClick={() => setLocation("/schedule")}
                 className="text-muted-foreground hover:text-foreground transition-colors"
-                data-testid="link-pricing"
+                data-testid="link-schedule"
               >
-                Pricing
+                Schedule a free discovery call
               </button>
             )}
 
