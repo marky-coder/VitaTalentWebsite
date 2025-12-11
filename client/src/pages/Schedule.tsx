@@ -1,7 +1,6 @@
 // client/src/pages/Schedule.tsx
-import { useState, useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import DecorativeSidebars from "@/components/DecorativeSidebars";
-import HeroSection from "@/components/HeroSection";
 import Footer from "@/components/Footer";
 import InquiryDialog from "@/components/InquiryDialog";
 
@@ -14,56 +13,81 @@ export default function Schedule(): JSX.Element {
   const [dialogType, setDialogType] = useState<"hire" | "candidate">("hire");
   const [selectedPack, setSelectedPack] = useState<string | undefined>(undefined);
 
-  // modal handlers (same behavior as Home)
+  // iframe lazy-loading
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
+  const [shouldLoadIframe, setShouldLoadIframe] = useState(false);
+
+  // Handlers for the decorative sidebars (match Home)
   const handleHireTalent = (packId?: string) => {
     setDialogType("hire");
     if (packId) setSelectedPack(packId);
     setDialogOpen(true);
   };
-
   const handleJoinAsCandidate = () => {
     setDialogType("candidate");
     setDialogOpen(true);
   };
 
-  // Inject GHL embed script once so iframe can initialize
+  // Inject GHL script once we are about to load the iframe
   useEffect(() => {
+    if (!shouldLoadIframe) return;
     if (!document.querySelector(`script[src="${SCRIPT_SRC}"]`)) {
       const s = document.createElement("script");
       s.src = SCRIPT_SRC;
       s.async = true;
       s.type = "text/javascript";
-      // Give it an id so it's easy to find later if needed
       s.id = "ghl-booking-script";
       document.body.appendChild(s);
     }
-    // keep the script for reuse; removing it may cause re-init issues
-  }, []);
+  }, [shouldLoadIframe]);
+
+  // IntersectionObserver to set shouldLoadIframe when the scheduler wrapper is near the viewport
+  useEffect(() => {
+    if (!wrapperRef.current) return;
+    if (shouldLoadIframe) return;
+
+    let obs: IntersectionObserver | null = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            setShouldLoadIframe(true);
+            obs?.disconnect();
+            obs = null;
+            break;
+          }
+        }
+      },
+      { root: null, rootMargin: "500px", threshold: 0.01 }
+    );
+
+    obs.observe(wrapperRef.current);
+    return () => {
+      obs?.disconnect();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [wrapperRef.current]);
 
   return (
     <div className="min-h-screen">
-      {/* Decorative sidebars + hero to match Home layout */}
+      {/* keep the decorative sidebars so layout matches Home */}
       <DecorativeSidebars onHireTalent={() => handleHireTalent()} onJoinAsCandidate={handleJoinAsCandidate} />
-      <div id="hero">
-        <HeroSection onHireTalent={() => handleHireTalent()} onJoinAsCandidate={handleJoinAsCandidate} />
-      </div>
 
-      {/* Schedule section styled consistent with the Home page content width & spacing */}
-      <main className="bg-gradient-to-b from-purple-50 via-purple-100 to-blue-50">
-        <div className="max-w-6xl mx-auto px-6 py-20">
-          <div className="text-center mb-8">
-            <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900">
-              Schedule a free discovery call
-            </h1>
-            <p className="text-sm text-slate-600 mt-3">
-              Pick a time that works for you — this will book a meeting with our sales closer.
-            </p>
-          </div>
+      {/* Main content container uses same widths/padding/typography as Home sections */}
+      <main className="max-w-7xl mx-auto px-6 py-20">
+        <div className="text-center mb-8">
+          <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight text-foreground">
+            Schedule a free discovery call
+          </h1>
+          <p className="text-lg text-muted-foreground max-w-3xl mx-auto mt-3">
+            Pick a time that works for you — this will book a meeting with our sales closer.
+          </p>
+        </div>
 
-          <div className="max-w-full mx-auto">
-            <div className="border rounded-xl overflow-hidden bg-white">
-              {/* Larger responsive fixed height so the calendar is prominent like Home sections */}
-              <div className="relative w-full h-[600px] md:h-[850px] lg:h-[1000px]">
+        <div className="max-w-full mx-auto">
+          <div className="border rounded-2xl overflow-hidden bg-white shadow-sm">
+            {/* wrapper observed by IntersectionObserver */}
+            <div ref={wrapperRef} className="relative w-full h-[600px] md:h-[850px] lg:h-[1000px]">
+              {shouldLoadIframe ? (
                 <iframe
                   title="Vita Talent - Schedule a discovery call"
                   id={IFRAME_ID}
@@ -79,23 +103,26 @@ export default function Schedule(): JSX.Element {
                     border: "none",
                   }}
                 />
-              </div>
+              ) : (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="text-sm text-slate-500">Loading scheduler…</div>
+                </div>
+              )}
             </div>
-
-            <p className="text-center text-sm text-slate-500 mt-4">
-              If the scheduler doesn't load,{" "}
-              <a href={IFRAME_SRC} target="_blank" rel="noopener noreferrer" className="underline">
-                open the scheduler in a new tab
-              </a>
-              .
-            </p>
           </div>
+
+          <p className="text-center text-sm text-slate-500 mt-4">
+            If the scheduler doesn't load,{" "}
+            <a href={IFRAME_SRC} target="_blank" rel="noopener noreferrer" className="underline">
+              open the scheduler in a new tab
+            </a>
+            .
+          </p>
         </div>
       </main>
 
       <Footer />
 
-      {/* Inquiry dialog (same as Home) */}
       <InquiryDialog open={dialogOpen} onOpenChange={setDialogOpen} type={dialogType} selectedPack={selectedPack} />
     </div>
   );
