@@ -21,7 +21,7 @@ export default function Schedule(): JSX.Element {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-50 via-purple-100 to-blue-50">
-      <div className="max-w-7xl mx-auto px-6 py-20">
+      <div className="max-w-6xl mx-auto px-6 py-20">
         <div className="text-center mb-8">
           <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900">
             Schedule a free discovery call
@@ -31,9 +31,10 @@ export default function Schedule(): JSX.Element {
           </p>
         </div>
 
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-full mx-auto">
           <div className="border rounded-xl overflow-hidden">
-            <div style={{ position: "relative", paddingBottom: "75%", height: 0 }}>
+            {/* Responsive fixed-height wrapper for the iframe so it appears much larger on desktop */}
+            <div className="relative w-full h-[600px] md:h-[850px] lg:h-[1000px]">
               <iframe
                 title="Vita Talent - Schedule a discovery call"
                 id={IFRAME_ID}
