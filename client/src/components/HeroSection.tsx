@@ -3,25 +3,12 @@ import { Button } from "@/components/ui/button";
 import heroBackground from "@assets/generated_images/Global_network_hero_background_3fc03fc7.png";
 import logoImage from "@assets/WhatsApp_Image_2025-10-24_at_11.32.23_PM-removebg-preview_1761482028519.png";
 
-/**
- * Partner logos:
- * - Ensure the following files exist under your @assets alias (attached_assets):
- *   IMG_6617.jpg
- *   IMG_6614.png
- *   IMG_6615.png
- *   IMG_6616.png
- *   IMG_6618.png
- *   Land Growth Capital.png   (the file you uploaded)
- *
- * If your build tool has issues with spaces in filenames, rename "Land Growth Capital.png"
- * to "land-growth-capital.png" and update the import below.
- */
 import partner1 from "@assets/IMG_6617.jpg";
 import partner2 from "@assets/IMG_6614.png";
 import partner3 from "@assets/IMG_6615.png";
 import partner4 from "@assets/IMG_6616.png";
 import partner5 from "@assets/IMG_6618.png";
-import partner6 from "@assets/Land Growth Capital.png"; // your uploaded logo
+import partner6 from "@assets/Land Growth Capital.png";
 
 import { Link } from "wouter";
 
@@ -31,14 +18,13 @@ interface HeroSectionProps {
 }
 
 export default function HeroSection({ onHireTalent, onJoinAsCandidate }: HeroSectionProps) {
-  // 6 logos — arranged for visual balance. Change order here if you want a different visual order.
   const partnerLogos: string[] = [
-    partner1, // Whitestone (example)
-    partner2, // eXp
-    partner6, // Land Growth Capital (uploaded)
-    partner5, // RE/MAX
-    partner3, // Higher Ground (example)
-    partner4, // another partner to make 6
+    partner1,
+    partner2,
+    partner6,
+    partner5,
+    partner3,
+    partner4,
   ];
 
   return (
@@ -88,14 +74,14 @@ export default function HeroSection({ onHireTalent, onJoinAsCandidate }: HeroSec
             </Button>
           </div>
 
-          {/* Pricing button under CTAs */}
+          {/* Replaced Pricing button with Schedule CTA */}
           <div className="mt-4 flex justify-center w-full">
-            <Button size="lg" variant="outline" asChild>
-              <Link href="/pricing">Pricing</Link>
+            <Button size="lg" className="text-base px-8" asChild>
+              <Link href="/schedule">Schedule a free discovery call</Link>
             </Button>
           </div>
 
-          {/* Trusted by logos — centered */}
+          {/* Trusted by logos */}
           <div className="mt-16 w-full">
             <p className="text-base font-medium text-muted-foreground mb-8">
               Trusted by leading companies worldwide
