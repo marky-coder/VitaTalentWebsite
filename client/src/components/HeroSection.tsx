@@ -3,15 +3,8 @@ import { Button } from "@/components/ui/button";
 import heroBackground from "@assets/generated_images/Global_network_hero_background_3fc03fc7.png";
 import logoImage from "@assets/WhatsApp_Image_2025-10-24_at_11.32.23_PM-removebg-preview_1761482028519.png";
 
-import partner1 from "@assets/IMG_6617.jpg";
-import partner2 from "@assets/IMG_6614.png";
-import partner3 from "@assets/IMG_6615.png";
-import partner4 from "@assets/IMG_6616.png";
-import partner5 from "@assets/IMG_6618.png";
-import partner6 from "@assets/Land Growth Capital.png";
-
 import { Link } from "wouter";
-import ClientLogoMarquee from "@/components/ClientLogoMarquee";
+import SocialMarquee from "@/components/SocialMarquee";
 
 interface HeroSectionProps {
   onHireTalent: () => void;
@@ -19,15 +12,6 @@ interface HeroSectionProps {
 }
 
 export default function HeroSection({ onHireTalent, onJoinAsCandidate }: HeroSectionProps) {
-  const partnerLogos: string[] = [
-    partner1,
-    partner2,
-    partner6,
-    partner5,
-    partner3,
-    partner4,
-  ];
-
   return (
     <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-primary/12 via-primary/6 to-background">
       <div
@@ -36,8 +20,13 @@ export default function HeroSection({ onHireTalent, onJoinAsCandidate }: HeroSec
       />
       <div className="relative z-10 container max-w-5xl mx-auto px-4 py-24 text-center">
         <div className="flex flex-col items-center gap-6">
-          <div className="flex items-center gap-3">
+          <div className="flex flex-col items-center gap-3">
             <img src={logoImage} alt="Vita Talent Logo" className="w-40 h-40 md:w-48 md:h-48 object-contain" />
+
+            {/* Socials under the logo: bigger marquee */}
+            <div className="mt-4 w-full flex justify-center">
+              <SocialMarquee speed={14} size={44} />
+            </div>
           </div>
 
           <div className="space-y-2">
@@ -82,19 +71,7 @@ export default function HeroSection({ onHireTalent, onJoinAsCandidate }: HeroSec
             </Button>
           </div>
 
-          {/* Trusted by logos — replaced static row with marquee */}
-          <div className="mt-16 w-full">
-            <p className="text-base font-medium text-muted-foreground mb-8">
-              Trusted by leading companies worldwide
-            </p>
-
-            {/* ClientLogoMarquee expects an array of { src, alt? } */}
-            <ClientLogoMarquee
-              logos={partnerLogos.map((src, idx) => ({ src, alt: `Partner ${idx + 1}` }))}
-              speed={24}
-              className="mx-auto"
-            />
-          </div>
+          {/* NOTE: Trusted-by logos have been moved to the footer per your request */}
         </div>
       </div>
     </section>
