@@ -77,7 +77,7 @@ export default function HeroSection({ onHireTalent, onJoinAsCandidate }: HeroSec
           {/* Replaced Pricing button with Schedule CTA */}
           <div className="mt-4 flex justify-center w-full">
             <Button size="lg" className="text-base px-8" asChild>
-              <Link href="/schedule">Schedule a free discovery call</Link>
+              <Link href="/schedule">Schedule A Free Discovery Call</Link>
             </Button>
           </div>
 
