@@ -1,0 +1,67 @@
+/* ClientLogoMarquee.css
+   Lightweight CSS marquee. Duplicated DOM (JSX) handles seamless looping.
+*/
+
+.client-marquee {
+  --gap: 2.5rem;               /* space between logos */
+  --height: 4.25rem;          /* default logo height (mobile) */
+  --marquee-duration: 24s;    /* overridden by inline style from component */
+  width: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+  display: block;
+  padding: 0.5rem 0;
+}
+
+.client-marquee__track {
+  display: flex;
+  align-items: center;
+  gap: var(--gap);
+  /* Animate the whole repeated sequence to left by 50% (we duplicated content) */
+  animation: marquee linear var(--marquee-duration) infinite;
+  will-change: transform;
+}
+
+/* Each item */
+.client-marquee__item {
+  flex: 0 0 auto; /* don't shrink */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* The images — tune height to match your design */
+.client-marquee__item img {
+  height: var(--height);
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.06));
+  margin: 0;
+}
+
+/* Pause on hover/focus for discoverability */
+.client-marquee__track:hover,
+.client-marquee__track:focus-within {
+  animation-play-state: paused;
+}
+
+/* Accessible: respect reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .client-marquee__track {
+    animation: none;
+  }
+}
+
+/* Keyframes: shift left by 50% (because content is duplicated) */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* Responsive logo heights (tweak to taste) */
+@media (min-width: 640px) {
+  .client-marquee__item img { height: 5rem; }
+}
+@media (min-width: 1024px) {
+  .client-marquee__item img { height: 6rem; }
+}
