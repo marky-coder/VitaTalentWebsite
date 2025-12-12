@@ -36,6 +36,9 @@ import videoMohamed from "@assets/Mohamed Sobhy.mp4";
 /* NEW: Nina Hadidi (uploaded) */
 import videoNina from "@assets/Nina Hadidi - Acquisition Manager.mp4";
 
+/* NEW: Josh Pierce (added client testimonial) */
+import videoJoshPierce from "@assets/Josh Pierce - CEO of Higher Ground Land.mp4";
+
 /**
  * VideoThumbnail: captures a frame from the provided video URL on the client,
  * and returns an <img> with that data URL. Falls back to a subtle placeholder.
@@ -149,7 +152,7 @@ function VideoThumbnail({ src, alt }: { src: string; alt?: string }) {
   );
 }
 
-/* Client video testimonials (Kevin, Sam, Nick + Daniel + Zach) */
+/* Client video testimonials (Kevin, Sam, Nick + Daniel + Zach + Josh) */
 const clientVideoTestimonials = [
   {
     id: 1,
@@ -180,6 +183,12 @@ const clientVideoTestimonials = [
     name: "Zach Nahas",
     role: "CEO of Clear Path Land",
     src: videoZach,
+  },
+  {
+    id: 6,
+    name: "Josh Pierce",
+    role: "CEO of Higher Ground Land",
+    src: videoJoshPierce,
   },
 ];
 
