@@ -4,7 +4,6 @@ import heroBackground from "@assets/generated_images/Global_network_hero_backgro
 import logoImage from "@assets/WhatsApp_Image_2025-10-24_at_11.32.23_PM-removebg-preview_1761482028519.png";
 
 import { Link } from "wouter";
-import SocialMarquee from "@/components/SocialMarquee";
 
 interface HeroSectionProps {
   onHireTalent: () => void;
@@ -20,13 +19,8 @@ export default function HeroSection({ onHireTalent, onJoinAsCandidate }: HeroSec
       />
       <div className="relative z-10 container max-w-5xl mx-auto px-4 py-24 text-center">
         <div className="flex flex-col items-center gap-6">
-          <div className="flex flex-col items-center gap-3">
+          <div className="flex items-center gap-3">
             <img src={logoImage} alt="Vita Talent Logo" className="w-40 h-40 md:w-48 md:h-48 object-contain" />
-
-            {/* Socials under the logo: bigger marquee */}
-            <div className="mt-4 w-full flex justify-center">
-              <SocialMarquee speed={14} size={44} />
-            </div>
           </div>
 
           <div className="space-y-2">
@@ -71,7 +65,7 @@ export default function HeroSection({ onHireTalent, onJoinAsCandidate }: HeroSec
             </Button>
           </div>
 
-          {/* NOTE: Trusted-by logos have been moved to the footer per your request */}
+          {/* NOTE: trusted-by logos and socials have been moved to the footer per your request */}
         </div>
       </div>
     </section>
