@@ -112,9 +112,9 @@ export default function Schedule(): JSX.Element {
           </div>
 
           <p className="text-center text-sm text-slate-500 mt-4">
-            If the scheduler doesn't load,{" "}
+            If the Calendar doesn't load,{" "}
             <a href={IFRAME_SRC} target="_blank" rel="noopener noreferrer" className="underline">
-              open the scheduler in a new tab
+              open the Calendar in a new tab
             </a>
             .
           </p>
