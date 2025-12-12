@@ -76,10 +76,10 @@ export default function Schedule(): JSX.Element {
       <main className="max-w-7xl mx-auto px-6 py-20">
         <div className="text-center mb-8">
           <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight text-foreground">
-            Schedule a free discovery call
+            Schedule A Free Discovery Call
           </h1>
           <p className="text-lg text-muted-foreground max-w-3xl mx-auto mt-3">
-            Pick a time that works for you — this will book a meeting with our sales closer.
+            Pick a time that works for you — this will book a meeting with our Sales Team.
           </p>
         </div>
 
