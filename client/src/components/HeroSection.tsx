@@ -11,6 +11,7 @@ import partner5 from "@assets/IMG_6618.png";
 import partner6 from "@assets/Land Growth Capital.png";
 
 import { Link } from "wouter";
+import ClientLogoMarquee from "@/components/ClientLogoMarquee";
 
 interface HeroSectionProps {
   onHireTalent: () => void;
@@ -81,28 +82,18 @@ export default function HeroSection({ onHireTalent, onJoinAsCandidate }: HeroSec
             </Button>
           </div>
 
-          {/* Trusted by logos */}
+          {/* Trusted by logos — replaced static row with marquee */}
           <div className="mt-16 w-full">
             <p className="text-base font-medium text-muted-foreground mb-8">
               Trusted by leading companies worldwide
             </p>
 
-            <div className="flex flex-wrap items-center justify-center gap-8 md:gap-12">
-              {partnerLogos.map((logo, index) => (
-                <div
-                  key={index}
-                  className="flex items-center justify-center transition-opacity"
-                  data-testid={`logo-company-${index + 1}`}
-                  style={{ minWidth: 80 }}
-                >
-                  <img
-                    src={logo ?? logoImage}
-                    alt={`Partner Company ${index + 1}`}
-                    className="h-16 w-auto md:h-20 object-contain"
-                  />
-                </div>
-              ))}
-            </div>
+            {/* ClientLogoMarquee expects an array of { src, alt? } */}
+            <ClientLogoMarquee
+              logos={partnerLogos.map((src, idx) => ({ src, alt: `Partner ${idx + 1}` }))}
+              speed={24}
+              className="mx-auto"
+            />
           </div>
         </div>
       </div>
