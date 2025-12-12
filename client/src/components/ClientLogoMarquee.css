@@ -1,4 +1,4 @@
-/* ClientLogoMarquee.css
+/* client/src/components/ClientLogoMarquee.css
    Lightweight CSS marquee. Duplicated DOM (JSX) handles seamless looping.
 */
 
@@ -11,21 +11,34 @@
   box-sizing: border-box;
   display: block;
   padding: 0.5rem 0;
+
+  /* Important: prevent wrapping so the duplicated sequence remains inline */
+  white-space: nowrap;
 }
 
+/* ensure the animated track is exactly as wide as its contents */
 .client-marquee__track {
   display: flex;
   align-items: center;
   gap: var(--gap);
+
+  /* Make the track width equal to its full content (important for translateX(-50%)) */
+  width: max-content;
+
   /* Animate the whole repeated sequence to left by 50% (we duplicated content) */
   animation: marquee linear var(--marquee-duration) infinite;
   will-change: transform;
 }
 
+/* Support reversing direction via data-direction="right" on the root */
+.client-marquee[data-direction="right"] .client-marquee__track {
+  animation-direction: reverse;
+}
+
 /* Each item */
 .client-marquee__item {
   flex: 0 0 auto; /* don't shrink */
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
 }
