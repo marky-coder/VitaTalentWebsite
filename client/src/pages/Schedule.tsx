@@ -84,16 +84,19 @@ export default function Schedule(): JSX.Element {
         </div>
 
         <div className="max-w-full mx-auto">
-          <div className="border rounded-2xl overflow-hidden bg-white shadow-sm">
-            {/* wrapper observed by IntersectionObserver */}
-            <div ref={wrapperRef} className="relative w-full h-[600px] md:h-[850px] lg:h-[1000px]">
+          {/* Removed overflow-hidden so the page can scroll if the iframe/content is taller on mobile */}
+          <div className="border rounded-2xl bg-white shadow-sm">
+            {/* wrapper observed by IntersectionObserver.
+                Use min-h so it can expand better on small screens */}
+            <div ref={wrapperRef} className="relative w-full min-h-[600px] md:min-h-[850px] lg:min-h-[1000px]">
               {shouldLoadIframe ? (
                 <iframe
                   title="Vita Talent - Schedule a discovery call"
                   id={IFRAME_ID}
                   src={IFRAME_SRC}
                   loading="lazy"
-                  scrolling="no"
+                  /* Allow iframe scrolling and enable smooth touch scrolling on iOS */
+                  scrolling="yes"
                   style={{
                     position: "absolute",
                     top: 0,
@@ -101,7 +104,12 @@ export default function Schedule(): JSX.Element {
                     width: "100%",
                     height: "100%",
                     border: "none",
+                    overflow: "auto",
+                    WebkitOverflowScrolling: "touch",
                   }}
+                  className="w-full h-full"
+                  /* allowFullScreen can help some embed UIs */
+                  allowFullScreen
                 />
               ) : (
                 <div className="absolute inset-0 flex items-center justify-center">
