@@ -120,3 +120,17 @@
     filter: drop-shadow(0 0 12px rgba(25,118,72,0.35)) drop-shadow(0 0 6px rgba(207,165,91,0.12));
   }
 }
+/* Make the inner (masked) area white for the 'light' neon card variant */
+.neonCardLight::after {
+  /* white inner face so footer & center appear white */
+  background: #ffffff !important;
+  /* keep the same border radius (match the mask shape) */
+  border-radius: calc(var(--card-radius) - var(--border-size));
+  z-index: 3;
+}
+
+/* Optional: ensure text on the white inner becomes readable (dark text) */
+.neonCardLight .neonCardFooterText,
+.neonCardLight .text-foreground {
+  color: #0b1b1c !important; /* dark text for readability */
+}
