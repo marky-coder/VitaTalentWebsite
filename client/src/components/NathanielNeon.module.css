@@ -1,64 +1,116 @@
-/* client/src/components/NathanielNeon.module.css */
-/* Neon rotating corner effect for Nathaniel card (scoped to components) */
+/* client/src/components/NathanielNeon.module.css
+   Small L-shaped corner strokes: top-left green, bottom-right gold.
+   Thin, crisp strokes (no rainbow), minimal halo. */
 
-:root {
+:root{
   --card-bg: #07182E;
-  --blue: #00b7ff;
-  --pink: #ff30ff;
+  --green: #197648;
+  --gold:  #CFA55B;
 }
 
-/* The neon wrapper applied to the Card element */
+/* Apply to the Card wrapper that we attach to Nathaniel only */
 .neonCard {
   position: relative;
-  overflow: hidden;
-  /* keep Card's rounded corners but ensure the neon shows outside a bit if needed */
-  border-radius: inherit; /* inherits rounded-xl from Card */
-  background: var(--card-bg) !important;
+  overflow: visible !important; /* allow corner strokes to peek outside */
+  border-radius: inherit;
+  /* neutralize any previous blue border tint */
+  border-color: rgba(0,0,0,0.12) !important;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
 }
 
-/* make content sit above the neon pseudo-elements */
+/* Make sure inner children sit above the neon elements */
 .neonCard > * {
   position: relative;
-  z-index: 2;
+  z-index: 4;
 }
 
-/* rotating colorful element (creates the top-left blue and bottom-right pink corners) */
-.neonCard::before {
+/* --- TOP-LEFT: green L stroke (keeps class name arcBlue for compatibility) --- */
+.arcBlue {
+  position: absolute;
+  top: -6px;
+  left: -6px;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+  z-index: 6;
+}
+
+/* horizontal top stroke */
+.arcBlue::before {
   content: "";
   position: absolute;
-  /* make the gradient very large so only the corners peek through */
-  width: 220%;
-  height: 220%;
-  left: -60%;
-  top: -60%;
-  background: linear-gradient(180deg, var(--blue) 0%, var(--pink) 100%);
-  transform-origin: 50% 50%;
-  animation: rotate 3s linear infinite;
-  z-index: 0;
-  pointer-events: none;
+  left: 6px;
+  top: 6px;
+  width: 40px;            /* horizontal length */
+  height: 4px;            /* stroke thickness */
+  background: var(--green);
+  border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(25,118,72,0.18); /* subtle green halo */
 }
 
-/* inner mask so the center stays the same card color while a glowing border remains */
-.neonCard::after {
+/* vertical left stroke */
+.arcBlue::after {
   content: "";
   position: absolute;
-  inset: 6px; /* leaves a glowing border area */
-  background: var(--card-bg);
-  border-radius: calc(inherit ? 1 : 15px); /* fallback, Card has rounded corners */
-  z-index: 1;
+  left: 6px;
+  top: 6px;
+  width: 4px;             /* stroke thickness */
+  height: 40px;           /* vertical length */
+  background: var(--green);
+  border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(25,118,72,0.18);
+}
+
+/* --- BOTTOM-RIGHT: gold L stroke (keeps class name arcPink for compatibility) --- */
+.arcPink {
+  position: absolute;
+  right: -6px;
+  bottom: -6px;
+  width: 0;
+  height: 0;
   pointer-events: none;
+  z-index: 6;
 }
 
-/* title / inner text may need to be centered by the existing markup.
-   We keep any typography changes minimal here. */
-.neonTitle {
-  color: #ffffff;
-  font-size: 1rem;
-  z-index: 3;
+/* horizontal bottom stroke (anchored from the right) */
+.arcPink::before {
+  content: "";
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+  width: 40px;            /* horizontal length */
+  height: 4px;            /* stroke thickness */
+  background: var(--gold);
+  border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(207,165,91,0.18); /* subtle gold halo */
 }
 
-/* rotation keyframes */
-@keyframes rotate {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
+/* vertical right stroke */
+.arcPink::after {
+  content: "";
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+  width: 4px;             /* stroke thickness */
+  height: 40px;           /* vertical length */
+  background: var(--gold);
+  border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(207,165,91,0.18);
+}
+
+/* Make footer text visible above the neon and color it */
+.neonCard .text-foreground {
+  color: var(--green) !important;  /* name color */
+  font-weight: 700;
+}
+
+.neonCard .text-muted-foreground {
+  color: var(--gold) !important;   /* role color */
+  opacity: 0.95;
+}
+
+/* ensure the footer container we set to transparent sits above everything */
+.neonCard .relative.z-20,
+.neonCard .relative.z-30 {
+  z-index: 8;
 }
