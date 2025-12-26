@@ -1,87 +1,83 @@
 /* client/src/components/NathanielNeon.module.css
-   Rotating green <-> gold neon band around the card, with an inset mask.
-   neonPulse only affects glow/opacity/box-shadow (no transform) so rotate owns transform.
+   Full replacement: rotating green<->gold neon border that crawls around the tile.
+   Important z-index ordering: band (1), mask (2), content (4).
 */
 
 :root {
   --card-bg: #07182E;
-  --green: #197648; /* requested */
-  --gold:  #CFA55B; /* requested */
+  --green: #197648;
+  --gold:  #CFA55B;
   --card-radius: 20px;
-  --border-size: 8px;
-  --rotate-duration: 1.8s;  /* faster so movement is obvious */
+  --border-size: 12px;
+  --rotate-duration: 1.2s;
 }
 
-/* Wrapper class TeamSection adds to Nathaniel Card */
+/* wrapper */
 .neonCard {
   position: relative;
-  overflow: hidden;                 /* clip rotating band to card bounds */
+  overflow: hidden;
   border-radius: var(--card-radius);
   background: var(--card-bg) !important;
   z-index: 0;
-  box-shadow: 0 6px 24px rgba(0,0,0,0.45);
+  box-shadow: 0 8px 36px rgba(0,0,0,0.5);
 }
 
-/* Ensure content sits above band and under inset mask */
+/* ensure content is above mask & bands */
 .neonCard > * {
   position: relative;
-  z-index: 3;
+  z-index: 4; /* content sits above mask and band */
 }
 
-/* ---- The rotating band: diagonal + stripe layer for visible motion ---- */
+/* rotating band (visible around whole tile) */
 .neonCard::before {
   content: "";
   position: absolute;
-  left: -48px;
-  top: -48px;
-  width: 360px;
-  height: 360px;
-  border-radius: calc(var(--card-radius) + 10px);
+  left: -72px;
+  top: -72px;
+  width: 500px;
+  height: 500px;
+  border-radius: calc(var(--card-radius) + 20px);
 
-  /* Layer 1: tiny diagonal stripe to give the band a pattern when rotating.
-     Layer 2: main diagonal gradient (green -> gold). */
   background:
-    linear-gradient(45deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.00) 50%, rgba(255,255,255,0.03) 100%),
+    linear-gradient(45deg, rgba(255,255,255,0.035) 0%, rgba(255,255,255,0) 50%, rgba(255,255,255,0.035) 100%),
     linear-gradient(45deg, var(--green) 0%, var(--gold) 100%);
 
-  z-index: 1;
+  z-index: 1;              /* behind mask and content */
   transform-origin: 50% 50%;
+  animation: rotate var(--rotate-duration) linear infinite, neonPulse 3s ease-in-out infinite;
 
-  /* rotate owns transform. neonPulse handles glow only (no transform). */
-  animation: rotate var(--rotate-duration) linear infinite, neonPulse 3.6s ease-in-out infinite;
-
-  /* stronger glow tuned for green/gold */
   filter:
-    drop-shadow(0 0 24px rgba(25,118,72,0.48))
-    drop-shadow(0 0 14px rgba(207,165,91,0.20));
+    drop-shadow(0 0 36px rgba(25,118,72,0.6))
+    drop-shadow(0 0 20px rgba(207,165,91,0.35));
+  mix-blend-mode: screen;
+  opacity: 1;
 }
 
-/* Inset mask so only border shows */
+/* inset mask that keeps the center visually separate.
+   Keep it dark so the image is visible above it (content z-index higher). */
 .neonCard::after {
   content: "";
   position: absolute;
-  inset: var(--border-size);
-  background: var(--card-bg);
+  inset: var(--border-size);           /* thickness of visible border */
+  background: var(--card-bg);          /* dark inner mask */
   border-radius: calc(var(--card-radius) - var(--border-size));
-  z-index: 2;
+  z-index: 2;                          /* sits above band, below content */
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
 }
 
-/* neonPulse — do NOT animate transform; only glow and opacity */
+/* neon glow pulse — only glow/opacity (NO transform) */
 @keyframes neonPulse {
   0% {
-    filter: drop-shadow(0 0 18px rgba(25,118,72,0.30)) drop-shadow(0 0 8px rgba(207,165,91,0.10));
-    opacity: 0.96;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.06);
+    filter: drop-shadow(0 0 28px rgba(25,118,72,0.45)) drop-shadow(0 0 16px rgba(207,165,91,0.3));
+    opacity: 0.98;
   }
   50% {
-    filter: drop-shadow(0 0 36px rgba(25,118,72,0.48)) drop-shadow(0 0 18px rgba(207,165,91,0.18));
+    filter: drop-shadow(0 0 48px rgba(25,118,72,0.65)) drop-shadow(0 0 28px rgba(207,165,91,0.45));
     opacity: 1;
-    box-shadow: 0 12px 22px rgba(0,0,0,0.12);
   }
   100% {
-    filter: drop-shadow(0 0 18px rgba(25,118,72,0.30)) drop-shadow(0 0 8px rgba(207,165,91,0.10));
-    opacity: 0.96;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.06);
+    filter: drop-shadow(0 0 28px rgba(25,118,72,0.45)) drop-shadow(0 0 16px rgba(207,165,91,0.3));
+    opacity: 0.98;
   }
 }
 
@@ -91,46 +87,32 @@
   to   { transform: rotate(360deg); }
 }
 
-/* style for footer text if you want to tint it when neon active */
+/* This class exists as a marker; it does not change the mask (we handle footer white in TSX) */
+.neonCardLight {
+  /* empty by design; footer will be white via TSX class */
+}
+
+/* Footer text highlight when neon active */
 .neonCardFooterText {
   position: relative;
-  z-index: 4;
+  z-index: 5;
   color: var(--green);
   font-weight: 700;
 }
 
-/* Slight adjustments for larger screens */
+/* larger screens tweaks */
 @media (min-width: 700px) {
   .neonCard::before {
-    left: -70px;
-    top: -70px;
-    width: 420px;
-    height: 420px;
-    border-radius: calc(var(--card-radius) + 14px);
+    left: -90px;
+    top: -90px;
+    width: 600px;
+    height: 600px;
+    border-radius: calc(var(--card-radius) + 28px);
   }
-  :root { --border-size: 10px; }
+  :root { --border-size: 14px; }
 }
 
-/* Respect reduced motion by default (accessibility). If your OS preference is to reduce motion,
-   the animation will be disabled. If you *really* want to force motion even when reduced-motion is set,
-   remove or adjust the media query below. */
+/* respect reduced motion */
 @media (prefers-reduced-motion: reduce) {
-  .neonCard::before {
-    animation: none !important;
-    filter: drop-shadow(0 0 12px rgba(25,118,72,0.35)) drop-shadow(0 0 6px rgba(207,165,91,0.12));
-  }
-}
-/* Make the inner (masked) area white for the 'light' neon card variant */
-.neonCardLight::after {
-  /* white inner face so footer & center appear white */
-  background: #ffffff !important;
-  /* keep the same border radius (match the mask shape) */
-  border-radius: calc(var(--card-radius) - var(--border-size));
-  z-index: 3;
-}
-
-/* Optional: ensure text on the white inner becomes readable (dark text) */
-.neonCardLight .neonCardFooterText,
-.neonCardLight .text-foreground {
-  color: #0b1b1c !important; /* dark text for readability */
+  .neonCard::before { animation: none !important; filter: drop-shadow(0 0 20px rgba(25,118,72,0.45)) drop-shadow(0 0 12px rgba(207,165,91,0.20)); }
 }
