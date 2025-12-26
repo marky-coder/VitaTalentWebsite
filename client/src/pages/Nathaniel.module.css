@@ -1,34 +1,38 @@
-/* client/src/components/NathanielNeon.module.css */
+/* client/src/components/NathanielNeon.module.css
+   Small L-shaped neon corners: top-left green, bottom-right gold.
+   Thin, crisp strokes (no rainbow), minimal glow, no blue background. */
 
-/* Neon corner accents for Nathaniel team card */
-:root {
+:root{
   --card-bg: #07182E;
-  --blue: #00b7ff;
-  --pink: #ff30ff;
+  --green: #197648;
+  --gold:  #CFA55B;
 }
 
-/* Apply to Card wrapper so arcs can overflow outside */
+/* Apply to the Card wrapper that we attach to Nathaniel only */
 .neonCard {
   position: relative;
-  overflow: visible !important; /* allow arcs to show outside corners */
-  border-radius: inherit; /* keep Card rounded-xl shape */
+  overflow: visible !important; /* allow corner strokes to peek outside */
+  border-radius: inherit;
+  /* ensure Card border isn't tinted blue by prior styles */
+  border-color: rgba(0,0,0,0.12) !important;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
 }
 
-/* ensure card children (image/footer) sit above the neon base */
+/* Make sure inner children sit above the neon elements */
 .neonCard > * {
   position: relative;
-  z-index: 3;
+  z-index: 4;
 }
 
-/* --- BLUE top-left L-shaped neon --- */
+/* --- TOP-LEFT: green L stroke (class name kept as arcBlue for compatibility) --- */
 .arcBlue {
   position: absolute;
-  top: -10px;
-  left: -10px;
+  top: -6px;
+  left: -6px;
   width: 0;
   height: 0;
   pointer-events: none;
-  z-index: 4;
+  z-index: 6;
 }
 
 /* horizontal top stroke */
@@ -37,11 +41,11 @@
   position: absolute;
   left: 6px;
   top: 6px;
-  width: 56px;        /* length of horizontal stroke */
-  height: 6px;        /* thickness of stroke */
-  background: linear-gradient(90deg, var(--blue), #60e1ff);
-  border-radius: 6px;
-  box-shadow: 0 4px 14px rgba(0,183,255,0.35), 0 0 6px rgba(0,183,255,0.25);
+  width: 40px;            /* horizontal length */
+  height: 4px;            /* stroke thickness */
+  background: var(--green);
+  border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(25,118,72,0.18); /* subtle green halo */
 }
 
 /* vertical left stroke */
@@ -50,22 +54,22 @@
   position: absolute;
   left: 6px;
   top: 6px;
-  width: 6px;         /* thickness of stroke */
-  height: 56px;       /* length of vertical stroke */
-  background: linear-gradient(180deg, var(--blue), #60e1ff);
-  border-radius: 6px;
-  box-shadow: 0 4px 14px rgba(0,183,255,0.35), 0 0 6px rgba(0,183,255,0.25);
+  width: 4px;             /* stroke thickness */
+  height: 40px;           /* vertical length */
+  background: var(--green);
+  border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(25,118,72,0.18);
 }
 
-/* --- PINK bottom-right L-shaped neon --- */
+/* --- BOTTOM-RIGHT: gold L stroke (class name kept as arcPink for compatibility) --- */
 .arcPink {
   position: absolute;
-  right: -10px;
-  bottom: -10px;
+  right: -6px;
+  bottom: -6px;
   width: 0;
   height: 0;
   pointer-events: none;
-  z-index: 4;
+  z-index: 6;
 }
 
 /* horizontal bottom stroke (anchored from the right) */
@@ -74,11 +78,11 @@
   position: absolute;
   right: 6px;
   bottom: 6px;
-  width: 56px;        /* length */
-  height: 6px;        /* thickness */
-  background: linear-gradient(90deg, #ff60f0, var(--pink));
-  border-radius: 6px;
-  box-shadow: 0 4px 14px rgba(255,48,255,0.35), 0 0 6px rgba(255,48,255,0.2);
+  width: 40px;            /* horizontal length */
+  height: 4px;            /* stroke thickness */
+  background: var(--gold);
+  border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(207,165,91,0.18); /* subtle gold halo */
 }
 
 /* vertical right stroke */
@@ -87,16 +91,26 @@
   position: absolute;
   right: 6px;
   bottom: 6px;
-  width: 6px;         /* thickness */
-  height: 56px;       /* length */
-  background: linear-gradient(180deg, #ff60f0, var(--pink));
-  border-radius: 6px;
-  box-shadow: 0 4px 14px rgba(255,48,255,0.35), 0 0 6px rgba(255,48,255,0.2);
+  width: 4px;             /* stroke thickness */
+  height: 40px;           /* vertical length */
+  background: var(--gold);
+  border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(207,165,91,0.18);
 }
 
-/* make footer content readable above neon (extra safety) */
-.neonCardFooterText {
-  position: relative;
-  z-index: 5;
-  color: inherit;
+/* Keep footer text visible above the neon and color it */
+.neonCard .text-foreground {
+  color: var(--green) !important;  /* name color */
+  font-weight: 700;
+}
+
+.neonCard .text-muted-foreground {
+  color: var(--gold) !important;   /* role color */
+  opacity: 0.95;
+}
+
+/* Make sure the footer's container (we set it transparent in TSX) is above everything */
+.neonCard .relative.z-20,
+.neonCard .relative.z-30 {
+  z-index: 8;
 }
