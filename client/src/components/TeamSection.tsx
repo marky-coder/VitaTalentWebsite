@@ -8,7 +8,7 @@ import ivyBakerImage from "@assets/ivy-baker-photo.png";
 import markAnthonyImage from "@assets/Mark Anthony.png";
 import linaHossamImage from "@assets/lina-hossam-photo.png";
 
-/* import neon module */
+/* import neon module with staticBorder */
 import neonStyles from "./NathanielNeon.module.css";
 
 type TeamMember = {
@@ -48,26 +48,16 @@ export default function TeamSection() {
           {team.map((member, index) => {
             const isNathaniel = member.name === "Nathaniel Brimlow";
 
-            /* add neon class for Nathaniel (neonCard) and marker neonCardLight for clarity */
-            const extraClass = isNathaniel ? `${neonStyles.neonCard} ${neonStyles.neonCardLight}` : "";
-
-            /* Footer: make it white for Nathaniel; keep others unchanged */
-            const footerClass = isNathaniel
-              ? "flex-1 p-5 text-center bg-white border-t-0 relative z-20 flex flex-col justify-center"
-              : "flex-1 p-5 text-center bg-gradient-to-b from-card to-primary/5 border-t border-primary/10 flex flex-col justify-center";
-
-            /* ensure text color on white footer is readable */
-            const nameClass = isNathaniel ? "font-semibold text-base text-foreground tracking-tight transition-colors duration-300 mb-1" : "font-semibold text-base text-foreground tracking-tight group-hover:text-primary transition-colors duration-300 mb-1";
-            const roleClass = isNathaniel ? "text-sm font-medium text-gray-700" : "text-sm font-medium text-muted-foreground";
-
-            return (
+            /* For Nathaniel: wrap the Card in a static border wrapper .staticBorder
+               and add the neonCard class so if animation works it is visible.
+               For others, render the Card directly. */
+            const cardInner = (
               <Card
                 key={index}
-                className={`${extraClass} group w-full sm:w-1/2 md:w-1/3 lg:w-1/4 max-w-xs overflow-hidden bg-gradient-to-br from-card via-card to-primary/8 border border-primary/20 shadow-md hover:shadow-2xl hover:border-primary/40 transition-all duration-500 hover:-translate-y-1`}
+                className={`group w-full sm:w-1/2 md:w-1/3 lg:w-1/4 max-w-xs overflow-hidden bg-gradient-to-br from-card via-card to-primary/8 border border-primary/20 shadow-md hover:shadow-2xl hover:border-primary/40 transition-all duration-500 hover:-translate-y-1 ${isNathaniel ? neonStyles.neonCard : ""}`}
                 data-testid={`team-member-${index}`}
               >
                 <div className="flex flex-col h-full">
-                  {/* Image — content is above mask because .neonCard > * z-index:4 */}
                   <div className="relative w-full aspect-[3/4] overflow-hidden bg-gradient-to-br from-muted to-muted/50">
                     {member.image ? (
                       <img
@@ -85,17 +75,28 @@ export default function TeamSection() {
                   </div>
 
                   {/* Footer */}
-                  <div className={footerClass}>
-                    <h3 className={nameClass}>
+                  <div className={isNathaniel ? "flex-1 p-5 text-center bg-white border-t-0 relative z-20 flex flex-col justify-center" : "flex-1 p-5 text-center bg-gradient-to-b from-card to-primary/5 border-t border-primary/10 flex flex-col justify-center"}>
+                    <h3 className="font-semibold text-base text-foreground tracking-tight group-hover:text-primary transition-colors duration-300 mb-1">
                       <span className={isNathaniel ? "relative z-30" : ""}>{member.name}</span>
                     </h3>
-                    <p className={roleClass}>
+                    <p className={isNathaniel ? "text-sm font-medium text-gray-700" : "text-sm font-medium text-muted-foreground"}>
                       <span className={isNathaniel ? "relative z-30" : ""}>{member.role}</span>
                     </p>
                   </div>
                 </div>
               </Card>
             );
+
+            /* For Nathaniel wrap with static border wrapper so border is always visible */
+            if (isNathaniel) {
+              return (
+                <div key={index} className={neonStyles.staticBorder} style={{ marginBottom: 8 }}>
+                  {cardInner}
+                </div>
+              );
+            }
+
+            return cardInner;
           })}
         </div>
       </div>
