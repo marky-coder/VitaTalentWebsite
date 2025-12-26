@@ -80,3 +80,14 @@
   from { transform: rotate(0deg); }
   to   { transform: rotate(360deg); }
 }
+/* Hide the footer's own gradient when neon is active so only the neon border shows */
+.neonCard :global(.flex-1) {
+  background: transparent !important;
+  border-top: none !important; /* remove the subtle top border if present */
+}
+
+/* Make sure the inner text area stays above the mask and remains readable */
+.neonCard :global(.flex-1) > * {
+  position: relative;
+  z-index: 3;
+}
