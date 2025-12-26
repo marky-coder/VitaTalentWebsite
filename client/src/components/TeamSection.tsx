@@ -8,7 +8,7 @@ import ivyBakerImage from "@assets/ivy-baker-photo.png";
 import markAnthonyImage from "@assets/Mark Anthony.png";
 import linaHossamImage from "@assets/lina-hossam-photo.png";
 
-/* Import the new CSS module in the same components folder */
+/* Import the new CSS module for Nathaniel neon */
 import neonStyles from "./NathanielNeon.module.css";
 
 type TeamMember = {
@@ -95,6 +95,11 @@ export default function TeamSection() {
             /* If this is Nathaniel, add neon class from module on top of existing classes */
             const extraClass = isNathaniel ? neonStyles.neonCard : "";
 
+            /* FOOTER: for Nathaniel make the footer transparent and keep text above the neon */
+            const footerClass = isNathaniel
+              ? "flex-1 p-5 text-center bg-transparent border-t-0 relative z-20 flex flex-col justify-center"
+              : "flex-1 p-5 text-center bg-gradient-to-b from-card to-primary/5 border-t border-primary/10 flex flex-col justify-center";
+
             return (
               <Card
                 key={index}
@@ -102,6 +107,10 @@ export default function TeamSection() {
                 data-testid={`team-member-${index}`}
               >
                 <div className="flex flex-col h-full">
+                  {/* If Nathaniel, add two small neon corner spans */}
+                  {isNathaniel && <span className={neonStyles.arcBlue} aria-hidden="true" />}
+                  {isNathaniel && <span className={neonStyles.arcPink} aria-hidden="true" />}
+
                   {/* Image */}
                   <div className="relative w-full aspect-[3/4] overflow-hidden bg-gradient-to-br from-muted to-muted/50">
                     {member.image ? (
@@ -122,12 +131,16 @@ export default function TeamSection() {
                   </div>
 
                   {/* Text */}
-                  <div className="flex-1 p-5 text-center bg-gradient-to-b from-card to-primary/5 border-t border-primary/10 flex flex-col justify-center">
+                  <div className={footerClass}>
                     <h3 className="font-semibold text-base text-foreground tracking-tight group-hover:text-primary transition-colors duration-300 mb-1">
-                      {member.name}
+                      <span className={isNathaniel ? "relative z-30" : ""}>
+                        {member.name}
+                      </span>
                     </h3>
                     <p className="text-sm font-medium text-muted-foreground">
-                      {member.role}
+                      <span className={isNathaniel ? neonStyles.neonCardFooterText : ""}>
+                        {member.role}
+                      </span>
                     </p>
                   </div>
                 </div>
