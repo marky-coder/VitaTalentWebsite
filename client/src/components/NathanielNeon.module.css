@@ -114,3 +114,36 @@
 .neonCard .relative.z-30 {
   z-index: 8;
 }
+/* subtle pulsing/glow animation for small corner strokes */
+@keyframes neonPulse {
+  0% {
+    transform: translateY(0);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+    opacity: 0.95;
+    filter: drop-shadow(0 0 6px rgba(0,0,0,0.04));
+  }
+  50% {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 18px rgba(0,0,0,0.16);
+    opacity: 1;
+    filter: drop-shadow(0 6px 18px rgba(0,0,0,0.08));
+  }
+  100% {
+    transform: translateY(0);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+    opacity: 0.95;
+    filter: drop-shadow(0 0 6px rgba(0,0,0,0.04));
+  }
+}
+
+/* apply the pulse to the visible pseudo-elements (horizontal and vertical strokes) */
+.arcBlue::before,
+.arcBlue::after,
+.arcPink::before,
+.arcPink::after {
+  will-change: transform, box-shadow, opacity;
+  transform-origin: center center;
+  animation: neonPulse 2.8s ease-in-out infinite;
+}
+
+/* Optionally slow down or lessen the glow: reduce duration or opacity above */
