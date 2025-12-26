@@ -1,149 +1,112 @@
 /* client/src/components/NathanielNeon.module.css
-   Small L-shaped corner strokes: top-left green, bottom-right gold.
-   Thin, crisp strokes (no rainbow), minimal halo. */
+   Rotating blue <-> pink neon band around the card, with an inset mask.
+   The pulse animation ONLY affects glow/opacity/box-shadow (does NOT touch transform),
+   so the rotate animation remains in control of transform.
+*/
 
-:root{
+:root {
   --card-bg: #07182E;
-  --green: #197648;
-  --gold:  #CFA55B;
+  --blue: #00b7ff;
+  --pink: #ff30ff;
+  --card-radius: 20px; /* match card rounding; change if needed */
+  --border-size: 8px;  /* thickness of neon border */
+  --rotate-duration: 3s;
 }
 
-/* Apply to the Card wrapper that we attach to Nathaniel only */
+/* The neon wrapper applied to the Card element (TeamSection will add this class) */
 .neonCard {
   position: relative;
-  overflow: visible !important; /* allow corner strokes to peek outside */
-  border-radius: inherit;
-  /* neutralize any previous blue border tint */
-  border-color: rgba(0,0,0,0.12) !important;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+  overflow: hidden;                 /* clip rotating band to card bounds */
+  border-radius: var(--card-radius);
+  background: var(--card-bg) !important; /* ensure card face color isn't overridden */
+  z-index: 0;
+  /* subtle base shadow */
+  box-shadow: 0 6px 24px rgba(0,0,0,0.45);
 }
 
-/* Make sure inner children sit above the neon elements */
+/* Keep card contents above the neon band but under the inset mask */
 .neonCard > * {
   position: relative;
-  z-index: 4;
+  z-index: 3;
 }
 
-/* --- TOP-LEFT: green L stroke (keeps class name arcBlue for compatibility) --- */
-.arcBlue {
-  position: absolute;
-  top: -6px;
-  left: -6px;
-  width: 0;
-  height: 0;
-  pointer-events: none;
-  z-index: 6;
-}
-
-/* horizontal top stroke */
-.arcBlue::before {
+/* The rotating neon band (bigger than the card and placed behind it) */
+.neonCard::before {
   content: "";
   position: absolute;
-  left: 6px;
-  top: 6px;
-  width: 40px;            /* horizontal length */
-  height: 4px;            /* stroke thickness */
-  background: var(--green);
-  border-radius: 4px;
-  box-shadow: 0 4px 8px rgba(25,118,72,0.18); /* subtle green halo */
+  /* larger than the card so it peeks around corners */
+  left: -30px;
+  top: -30px;
+  width: 260px;
+  height: 260px;
+  border-radius: calc(var(--card-radius) + 4px);
+  background: linear-gradient(180deg, var(--blue) 0%, var(--pink) 100%);
+  z-index: 1;
+  transform-origin: 50% 50%;
+  /* rotate owns transform */
+  animation: rotate var(--rotate-duration) linear infinite;
+  /* subtle neon glow */
+  filter: drop-shadow(0 0 14px rgba(0,183,255,0.35)) drop-shadow(0 0 8px rgba(255,48,255,0.14));
 }
 
-/* vertical left stroke */
-.arcBlue::after {
+/* The inset mask that hides the center and leaves only the neon border visible */
+.neonCard::after {
   content: "";
   position: absolute;
-  left: 6px;
-  top: 6px;
-  width: 4px;             /* stroke thickness */
-  height: 40px;           /* vertical length */
-  background: var(--green);
-  border-radius: 4px;
-  box-shadow: 0 4px 8px rgba(25,118,72,0.18);
+  inset: var(--border-size);            /* thickness of neon border; adjust to taste */
+  background: var(--card-bg);           /* same as card face */
+  border-radius: calc(var(--card-radius) - var(--border-size));
+  z-index: 2;
 }
 
-/* --- BOTTOM-RIGHT: gold L stroke (keeps class name arcPink for compatibility) --- */
-.arcPink {
-  position: absolute;
-  right: -6px;
-  bottom: -6px;
-  width: 0;
-  height: 0;
-  pointer-events: none;
-  z-index: 6;
-}
-
-/* horizontal bottom stroke (anchored from the right) */
-.arcPink::before {
-  content: "";
-  position: absolute;
-  right: 6px;
-  bottom: 6px;
-  width: 40px;            /* horizontal length */
-  height: 4px;            /* stroke thickness */
-  background: var(--gold);
-  border-radius: 4px;
-  box-shadow: 0 4px 8px rgba(207,165,91,0.18); /* subtle gold halo */
-}
-
-/* vertical right stroke */
-.arcPink::after {
-  content: "";
-  position: absolute;
-  right: 6px;
-  bottom: 6px;
-  width: 4px;             /* stroke thickness */
-  height: 40px;           /* vertical length */
-  background: var(--gold);
-  border-radius: 4px;
-  box-shadow: 0 4px 8px rgba(207,165,91,0.18);
-}
-
-/* Make footer text visible above the neon and color it */
-.neonCard .text-foreground {
-  color: var(--green) !important;  /* name color */
-  font-weight: 700;
-}
-
-.neonCard .text-muted-foreground {
-  color: var(--gold) !important;   /* role color */
-  opacity: 0.95;
-}
-
-/* ensure the footer container we set to transparent sits above everything */
-.neonCard .relative.z-20,
-.neonCard .relative.z-30 {
-  z-index: 8;
-}
-/* subtle pulsing/glow animation for small corner strokes */
+/* subtle pulsing/glow animation for the rotating band
+   NOTE: do NOT animate `transform` here — leave rotation to the `rotate` animation */
 @keyframes neonPulse {
   0% {
-    transform: translateY(0);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+    filter: drop-shadow(0 0 12px rgba(0,183,255,0.28)) drop-shadow(0 0 6px rgba(255,48,255,0.10));
     opacity: 0.95;
-    filter: drop-shadow(0 0 6px rgba(0,0,0,0.04));
+    box-shadow: 0 4px 8px rgba(0,0,0,0.08);
   }
   50% {
-    transform: translateY(-3px);
-    box-shadow: 0 10px 18px rgba(0,0,0,0.16);
+    filter: drop-shadow(0 0 18px rgba(0,183,255,0.42)) drop-shadow(0 0 10px rgba(255,48,255,0.18));
     opacity: 1;
-    filter: drop-shadow(0 6px 18px rgba(0,0,0,0.08));
+    box-shadow: 0 10px 18px rgba(0,0,0,0.16);
   }
   100% {
-    transform: translateY(0);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+    filter: drop-shadow(0 0 12px rgba(0,183,255,0.28)) drop-shadow(0 0 6px rgba(255,48,255,0.10));
     opacity: 0.95;
-    filter: drop-shadow(0 0 6px rgba(0,0,0,0.04));
+    box-shadow: 0 4px 8px rgba(0,0,0,0.08);
   }
 }
 
-/* apply the pulse to the visible pseudo-elements (horizontal and vertical strokes) */
-.arcBlue::before,
-.arcBlue::after,
-.arcPink::before,
-.arcPink::after {
-  will-change: transform, box-shadow, opacity;
-  transform-origin: center center;
-  animation: neonPulse 2.8s ease-in-out infinite;
+/* Apply both animations — rotate owns transform, neonPulse handles glow only */
+.neonCard::before {
+  animation: rotate var(--rotate-duration) linear infinite, neonPulse 4.5s ease-in-out infinite;
 }
 
-/* Optionally slow down or lessen the glow: reduce duration or opacity above */
+/* Footer text (if you want to color it differently when neon is active) */
+.neonCardFooterText {
+  position: relative;
+  z-index: 4;
+  color: #ffffff;
+}
+
+/* Tweaks for larger screens */
+@media (min-width: 700px) {
+  .neonCard::before {
+    left: -50px;
+    top: -50px;
+    width: 320px;
+    height: 320px;
+    border-radius: calc(var(--card-radius) + 6px);
+  }
+  :root {
+    --border-size: 10px;
+  }
+}
+
+/* rotation keyframes used by ::before */
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
