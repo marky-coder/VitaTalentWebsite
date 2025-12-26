@@ -1,0 +1,99 @@
+/* src/pages/Nathaniel.css */
+
+/* CSS variables for easy customization */
+:root{
+  --page-bg: #0f1113;       /* page background */
+  --card-bg: #07182E;       /* card inner background (same as inset) */
+  --neon-a: #00b7ff;        /* neon color 1 (blue) */
+  --neon-b: #ff30ff;        /* neon color 2 (pink) */
+  --card-radius: 20px;      /* card corner radius */
+  --border-size: 8px;       /* thickness of neon border (inset) */
+  --rotate-duration: 3s;    /* speed of rotation */
+}
+
+/* page layout */
+.nathaniel-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--page-bg);
+  font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  color: #fff;
+}
+
+/* center container (helps with consistent spacing) */
+.container {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding: 28px;
+}
+
+/* main card */
+.card{
+  width: 190px;
+  height: 254px;
+  background: var(--card-bg);
+  border-radius: var(--card-radius);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;                   /* clip rotating gradient */
+  box-shadow: 0 6px 30px rgba(0,0,0,0.6);
+}
+
+/* label */
+.card-title{
+  color: #ffffff;
+  font-size: 1.85rem;
+  letter-spacing: 1px;
+  z-index: 3;                          /* on top of the inset cover */
+  margin: 0;
+}
+
+/* rotating neon gradient, bigger than the card and set behind */
+.card::before{
+  content: "";
+  position: absolute;
+  /* make it larger than the card so it wraps the corners */
+  width: 260px;
+  height: 260px;
+  left: -30px;                         /* tune so gradient peeks the correct corners */
+  top: -30px;
+  border-radius: calc(var(--card-radius) + 4px);
+  background: linear-gradient(180deg, var(--neon-a) 0%, var(--neon-b) 100%);
+  z-index: 1;
+  transform-origin: 50% 50%;
+  animation: rotate var(--rotate-duration) linear infinite;
+  /* glow around the neon */
+  filter: drop-shadow(0 0 14px rgba(0,183,255,0.35)) drop-shadow(0 0 6px rgba(255,48,255,0.12));
+}
+
+/* inset cover that hides the center - creates the neon border effect */
+.card::after{
+  content: "";
+  position: absolute;
+  inset: var(--border-size);            /* thickness of neon border */
+  background: var(--card-bg);           /* same as card's face */
+  border-radius: calc(var(--card-radius) - var(--border-size));
+  z-index: 2;
+}
+
+/* rotation keyframes */
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* make slightly bigger on wider screens */
+@media (min-width: 700px){
+  .card { width: 220px; height: 300px; }
+  .card::before {
+    width: 320px;
+    height: 320px;
+    left: -50px;
+    top: -50px;
+  }
+}
