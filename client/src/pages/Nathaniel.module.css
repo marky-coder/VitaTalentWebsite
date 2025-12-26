@@ -8,7 +8,7 @@
   --pink: #ff30ff;
 }
 
-/* page + centering (matches your TSX usage) */
+/* page + centering */
 .page{
   min-height: 100vh;
   display: flex;
@@ -37,7 +37,7 @@
   align-items: center;
   justify-content: center;
   background: var(--card-bg);
-  overflow: hidden; /* important so the rotating element is clipped to corners */
+  overflow: hidden; /* clip the rotating gradient to corners */
 }
 
 /* rotating colorful element (creates the top-left blue and bottom-right pink corners) */
@@ -52,7 +52,6 @@
   background: linear-gradient(180deg, var(--blue) 0%, var(--pink) 100%);
   transform-origin: 50% 50%;
   animation: rotate 3s linear infinite;
-  /* optional: slightly crisp edges — no blur so the corners look like the screenshot */
   z-index: 0;
 }
 
