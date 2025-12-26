@@ -8,7 +8,7 @@ import ivyBakerImage from "@assets/ivy-baker-photo.png";
 import markAnthonyImage from "@assets/Mark Anthony.png";
 import linaHossamImage from "@assets/lina-hossam-photo.png";
 
-/* Import the neon CSS module that contains the rotating band & light variant */
+/* import neon module */
 import neonStyles from "./NathanielNeon.module.css";
 
 type TeamMember = {
@@ -16,7 +16,7 @@ type TeamMember = {
   role: string;
   initials: string;
   image?: string;
-  imageScale?: string; // extra per-person image tuning
+  imageScale?: string;
 };
 
 const team: TeamMember[] = [
@@ -37,29 +37,28 @@ const team: TeamMember[] = [
 
 export default function TeamSection() {
   return (
-    <section
-      className="py-24 bg-gradient-to-bl from-primary/15 via-primary/10 to-background"
-      data-testid="section-team"
-    >
+    <section className="py-24 bg-gradient-to-bl from-primary/15 via-primary/10 to-background" data-testid="section-team">
       <div className="container max-w-7xl mx-auto px-4">
-        {/* Heading */}
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-foreground mb-4">Meet the Team</h2>
           <p className="text-lg font-medium text-muted-foreground">Dedicated professionals committed to your success</p>
         </div>
 
-        {/* Cards (flex so last row is centered) */}
         <div className="flex flex-wrap justify-center gap-6 md:gap-8 max-w-5xl mx-auto">
           {team.map((member, index) => {
             const isNathaniel = member.name === "Nathaniel Brimlow";
 
-            /* For Nathaniel: add both the neon border class and the light inner variant */
+            /* add neon class for Nathaniel (neonCard) and marker neonCardLight for clarity */
             const extraClass = isNathaniel ? `${neonStyles.neonCard} ${neonStyles.neonCardLight}` : "";
 
-            /* Footer: transparent for Nathaniel so the neon border shows cleanly */
+            /* Footer: make it white for Nathaniel; keep others unchanged */
             const footerClass = isNathaniel
-              ? "flex-1 p-5 text-center bg-transparent border-t-0 relative z-20 flex flex-col justify-center"
+              ? "flex-1 p-5 text-center bg-white border-t-0 relative z-20 flex flex-col justify-center"
               : "flex-1 p-5 text-center bg-gradient-to-b from-card to-primary/5 border-t border-primary/10 flex flex-col justify-center";
+
+            /* ensure text color on white footer is readable */
+            const nameClass = isNathaniel ? "font-semibold text-base text-foreground tracking-tight transition-colors duration-300 mb-1" : "font-semibold text-base text-foreground tracking-tight group-hover:text-primary transition-colors duration-300 mb-1";
+            const roleClass = isNathaniel ? "text-sm font-medium text-gray-700" : "text-sm font-medium text-muted-foreground";
 
             return (
               <Card
@@ -68,7 +67,7 @@ export default function TeamSection() {
                 data-testid={`team-member-${index}`}
               >
                 <div className="flex flex-col h-full">
-                  {/* Image */}
+                  {/* Image — content is above mask because .neonCard > * z-index:4 */}
                   <div className="relative w-full aspect-[3/4] overflow-hidden bg-gradient-to-br from-muted to-muted/50">
                     {member.image ? (
                       <img
@@ -85,13 +84,13 @@ export default function TeamSection() {
                     )}
                   </div>
 
-                  {/* Text */}
+                  {/* Footer */}
                   <div className={footerClass}>
-                    <h3 className="font-semibold text-base text-foreground tracking-tight group-hover:text-primary transition-colors duration-300 mb-1">
+                    <h3 className={nameClass}>
                       <span className={isNathaniel ? "relative z-30" : ""}>{member.name}</span>
                     </h3>
-                    <p className="text-sm font-medium text-muted-foreground">
-                      <span className={isNathaniel ? neonStyles.neonCardFooterText : ""}>{member.role}</span>
+                    <p className={roleClass}>
+                      <span className={isNathaniel ? "relative z-30" : ""}>{member.role}</span>
                     </p>
                   </div>
                 </div>
