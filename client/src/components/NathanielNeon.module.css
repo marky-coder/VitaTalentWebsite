@@ -1,0 +1,64 @@
+/* client/src/components/NathanielNeon.module.css */
+/* Neon rotating corner effect for Nathaniel card (scoped to components) */
+
+:root {
+  --card-bg: #07182E;
+  --blue: #00b7ff;
+  --pink: #ff30ff;
+}
+
+/* The neon wrapper applied to the Card element */
+.neonCard {
+  position: relative;
+  overflow: hidden;
+  /* keep Card's rounded corners but ensure the neon shows outside a bit if needed */
+  border-radius: inherit; /* inherits rounded-xl from Card */
+  background: var(--card-bg) !important;
+}
+
+/* make content sit above the neon pseudo-elements */
+.neonCard > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* rotating colorful element (creates the top-left blue and bottom-right pink corners) */
+.neonCard::before {
+  content: "";
+  position: absolute;
+  /* make the gradient very large so only the corners peek through */
+  width: 220%;
+  height: 220%;
+  left: -60%;
+  top: -60%;
+  background: linear-gradient(180deg, var(--blue) 0%, var(--pink) 100%);
+  transform-origin: 50% 50%;
+  animation: rotate 3s linear infinite;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* inner mask so the center stays the same card color while a glowing border remains */
+.neonCard::after {
+  content: "";
+  position: absolute;
+  inset: 6px; /* leaves a glowing border area */
+  background: var(--card-bg);
+  border-radius: calc(inherit ? 1 : 15px); /* fallback, Card has rounded corners */
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* title / inner text may need to be centered by the existing markup.
+   We keep any typography changes minimal here. */
+.neonTitle {
+  color: #ffffff;
+  font-size: 1rem;
+  z-index: 3;
+}
+
+/* rotation keyframes */
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
