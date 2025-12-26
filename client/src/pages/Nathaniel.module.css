@@ -1,6 +1,6 @@
 /* client/src/components/NathanielNeon.module.css
-   Small L-shaped neon corners: top-left green, bottom-right gold.
-   Thin, crisp strokes (no rainbow), minimal glow, no blue background. */
+   Small L-shaped corner strokes: top-left green, bottom-right gold.
+   Thin, crisp strokes (no rainbow), minimal halo. */
 
 :root{
   --card-bg: #07182E;
@@ -13,7 +13,7 @@
   position: relative;
   overflow: visible !important; /* allow corner strokes to peek outside */
   border-radius: inherit;
-  /* ensure Card border isn't tinted blue by prior styles */
+  /* neutralize any previous blue border tint */
   border-color: rgba(0,0,0,0.12) !important;
   box-shadow: 0 6px 18px rgba(0,0,0,0.06);
 }
@@ -24,7 +24,7 @@
   z-index: 4;
 }
 
-/* --- TOP-LEFT: green L stroke (class name kept as arcBlue for compatibility) --- */
+/* --- TOP-LEFT: green L stroke (keeps class name arcBlue for compatibility) --- */
 .arcBlue {
   position: absolute;
   top: -6px;
@@ -61,7 +61,7 @@
   box-shadow: 0 4px 8px rgba(25,118,72,0.18);
 }
 
-/* --- BOTTOM-RIGHT: gold L stroke (class name kept as arcPink for compatibility) --- */
+/* --- BOTTOM-RIGHT: gold L stroke (keeps class name arcPink for compatibility) --- */
 .arcPink {
   position: absolute;
   right: -6px;
@@ -98,7 +98,7 @@
   box-shadow: 0 4px 8px rgba(207,165,91,0.18);
 }
 
-/* Keep footer text visible above the neon and color it */
+/* Make footer text visible above the neon and color it */
 .neonCard .text-foreground {
   color: var(--green) !important;  /* name color */
   font-weight: 700;
@@ -109,7 +109,7 @@
   opacity: 0.95;
 }
 
-/* Make sure the footer's container (we set it transparent in TSX) is above everything */
+/* ensure the footer container we set to transparent sits above everything */
 .neonCard .relative.z-20,
 .neonCard .relative.z-30 {
   z-index: 8;
