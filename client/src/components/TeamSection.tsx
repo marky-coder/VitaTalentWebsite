@@ -8,7 +8,7 @@ import ivyBakerImage from "@assets/ivy-baker-photo.png";
 import markAnthonyImage from "@assets/Mark Anthony.png";
 import linaHossamImage from "@assets/lina-hossam-photo.png";
 
-/* Import the neon CSS module that contains the rotating band */
+/* Import the neon CSS module that contains the rotating band & light variant */
 import neonStyles from "./NathanielNeon.module.css";
 
 type TeamMember = {
@@ -52,10 +52,11 @@ export default function TeamSection() {
         <div className="flex flex-wrap justify-center gap-6 md:gap-8 max-w-5xl mx-auto">
           {team.map((member, index) => {
             const isNathaniel = member.name === "Nathaniel Brimlow";
-            // If this is Nathaniel, add the rotating neon class from the components CSS module
-            const extraClass = isNathaniel ? neonStyles.neonCard : "";
 
-            // Footer: transparent for Nathaniel so neon border shows cleanly
+            /* For Nathaniel: add both the neon border class and the light inner variant */
+            const extraClass = isNathaniel ? `${neonStyles.neonCard} ${neonStyles.neonCardLight}` : "";
+
+            /* Footer: transparent for Nathaniel so the neon border shows cleanly */
             const footerClass = isNathaniel
               ? "flex-1 p-5 text-center bg-transparent border-t-0 relative z-20 flex flex-col justify-center"
               : "flex-1 p-5 text-center bg-gradient-to-b from-card to-primary/5 border-t border-primary/10 flex flex-col justify-center";
