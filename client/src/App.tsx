@@ -7,6 +7,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import Home from "@/pages/Home";
 import NotFound from "@/pages/not-found";
 import Schedule from "@/pages/Schedule";
+import Nathaniel from "@/pages/Nathaniel";
 import { useEffect } from "react";
 
 function Router() {
@@ -14,6 +15,7 @@ function Router() {
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/schedule" component={Schedule} />
+      <Route path="/nathaniel" component={Nathaniel} />
       <Route component={NotFound} />
     </Switch>
   );
