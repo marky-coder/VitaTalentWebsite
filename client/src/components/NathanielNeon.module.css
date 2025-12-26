@@ -1,7 +1,7 @@
 /* client/src/components/NathanielNeon.module.css
-   Rotating green <-> gold neon band around the card (same as before),
-   plus a static fallback/gold-green gradient border class `.staticBorder`
-   that wraps the card to ensure a visible border when animation is subtle.
+   Rotating green<->gold neon band around the card,
+   plus a safe gradient border class (.staticBorder) that uses border-image
+   so the border is visible and sized correctly without wrappers.
 */
 
 :root {
@@ -9,11 +9,11 @@
   --green: #197648;
   --gold:  #CFA55B;
   --card-radius: 20px;
-  --border-size: 12px;
-  --rotate-duration: 1.2s;
+  --border-size: 10px;      /* border-image width */
+  --rotate-duration: 1.2s;  /* rotation speed */
 }
 
-/* wrapper */
+/* Card wrapper used for Nathaniel */
 .neonCard {
   position: relative;
   overflow: hidden;
@@ -23,13 +23,13 @@
   box-shadow: 0 8px 36px rgba(0,0,0,0.5);
 }
 
-/* ensure content sits above band & mask */
+/* ensure content on top */
 .neonCard > * {
   position: relative;
   z-index: 4;
 }
 
-/* rotating band (diagonal + stripe) */
+/* rotating band behind the mask */
 .neonCard::before {
   content: "";
   position: absolute;
@@ -54,7 +54,7 @@
   opacity: 1;
 }
 
-/* inset mask (dark inner area) */
+/* dark inner mask so image is visible */
 .neonCard::after {
   content: "";
   position: absolute;
@@ -65,7 +65,7 @@
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
 }
 
-/* neon pulse (glow only) */
+/* neon glow (no transform) */
 @keyframes neonPulse {
   0% {
     filter: drop-shadow(0 0 28px rgba(25,118,72,0.45)) drop-shadow(0 0 16px rgba(207,165,91,0.3));
@@ -81,13 +81,18 @@
   }
 }
 
-/* rotate */
+/* rotation */
 @keyframes rotate {
   from { transform: rotate(0deg); }
   to   { transform: rotate(360deg); }
 }
 
-/* Footer text color when neon active */
+/* Optional class we used earlier (keeps fixture). No mask changes here. */
+.neonCardLight {
+  /* intentionally empty - the footer will be white via TSX */
+}
+
+/* FOOTER text highlight */
 .neonCardFooterText {
   position: relative;
   z-index: 5;
@@ -95,37 +100,40 @@
   font-weight: 700;
 }
 
-/* LARGE static gradient border wrapper for Nathaniel (visible fallback).
-   This wrapper sits outside the Card and creates a visible border using
-   background-clip method with a thin padding. */
+/* --------------------------
+   STATIC gradient border
+   Use border-image so the border is the card's border and always sized correctly.
+   Apply this class directly to the Card element.
+   -------------------------- */
 .staticBorder {
-  display: inline-block; /* shrink to card size */
-  padding: 4px; /* thickness of the visible border */
-  border-radius: calc(var(--card-radius) + 6px);
-  background: linear-gradient(90deg, var(--green), var(--gold));
-  /* subtle shadow to match other cards */
+  border: var(--border-size) solid transparent; /* thickness */
+  border-radius: calc(var(--card-radius) + 4px);
+  /* border-image takes the border area and fills it with the gradient */
+  border-image: linear-gradient(90deg, var(--green), var(--gold)) 1;
+  /* small shadow so it reads similarly to other cards */
   box-shadow: 0 10px 22px rgba(0,0,0,0.18);
-  /* ensure the child Card keeps its own border-radius so inner corners look neat */
 }
 
-/* Because the static border adds 4px padding, ensure the inner card has matching radius:
-   The Card already likely has a rounded corner class; this just helps if needed */
-.staticBorder > * {
-  display: block;
-  border-radius: calc(var(--card-radius) + 2px);
-  overflow: hidden; /* keep inner card clipped to rounded corner */
+/* small tweak to ensure the inner card radius looks neat when border is applied */
+.staticBorder.neonCard {
+  border-radius: calc(var(--card-radius) + 4px);
 }
 
-/* Don't change the mask or inner style here. Footer white is handled in TSX. */
-
-/* Large screen tweaks */
-@media (min-width: 700px) {
-  :root { --border-size: 14px; }
-  .neonCard::before { left: -90px; top: -90px; width: 600px; height: 600px; }
-  .staticBorder { padding: 5px; border-radius: calc(var(--card-radius) + 8px); }
+/* Larger screens tweak */
+@media (min-width:700px) {
+  .neonCard::before {
+    left: -90px;
+    top: -90px;
+    width: 600px;
+    height: 600px;
+    border-radius: calc(var(--card-radius) + 28px);
+  }
+  :root {
+    --border-size: 12px;
+  }
 }
 
-/* reduced-motion respect */
+/* Respect reduced-motion */
 @media (prefers-reduced-motion: reduce) {
   .neonCard::before { animation: none !important; }
 }
