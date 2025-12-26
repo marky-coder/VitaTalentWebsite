@@ -6,7 +6,11 @@ export default function Nathaniel(): JSX.Element {
   return (
     <div className={styles.page}>
       <div className={styles.container}>
-        <div className={styles.card} role="region" aria-label="Nathaniel Card">
+        <div
+          className={styles.card}
+          role="region"
+          aria-label="Nathaniel Card"
+        >
           <h2 className={styles.title}>NATHANIEL</h2>
         </div>
       </div>
