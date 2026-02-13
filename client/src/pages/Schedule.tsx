@@ -4,18 +4,21 @@ import DecorativeSidebars from "@/components/DecorativeSidebars";
 import Footer from "@/components/Footer";
 import InquiryDialog from "@/components/InquiryDialog";
 
-const IFRAME_SRC = "https://api.leadconnectorhq.com/widget/booking/DFNuSebE1R1wRlQFkgpT";
-const SCRIPT_SRC = "https://link.msgsndr.com/js/form_embed.js";
-const IFRAME_ID = "DFNuSebE1R1wRlQFkgpT_1765473793312";
+const CALENDLY_URL = "https://calendly.com/mo-svrea/30min";
+const CALENDLY_WIDGET_CSS = "https://assets.calendly.com/assets/external/widget.css";
+const CALENDLY_WIDGET_JS = "https://assets.calendly.com/assets/external/widget.js";
 
+/**
+ * Schedule page — replaced GHL iframe/widget with Calendly inline widget.
+ */
 export default function Schedule(): JSX.Element {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogType, setDialogType] = useState<"hire" | "candidate">("hire");
   const [selectedPack, setSelectedPack] = useState<string | undefined>(undefined);
 
-  // iframe lazy-loading
+  // iframe/widget lazy-loading
   const wrapperRef = useRef<HTMLDivElement | null>(null);
-  const [shouldLoadIframe, setShouldLoadIframe] = useState(false);
+  const [shouldLoadWidget, setShouldLoadWidget] = useState(false);
 
   // Handlers for the decorative sidebars (match Home)
   const handleHireTalent = (packId?: string) => {
@@ -28,29 +31,67 @@ export default function Schedule(): JSX.Element {
     setDialogOpen(true);
   };
 
-  // Inject GHL script once we are about to load the iframe
+  // Inject Calendly CSS + script once we are about to load the widget, and init it if possible.
   useEffect(() => {
-    if (!shouldLoadIframe) return;
-    if (!document.querySelector(`script[src="${SCRIPT_SRC}"]`)) {
+    if (!shouldLoadWidget) return;
+
+    // inject CSS if not present
+    if (!document.querySelector(`link[href="${CALENDLY_WIDGET_CSS}"]`)) {
+      const link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.href = CALENDLY_WIDGET_CSS;
+      link.type = "text/css";
+      link.id = "calendly-widget-css";
+      document.head.appendChild(link);
+    }
+
+    // helper to init Calendly inline widget if Calendly is loaded
+    const tryInit = () => {
+      // `Calendly.initInlineWidget` is provided by the widget.js script
+      if ((window as any).Calendly?.initInlineWidget) {
+        const parent = document.querySelector(".calendly-inline-widget");
+        if (parent) {
+          try {
+            (window as any).Calendly.initInlineWidget({
+              url: CALENDLY_URL,
+              parentElement: parent,
+            });
+          } catch (err) {
+            // ignore; script might initialize automatically
+            // console.debug("Calendly init failed:", err);
+          }
+        }
+      }
+    };
+
+    // inject script if not present
+    if (!document.querySelector(`script[src="${CALENDLY_WIDGET_JS}"]`)) {
       const s = document.createElement("script");
-      s.src = SCRIPT_SRC;
+      s.src = CALENDLY_WIDGET_JS;
       s.async = true;
       s.type = "text/javascript";
-      s.id = "ghl-booking-script";
+      s.id = "calendly-widget-script";
+      // On load, try to initialize the inline widget
+      s.onload = () => {
+        tryInit();
+      };
       document.body.appendChild(s);
+    } else {
+      // If the script already exists, attempt init (use small delay in case the script just finished loading)
+      setTimeout(tryInit, 250);
     }
-  }, [shouldLoadIframe]);
+  }, [shouldLoadWidget]);
 
-  // IntersectionObserver to set shouldLoadIframe when the scheduler wrapper is near the viewport
+  // IntersectionObserver to set shouldLoadWidget when the scheduler wrapper is near the viewport
   useEffect(() => {
     if (!wrapperRef.current) return;
-    if (shouldLoadIframe) return;
+    if (shouldLoadWidget) return;
 
     let obs: IntersectionObserver | null = new IntersectionObserver(
       (entries) => {
         for (const e of entries) {
           if (e.isIntersecting) {
-            setShouldLoadIframe(true);
+            setShouldLoadWidget(true);
             obs?.disconnect();
             obs = null;
             break;
@@ -84,32 +125,17 @@ export default function Schedule(): JSX.Element {
         </div>
 
         <div className="max-w-full mx-auto">
-          {/* Removed overflow-hidden so the page can scroll if the iframe/content is taller on mobile */}
+          {/* Removed overflow-hidden so the page can scroll if the widget/content is taller on mobile */}
           <div className="border rounded-2xl bg-white shadow-sm">
             {/* wrapper observed by IntersectionObserver.
                 Use min-h so it can expand better on small screens */}
             <div ref={wrapperRef} className="relative w-full min-h-[600px] md:min-h-[850px] lg:min-h-[1000px]">
-              {shouldLoadIframe ? (
-                <iframe
-                  title="Vita Talent - Schedule a discovery call"
-                  id={IFRAME_ID}
-                  src={IFRAME_SRC}
-                  loading="lazy"
-                  /* Allow iframe scrolling and enable smooth touch scrolling on iOS */
-                  scrolling="yes"
-                  style={{
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    width: "100%",
-                    height: "100%",
-                    border: "none",
-                    overflow: "auto",
-                    WebkitOverflowScrolling: "touch",
-                  }}
-                  className="w-full h-full"
-                  /* allowFullScreen can help some embed UIs */
-                  allowFullScreen
+              {shouldLoadWidget ? (
+                // Calendly inline widget — positioned to fill the wrapper (like the old iframe)
+                <div
+                  className="calendly-inline-widget absolute top-0 left-0 w-full h-full"
+                  data-url={CALENDLY_URL}
+                  style={{ minWidth: 320 }}
                 />
               ) : (
                 <div className="absolute inset-0 flex items-center justify-center">
@@ -121,7 +147,7 @@ export default function Schedule(): JSX.Element {
 
           <p className="text-center text-sm text-slate-500 mt-4">
             If the Calendar doesn't load,{" "}
-            <a href={IFRAME_SRC} target="_blank" rel="noopener noreferrer" className="underline">
+            <a href={CALENDLY_URL} target="_blank" rel="noopener noreferrer" className="underline">
               open the Calendar in a new tab
             </a>
             .
