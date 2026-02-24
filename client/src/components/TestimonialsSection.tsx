@@ -1,11 +1,10 @@
 // client/src/components/TestimonialsSection.tsx
-import { Card } from "@/components/ui/card";
+import React, { useEffect, useRef, useState } from "react";
 import { Play, X, ChevronLeft, ChevronRight } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 /* =========================
-   VIDEO ASSETS (the same assets you already have)
+   Video assets (your existing imports)
    ========================= */
 import videoKevin from "@assets/Kevin's Testimonial.mp4";
 import videoSam from "@assets/Sam's Testimonial .mov";
@@ -25,9 +24,8 @@ import videoMohamed from "@assets/Mohamed Sobhy.mp4";
 import videoNina from "@assets/Nina Hadidi - Acquisition Manager.mp4";
 
 /* =========================
-   DATA
+   Data
    ========================= */
-
 const clientVideoTestimonials = [
   { id: 1, name: "Kevin", role: "White Stone", src: videoKevin },
   { id: 2, name: "Sam", role: "Private Realtor", src: videoSam },
@@ -74,24 +72,19 @@ const candidateTestimonials = [
 ];
 
 /* =========================
-   Marquee CSS (for written testimonials)
+   Minimal marquee CSS for written testimonials (kept inline)
    ========================= */
 const marqueeCss = `
-:root {
-  --testimonial-tile-width: 300px;
-  --marquee-gap: 1rem;
-  --marquee-duration: 96s;
-}
+:root { --testimonial-tile-width: 300px; --marquee-gap: 1rem; --marquee-duration: 96s; }
 .testimonials-marquee { overflow: hidden; width: 100%; position: relative; }
 .testimonials-marquee__track { display:flex; gap:var(--marquee-gap); align-items:stretch; width:max-content; animation:marquee linear var(--marquee-duration) infinite; overflow:visible; }
 .testimonials-marquee__item { flex: 0 0 var(--testimonial-tile-width); display:block; }
 @keyframes marquee { from { transform: translateX(0);} to { transform: translateX(-50%);} }
-.testimonials-marquee:hover .testimonials-marquee__track { animation-play-state: paused; }
-@media (max-width:640px) { :root { --testimonial-tile-width:260px; } }
 `;
 
 /* =========================
-   VideoThumbnail (explicit px heights + forced object-fit)
+   VideoThumbnail - captures a frame, falls back to showing the video
+   (keeps a fixed px height so global rules can't blow it up)
    ========================= */
 function VideoThumbnail({ src, alt }: { src: string; alt?: string }) {
   const hiddenVideoRef = useRef<HTMLVideoElement | null>(null);
@@ -106,31 +99,21 @@ function VideoThumbnail({ src, alt }: { src: string; alt?: string }) {
       try {
         const t = Math.min(0.05, (v.duration && v.duration / 10) || 0.05);
         await new Promise<void>((resolve) => {
-          const onSeeked = () => {
-            v.removeEventListener("seeked", onSeeked);
-            resolve();
-          };
+          const onSeeked = () => { v.removeEventListener("seeked", onSeeked); resolve(); };
           v.addEventListener("seeked", onSeeked);
-          try {
-            v.currentTime = t;
-          } catch {
-            v.removeEventListener("seeked", onSeeked);
-            resolve();
-          }
+          try { v.currentTime = t; } catch { v.removeEventListener("seeked", onSeeked); resolve(); }
         });
-
         try { v.pause(); } catch {}
         const width = v.videoWidth || 640;
         const height = v.videoHeight || Math.round((width * 9) / 16);
         const canvas = document.createElement("canvas");
-        canvas.width = width;
-        canvas.height = height;
+        canvas.width = width; canvas.height = height;
         const ctx = canvas.getContext("2d");
         if (!ctx) throw new Error("No canvas context");
         ctx.drawImage(v, 0, 0, width, height);
         const dataUrl = canvas.toDataURL("image/png");
         if (mounted) setThumbUrl(dataUrl);
-      } catch (err) {
+      } catch {
         if (mounted) setCaptureFailed(true);
       }
     }
@@ -150,17 +133,16 @@ function VideoThumbnail({ src, alt }: { src: string; alt?: string }) {
     };
   }, [src]);
 
-  // force a fixed media height that cannot be overridden by global CSS
+  // hard pixel heights that cannot be overridden by global CSS
   const mediaBoxStyle: React.CSSProperties = {
     width: "100%",
-    height: 360, // px - change this value if you want smaller/larger
+    height: 360,
     minHeight: 360,
     maxHeight: 360,
     overflow: "hidden",
     background: "#f6f6f6",
     position: "relative",
   };
-
   const mediaInnerStyle: React.CSSProperties = {
     width: "100%",
     height: "100%",
@@ -183,10 +165,9 @@ function VideoThumbnail({ src, alt }: { src: string; alt?: string }) {
             style={{ ...mediaInnerStyle, display: captureFailed ? "block" : "none" }}
             aria-hidden={!captureFailed}
           />
-
           {!captureFailed && (
             <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <div style={{ borderRadius: "999px", background: "rgba(6, 95, 70, 0.95)", padding: 10, boxShadow: "0 6px 16px rgba(0,0,0,0.12)" }}>
+              <div style={{ borderRadius: 999, background: "rgba(6,95,70,0.95)", padding: 10, boxShadow: "0 6px 16px rgba(0,0,0,0.12)" }}>
                 <Play style={{ width: 20, height: 20, color: "white" }} />
               </div>
             </div>
@@ -198,34 +179,29 @@ function VideoThumbnail({ src, alt }: { src: string; alt?: string }) {
 }
 
 /* =========================
-   WrittenTestimonialCard
+   Written Testimonial Card + Marquee
    ========================= */
 function WrittenTestimonialCard({ testimonial }: { testimonial: { name: string; role: string; quote: string } }) {
   return (
-    <Card className="p-4 h-full flex flex-col justify-between rounded-lg shadow-sm bg-gradient-to-r from-green-50/80 to-white border border-green-100">
-      <div><p className="text-sm text-foreground/90 line-clamp-4">{testimonial.quote}</p></div>
-      <div className="mt-4 border-t-2 border-green-200 pt-3">
-        <p className="font-semibold text-sm text-foreground">{testimonial.name}</p>
-        <p className="text-xs text-muted-foreground">{testimonial.role}</p>
+    <div style={{ padding: 16, borderRadius: 8, background: "linear-gradient(90deg, rgba(244,250,248,0.98), white)", border: "1px solid rgba(6,95,70,0.06)" }}>
+      <p style={{ fontSize: 14, color: "rgba(0,0,0,0.8)" }}>{testimonial.quote}</p>
+      <div style={{ marginTop: 12, borderTop: "1px solid rgba(6,95,70,0.06)", paddingTop: 12 }}>
+        <div style={{ fontWeight: 700 }}>{testimonial.name}</div>
+        <div style={{ fontSize: 12, color: "#6b7280" }}>{testimonial.role}</div>
       </div>
-    </Card>
+    </div>
   );
 }
 
-/* =========================
-   TestimonialsMarquee
-   ========================= */
-function TestimonialsMarquee({ items, ariaLabel }: { items: { name: string; role: string; quote: string }[]; ariaLabel?: string; }) {
+function TestimonialsMarquee({ items }: { items: { name: string; role: string; quote: string }[] }) {
   const duplicated = [...items, ...items];
   return (
-    <div className="relative testimonials-marquee" role="region" aria-label={ariaLabel ?? "Testimonials"}>
+    <div style={{ position: "relative", width: "100%" }} role="region" aria-label="Testimonials">
       <style>{marqueeCss}</style>
-      <div className="testimonials-marquee__track" aria-hidden="false">
+      <div className="testimonials-marquee__track" style={{ display: "flex", gap: "1rem" }}>
         {duplicated.map((item, idx) => (
-          <div key={idx} className="testimonials-marquee__item p-2 h-full">
-            <div className="transform-gpu transition-transform duration-300 will-change-transform hover:scale-125 hover:z-30">
-              <WrittenTestimonialCard testimonial={item} />
-            </div>
+          <div key={idx} style={{ flex: "0 0 300px", padding: 8 }}>
+            <WrittenTestimonialCard testimonial={item} />
           </div>
         ))}
       </div>
@@ -234,15 +210,14 @@ function TestimonialsMarquee({ items, ariaLabel }: { items: { name: string; role
 }
 
 /* =========================
-   VIDEO CAROUSEL (pixel-based sizing)
+   VideoCarousel (pixel-based sizing + explicit card borders)
    ========================= */
-function VideoCarousel({ videos, title, onPlay }: { videos: { id: number; name: string; role: string; src: string }[]; title?: string; onPlay: (src: string) => void; }) {
+function VideoCarousel({ videos, onPlay }: { videos: { id: number; name: string; role: string; src: string }[]; onPlay: (src: string) => void; }) {
   const [startIndex, setStartIndex] = useState(0);
   const [itemsPerView, setItemsPerView] = useState(3);
   const viewportRef = useRef<HTMLDivElement | null>(null);
   const [viewportWidth, setViewportWidth] = useState(0);
 
-  // update itemsPerView and measure viewport
   useEffect(() => {
     function update() {
       let newItemsPerView = 3;
@@ -264,7 +239,6 @@ function VideoCarousel({ videos, title, onPlay }: { videos: { id: number; name: 
     return () => window.removeEventListener("resize", update);
   }, [videos.length]);
 
-  // measure once more if viewportRef changes
   useEffect(() => {
     if (!viewportRef.current) return;
     const ro = new ResizeObserver(() => {
@@ -276,79 +250,58 @@ function VideoCarousel({ videos, title, onPlay }: { videos: { id: number; name: 
 
   const maxStart = Math.max(0, videos.length - itemsPerView);
   const itemWidth = Math.max(0, Math.floor((viewportWidth || window.innerWidth) / Math.max(1, itemsPerView)));
-
   const goPrev = () => setStartIndex(s => (s <= 0 ? maxStart : s - 1));
   const goNext = () => setStartIndex(s => (s >= maxStart ? 0 : s + 1));
 
-  // keyboard
-  useEffect(() => {
-    function onKey(e: KeyboardEvent) { if (e.key === "ArrowLeft") goPrev(); if (e.key === "ArrowRight") goNext(); }
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  });
-
-  // center item index for emphasis
-  const centerOffset = Math.floor(itemsPerView / 2);
-  const centerIndex = Math.min(videos.length - 1, startIndex + centerOffset);
-
-  // fixed card height to match Kevin/Nick
-  const cardOuterStyle: React.CSSProperties = {
+  // explicit card style (guarantees border + radius)
+  const cardStyle: React.CSSProperties = {
     height: 540,
     maxHeight: 540,
     display: "flex",
     flexDirection: "column",
+    border: "1px solid rgba(229,231,235,1)", // subtle light gray border
+    borderRadius: 8,
+    overflow: "hidden",
+    background: "#ffffff",
+    boxSizing: "border-box",
   };
 
   return (
     <div>
-      {title && <h3 className="text-base font-semibold mb-4">{title}</h3>}
-      <div className="flex items-center gap-3">
-        <button aria-label="Previous" onClick={goPrev} className="p-2 rounded-full bg-white border shadow-sm hover:bg-gray-50">
-          <ChevronLeft className="w-5 h-5" />
+      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+        <button aria-label="Previous" onClick={goPrev} style={{ padding: 8, borderRadius: 999, background: "white", border: "1px solid rgba(0,0,0,0.06)" }}>
+          <ChevronLeft style={{ width: 18, height: 18 }} />
         </button>
 
-        <div ref={viewportRef} className="overflow-hidden w-full">
-          {/* track width = itemWidth * videos.length, translate = startIndex * itemWidth */}
-          <div
-            className="flex"
-            style={{
-              width: `${itemWidth * videos.length}px`,
-              transform: `translateX(-${startIndex * itemWidth}px)`,
-              transition: "transform 300ms ease",
-            }}
-          >
-            {videos.map((v, idx) => {
-              const isCenter = idx === centerIndex;
-              return (
-                <div key={v.id} style={{ flex: `0 0 ${itemWidth}px`, maxWidth: `${itemWidth}px` }} className="px-2">
-                  <article style={cardOuterStyle} className="bg-white rounded-lg overflow-hidden border border-gray-100">
-                    <div style={{ width: "100%", height: 360, minHeight: 360, maxHeight: 360, overflow: "hidden", borderTopLeftRadius: 8, borderTopRightRadius: 8, background: "#f6f6f6" }}>
-                      <div style={{ width: "100%", height: "100%" }}>
-                        <VideoThumbnail src={v.src} alt={v.name} />
-                        <div aria-hidden style={{ pointerEvents: "none", position: "absolute", left: "50%", top: "50%", transform: "translate(-50%, -50%)", width: 44, height: 44, borderRadius: 999, background: "rgba(6,95,70,0.95)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 6px 16px rgba(0,0,0,0.12)", border: "4px solid rgba(255,255,255,0.06)" }}>
-                          <Play style={{ width: 18, height: 18, color: "white" }} />
-                        </div>
-                      </div>
+        <div ref={viewportRef} style={{ overflow: "hidden", width: "100%" }}>
+          <div style={{ display: "flex", width: `${itemWidth * videos.length}px`, transform: `translateX(-${startIndex * itemWidth}px)`, transition: "transform 300ms ease" }}>
+            {videos.map(v => (
+              <div key={v.id} style={{ flex: `0 0 ${itemWidth}px`, maxWidth: `${itemWidth}px`, boxSizing: "border-box", padding: 12 }}>
+                <article style={cardStyle}>
+                  <div style={{ width: "100%", height: 360, minHeight: 360, maxHeight: 360, overflow: "hidden", position: "relative", background: "#f6f6f6" }}>
+                    <VideoThumbnail src={v.src} alt={v.name} />
+                    <div aria-hidden style={{ pointerEvents: "none", position: "absolute", left: "50%", top: "50%", transform: "translate(-50%, -50%)", width: 44, height: 44, borderRadius: 999, background: "rgba(6,95,70,0.95)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 6px 16px rgba(0,0,0,0.12)", border: "4px solid rgba(255,255,255,0.06)" }}>
+                      <Play style={{ width: 18, height: 18, color: "white" }} />
                     </div>
+                  </div>
 
-                    <div style={{ padding: 16, flex: 1, overflow: "auto" }}>
-                      <div style={{ fontWeight: 700, fontSize: 14 }}>{v.name}</div>
-                      <div style={{ color: "#6b7280", fontSize: 12, marginTop: 6 }}>{v.role}</div>
-                      <div style={{ marginTop: 12 }}>
-                        <button onClick={() => onPlay(v.src)} style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "8px 12px", background: "#0b8d57", color: "white", borderRadius: 6, fontSize: 13 }}>
-                          <Play style={{ width: 14, height: 14 }} /> Play
-                        </button>
-                      </div>
+                  <div style={{ padding: 16, flex: 1, overflow: "auto" }}>
+                    <div style={{ fontWeight: 700, fontSize: 14 }}>{v.name}</div>
+                    <div style={{ color: "#6b7280", fontSize: 12, marginTop: 6 }}>{v.role}</div>
+                    <div style={{ marginTop: 12 }}>
+                      <button onClick={() => onPlay(v.src)} style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "8px 12px", background: "#0b8d57", color: "white", borderRadius: 6, fontSize: 13 }}>
+                        <Play style={{ width: 14, height: 14 }} /> Play
+                      </button>
                     </div>
-                  </article>
-                </div>
-              );
-            })}
+                  </div>
+                </article>
+              </div>
+            ))}
           </div>
         </div>
 
-        <button aria-label="Next" onClick={goNext} className="p-2 rounded-full bg-white border shadow-sm hover:bg-gray-50">
-          <ChevronRight className="w-5 h-5" />
+        <button aria-label="Next" onClick={goNext} style={{ padding: 8, borderRadius: 999, background: "white", border: "1px solid rgba(0,0,0,0.06)" }}>
+          <ChevronRight style={{ width: 18, height: 18 }} />
         </button>
       </div>
     </div>
@@ -356,37 +309,37 @@ function VideoCarousel({ videos, title, onPlay }: { videos: { id: number; name: 
 }
 
 /* =========================
-   Main TestimonialsSection (renders both carousels and marquees)
+   Main component
    ========================= */
 export default function TestimonialsSection() {
   const [playingSrc, setPlayingSrc] = useState<string | null>(null);
 
   return (
-    <section style={{ padding: "40px 24px" }}>
+    <section style={{ padding: "40px 24px", boxSizing: "border-box" }}>
       <div style={{ marginBottom: 56 }}>
         <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 18 }}>Client Video Testimonials</h2>
-        <VideoCarousel videos={clientVideoTestimonials} onPlay={(src) => setPlayingSrc(src)} />
+        <VideoCarousel videos={clientVideoTestimonials} onPlay={src => setPlayingSrc(src)} />
       </div>
 
       <div style={{ marginBottom: 56 }}>
         <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 18 }}>Candidate Video Testimonials</h2>
-        <VideoCarousel videos={candidateVideoTestimonials} onPlay={(src) => setPlayingSrc(src)} />
+        <VideoCarousel videos={candidateVideoTestimonials} onPlay={src => setPlayingSrc(src)} />
       </div>
 
       <div style={{ marginBottom: 32 }}>
         <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 18 }}>Client Testimonials</h2>
-        <TestimonialsMarquee items={clientWrittenTestimonials} ariaLabel="Client testimonials" />
+        <TestimonialsMarquee items={clientWrittenTestimonials} />
       </div>
 
       <div>
         <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 18 }}>Candidate Testimonials</h2>
-        <TestimonialsMarquee items={candidateTestimonials} ariaLabel="Candidate testimonials" />
+        <TestimonialsMarquee items={candidateTestimonials} />
       </div>
 
       <AnimatePresence>
         {playingSrc && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} style={{ position: "fixed", inset: 0, zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.6)", padding: 16 }} onClick={() => setPlayingSrc(null)}>
-            <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }} style={{ width: "100%", maxWidth: 900, background: "white", borderRadius: 8, overflow: "hidden" }} onClick={(e) => e.stopPropagation()}>
+            <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }} style={{ width: "100%", maxWidth: 900, background: "white", borderRadius: 8, overflow: "hidden" }} onClick={e => e.stopPropagation()}>
               <div style={{ position: "relative" }}>
                 <video src={playingSrc || undefined} controls autoPlay style={{ width: "100%", height: "60vh", objectFit: "cover", background: "black" }} />
                 <button aria-label="Close" onClick={() => setPlayingSrc(null)} style={{ position: "absolute", top: 12, right: 12, background: "white", borderRadius: 999, padding: 8, boxShadow: "0 4px 12px rgba(0,0,0,0.12)" }}>
