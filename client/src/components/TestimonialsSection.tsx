@@ -3,10 +3,10 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Play, Star, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { SiTrustpilot, SiGoogle } from "react-icons/si";
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useLayoutEffect } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 
-/* (keep your existing imports — update paths if necessary) */
+/* keep all your existing video imports (paths unchanged) */
 import videoXimena from "@assets/WhatsApp Video 2025-11-25 at 10.45.54.mp4";
 import videoHesham from "@assets/WhatsApp Video 2025-11-25 at 10.46.13.mp4";
 import videoSherif from "@assets/WhatsApp Video 2025-11-25 at 10.47.09.mp4";
@@ -23,7 +23,7 @@ import videoMohamed from "@assets/Mohamed Sobhy.mp4";
 import videoNina from "@assets/Nina Hadidi - Acquisition Manager.mp4";
 import videoJoshPierce from "@assets/Josh Pierce - CEO of Higher Ground Land.mp4";
 
-/** VideoThumbnail (unchanged) */
+/** VideoThumbnail (unchanged implementation) */
 function VideoThumbnail({ src, alt }: { src: string; alt?: string }) {
   const [thumb, setThumb] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -133,7 +133,7 @@ function VideoThumbnail({ src, alt }: { src: string; alt?: string }) {
   );
 }
 
-/* Data arrays (6 client videos for carousel) */
+/* Data arrays (6 client videos) */
 const clientVideoTestimonials = [
   { id: 1, name: "Kevin", role: "White Stone", src: videoKevin },
   { id: 2, name: "Sam", role: "Private Realtor", src: videoSam },
@@ -143,7 +143,7 @@ const clientVideoTestimonials = [
   { id: 6, name: "Josh Pierce", role: "CEO of Higher Ground Land", src: videoJoshPierce },
 ];
 
-/* Candidate videos + written testimonials left unchanged (kept from your file) */
+/* Candidate videos and written testimonials are unchanged from your file */
 const candidateVideoTestimonials = [
   { id: 1, name: "Ximena Jimenez", role: "Lead Manager", src: videoXimena },
   { id: 2, name: "Sherif Daoud", role: "Acquisition Manager", src: videoSherif },
@@ -203,7 +203,7 @@ function chunkRows<T>(arr: T[], size: number) {
   return rows;
 }
 
-/* ---------- VideoCarousel: book-like shuffling carousel for 6 client videos ---------- */
+/* ---------- VideoCarousel (updated: horizontal-only motion + arrow positioning) ---------- */
 function VideoCarousel({
   videos,
   onOpen,
@@ -217,7 +217,12 @@ function VideoCarousel({
   const [isHovered, setIsHovered] = useState(false);
   const length = videos.length;
 
-  // keyboard navigation
+  const carouselRef = useRef<HTMLDivElement | null>(null);
+  const prevRef = useRef<HTMLDivElement | null>(null);
+  const nextRef = useRef<HTMLDivElement | null>(null);
+  const [arrowPos, setArrowPos] = useState<{ left?: number; right?: number } | null>(null);
+
+  // Keyboard nav
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "ArrowLeft") handlePrev();
@@ -239,39 +244,67 @@ function VideoCarousel({
     setIndex((i) => clamp(i - 1));
   }, [length]);
 
-  // drag threshold (px)
+  // compute arrow positions so they sit just outside the peek cards
+  useLayoutEffect(() => {
+    function recompute() {
+      const carouselEl = carouselRef.current;
+      const prevEl = prevRef.current;
+      const nextEl = nextRef.current;
+      if (!carouselEl) {
+        setArrowPos(null);
+        return;
+      }
+      const cRect = carouselEl.getBoundingClientRect();
+      // fallback offsets if prev/next not visible (mobile)
+      let left = 24; // default fallback
+      let right = 24;
+      if (prevEl) {
+        const pRect = prevEl.getBoundingClientRect();
+        // place arrow left to prev's left edge with 12px gap
+        left = Math.max(8, pRect.left - cRect.left - 40);
+      }
+      if (nextEl) {
+        const nRect = nextEl.getBoundingClientRect();
+        // place arrow just right of next's right edge with 12px gap
+        right = Math.max(8, cRect.right - nRect.right - 40);
+      }
+      setArrowPos({ left, right });
+    }
+
+    recompute();
+    window.addEventListener("resize", recompute);
+    window.addEventListener("orientationchange", recompute);
+    return () => {
+      window.removeEventListener("resize", recompute);
+      window.removeEventListener("orientationchange", recompute);
+    };
+  }, [index]);
+
+  // drag threshold px
   const dragThreshold = 80;
 
-  // Motion variants: use smoother spring transitions
+  // Center motion: only X and opacity (no vertical motion, no rotate)
   const centerVariants = {
     enter: (d: number) =>
       shouldReduceMotion
-        ? { opacity: 1, x: 0, rotate: 0, scale: 1 }
-        : { opacity: 0, x: d > 0 ? 260 : -260, rotate: d > 0 ? -10 : 10, scale: 0.96 },
+        ? { opacity: 1, x: 0, scale: 1 }
+        : { opacity: 0, x: d > 0 ? 260 : -260, scale: 0.98 },
     center: {
       opacity: 1,
       x: 0,
-      rotate: 0,
       scale: 1,
       transition: shouldReduceMotion
         ? { duration: 0 }
-        : { type: "spring", stiffness: 260, damping: 28, mass: 0.9 },
+        : { type: "spring", stiffness: 220, damping: 28, mass: 0.8 },
     },
     exit: (d: number) =>
       shouldReduceMotion
         ? { opacity: 0 }
-        : { opacity: 0, x: d > 0 ? -260 : 260, rotate: d > 0 ? 10 : -10, scale: 0.96, transition: { type: "spring", stiffness: 200, damping: 24 } },
+        : { opacity: 0, x: d > 0 ? -260 : 260, scale: 0.98, transition: { type: "spring", stiffness: 200, damping: 26 } },
   };
 
-  // small side card style (left / right)
-  const sideStyle = {
-    width: "min(420px, 40vw)",
-  };
-
-  // center card max width
-  const centerStyle = {
-    width: "min(680px, 80vw)",
-  };
+  const sideStyle = { width: "min(420px, 40vw)" };
+  const centerStyle = { width: "min(680px, 80vw)" };
 
   const prevIndex = clamp(index - 1);
   const nextIndex = clamp(index + 1);
@@ -279,12 +312,15 @@ function VideoCarousel({
   return (
     <div className="w-full flex flex-col items-center">
       <div
+        ref={carouselRef}
         className="relative w-full flex items-center justify-center"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
+        style={{ minHeight: 260 }}
       >
-        {/* Left peek (previous) — lower z-index so it sits behind */}
+        {/* Left peek (previous) - behind center (lower z) */}
         <motion.div
+          ref={prevRef}
           className="absolute left-4 top-1/2 -translate-y-1/2 hidden md:block z-10"
           initial={{ opacity: 0.95 }}
           animate={{ opacity: 1 }}
@@ -310,89 +346,60 @@ function VideoCarousel({
           </Card>
         </motion.div>
 
-        {/* Center animated card (ensure it sits on top with z-50) */}
+        {/* Center - always higher z so it sits above the peeks */}
         <div className="mx-6 md:mx-0 relative z-50" style={centerStyle}>
-          <div className="relative">
-            <AnimatePresence custom={direction} initial={false}>
-              <motion.div
-                key={videos[index].id}
-                custom={direction}
-                variants={centerVariants}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                transition={{ duration: shouldReduceMotion ? 0 : 0.6, ease: "easeOut" }}
-                drag="x"
-                dragConstraints={{ left: 0, right: 0 }}
-                dragElastic={0.16}
-                onDragEnd={(e, info) => {
-                  if (info.offset.x > dragThreshold) {
-                    handlePrev();
-                  } else if (info.offset.x < -dragThreshold) {
-                    handleNext();
-                  }
-                }}
-                className="cursor-grab"
-                layout
-                layoutId={`card-${videos[index].id}`}
-                style={centerStyle}
+          <AnimatePresence custom={direction} initial={false}>
+            <motion.div
+              key={videos[index].id}
+              custom={direction}
+              variants={centerVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ duration: shouldReduceMotion ? 0 : 0.55, ease: "easeOut" }}
+              drag="x"
+              dragConstraints={{ left: 0, right: 0 }}
+              dragElastic={0.16}
+              onDragEnd={(e, info) => {
+                if (info.offset.x > dragThreshold) {
+                  handlePrev();
+                } else if (info.offset.x < -dragThreshold) {
+                  handleNext();
+                }
+              }}
+              className="cursor-grab"
+              style={centerStyle}
+            >
+              <Card
+                onClick={() => onOpen(videos[index].src)}
+                className="relative overflow-hidden hover-elevate cursor-pointer"
+                aria-label={`Play testimonial from ${videos[index].name}`}
               >
-                <Card
-                  onClick={() => onOpen(videos[index].src)}
-                  className="relative overflow-hidden hover-elevate cursor-pointer"
-                  aria-label={`Play testimonial from ${videos[index].name}`}
-                >
-                  <div className="aspect-video bg-muted relative">
-                    <VideoThumbnail src={videos[index].src} alt={videos[index].name} />
-                    <div className="absolute inset-0 bg-background/60 flex items-center justify-center pointer-events-none">
-                      <motion.div
-                        className="w-16 h-16 rounded-full bg-primary text-primary-foreground flex items-center justify-center"
-                        initial={{ scale: 1 }}
-                        whileHover={{ scale: 1.08 }}
-                        transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                      >
-                        <Play className="w-8 h-8 ml-1" fill="currentColor" />
-                      </motion.div>
-                    </div>
+                <div className="aspect-video bg-muted relative">
+                  <VideoThumbnail src={videos[index].src} alt={videos[index].name} />
+                  <div className="absolute inset-0 bg-background/60 flex items-center justify-center pointer-events-none">
+                    <motion.div
+                      className="w-16 h-16 rounded-full bg-primary text-primary-foreground flex items-center justify-center"
+                      initial={{ scale: 1 }}
+                      whileHover={{ scale: 1.08 }}
+                      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                    >
+                      <Play className="w-8 h-8 ml-1" fill="currentColor" />
+                    </motion.div>
                   </div>
-                  <div className="p-4">
-                    <p className="font-bold text-foreground text-lg">{videos[index].name}</p>
-                    <p className="text-sm font-medium text-muted-foreground">{videos[index].role}</p>
-                  </div>
-                </Card>
-              </motion.div>
-            </AnimatePresence>
-
-            {/* left arrow (visible on all sizes as small button) */}
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                handlePrev();
-              }}
-              aria-label="Previous"
-              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 rounded-full bg-background/90 shadow-lg p-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
-              style={{ zIndex: 60 }}
-            >
-              <ChevronLeft className="w-6 h-6 text-foreground" />
-            </button>
-
-            {/* right arrow */}
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                handleNext();
-              }}
-              aria-label="Next"
-              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 rounded-full bg-background/90 shadow-lg p-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
-              style={{ zIndex: 60 }}
-            >
-              <ChevronRight className="w-6 h-6 text-foreground" />
-            </button>
-          </div>
+                </div>
+                <div className="p-4">
+                  <p className="font-bold text-foreground text-lg">{videos[index].name}</p>
+                  <p className="text-sm font-medium text-muted-foreground">{videos[index].role}</p>
+                </div>
+              </Card>
+            </motion.div>
+          </AnimatePresence>
         </div>
 
-        {/* Right peek (next) — lower z-index so it stays behind center */}
+        {/* Right peek (next) - behind center */}
         <motion.div
+          ref={nextRef}
           className="absolute right-4 top-1/2 -translate-y-1/2 hidden md:block z-10"
           initial={{ opacity: 0.95 }}
           animate={{ opacity: 1 }}
@@ -417,6 +424,41 @@ function VideoCarousel({
             </div>
           </Card>
         </motion.div>
+
+        {/* ARROWS: positioned outside the peeks using computed positions */}
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            handlePrev();
+          }}
+          aria-label="Previous"
+          className="absolute rounded-full bg-background/90 shadow-lg p-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+          style={{
+            zIndex: 60,
+            left: arrowPos ? `${Math.max(8, arrowPos.left)}px` : 8,
+            top: "50%",
+            transform: "translateY(-50%)",
+          }}
+        >
+          <ChevronLeft className="w-6 h-6 text-foreground" />
+        </button>
+
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            handleNext();
+          }}
+          aria-label="Next"
+          className="absolute rounded-full bg-background/90 shadow-lg p-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+          style={{
+            zIndex: 60,
+            right: arrowPos ? `${Math.max(8, arrowPos.right)}px` : 8,
+            top: "50%",
+            transform: "translateY(-50%)",
+          }}
+        >
+          <ChevronRight className="w-6 h-6 text-foreground" />
+        </button>
       </div>
 
       {/* Dots */}
@@ -438,7 +480,7 @@ function VideoCarousel({
   );
 }
 
-/* ---------- TestimonialsSection main component ---------- */
+/* ---------- TestimonialsSection main component (unchanged modal + rest) ---------- */
 export default function TestimonialsSection() {
   const [activeVideo, setActiveVideo] = useState<string | null>(null);
 
@@ -460,7 +502,7 @@ export default function TestimonialsSection() {
     };
   }, [activeVideo]);
 
-  // Prepare rows for candidates (unchanged)
+  // Candidate rows (unchanged)
   const candidateRows = chunkRows(candidateVideoTestimonials, 3);
 
   return (
@@ -474,11 +516,10 @@ export default function TestimonialsSection() {
           </p>
         </div>
 
-        {/* CLIENT: replaced grid with VideoCarousel */}
+        {/* CLIENT: VideoCarousel */}
         <div>
           <h3 className="text-2xl font-bold text-foreground mb-6 text-center">Client Testimonials</h3>
 
-          {/* VideoCarousel uses only the 6 client videos and opens the same modal */}
           <div className="mb-8">
             <VideoCarousel videos={clientVideoTestimonials} onOpen={(src) => setActiveVideo(src)} />
           </div>
@@ -502,13 +543,13 @@ export default function TestimonialsSection() {
           </div>
         </div>
 
-        {/* Candidate Testimonials: videos then written testimonials (unchanged) */}
+        {/* Candidate Testimonials (unchanged) */}
         <div className="space-y-12 mt-12">
           <div>
             <h3 className="text-2xl font-bold text-foreground mb-6 text-center">Candidate Testimonials</h3>
 
             <div className="mb-8 space-y-6">
-              {chunkRows(candidateVideoTestimonials, 3).map((row, rowIndex) => (
+              {candidateRows.map((row, rowIndex) => (
                 <div key={rowIndex} className={row.length === 3 ? "grid md:grid-cols-3 gap-6" : "flex justify-center"}>
                   <div className={row.length === 3 ? "" : "grid grid-cols-1 sm:grid-cols-2 gap-6 w-full max-w-4xl"}>
                     {row.map((video) => (
@@ -571,7 +612,6 @@ export default function TestimonialsSection() {
           <div
             className="relative w-full max-w-4xl mx-auto"
             onClick={(e) => {
-              // prevent overlay clicks from closing when interacting with video
               e.stopPropagation();
             }}
           >
