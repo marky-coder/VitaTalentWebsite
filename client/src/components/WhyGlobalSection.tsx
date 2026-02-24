@@ -77,6 +77,9 @@ export default function WhyGlobalSection() {
     },
   };
 
+  // small helper for consistent word spacing (replaces mr-2 + &nbsp;)
+  const wordStyle: React.CSSProperties = { display: "inline-block", marginRight: 6 };
+
   return (
     <section
       className="py-24 bg-gradient-to-br from-primary/15 via-primary/8 to-background"
@@ -117,7 +120,9 @@ export default function WhyGlobalSection() {
 
             {/* Short lead paragraph — word-by-word */}
             <motion.p
-              className="text-lg font-medium text-foreground leading-relaxed"
+              // tightened line-height to reduce vertical spacing
+              className="text-lg font-medium text-foreground"
+              style={{ lineHeight: 1.45 }}
               variants={wordContainer}
               aria-hidden={shouldReduceMotion ? false : true}
             >
@@ -132,12 +137,9 @@ export default function WhyGlobalSection() {
                   <motion.span
                     key={item.id}
                     variants={wordVariant}
-                    className="inline-block mr-2"
-                    style={{ display: "inline-block" }}
+                    style={wordStyle}
                   >
                     {item.w}
-                    {/* preserve space visually */}
-                    &nbsp;
                   </motion.span>
                 ))}
               </span>
@@ -145,7 +147,8 @@ export default function WhyGlobalSection() {
 
             {/* Longer paragraph — word-by-word */}
             <motion.p
-              className="text-lg font-medium text-muted-foreground leading-relaxed"
+              className="text-lg font-medium text-muted-foreground"
+              style={{ lineHeight: 1.45 }}
               variants={wordContainer}
               aria-hidden={shouldReduceMotion ? false : true}
             >
@@ -160,11 +163,9 @@ export default function WhyGlobalSection() {
                   <motion.span
                     key={item.id}
                     variants={wordVariant}
-                    className="inline-block mr-2"
-                    style={{ display: "inline-block" }}
+                    style={wordStyle}
                   >
                     {item.w}
-                    &nbsp;
                   </motion.span>
                 ))}
               </span>
