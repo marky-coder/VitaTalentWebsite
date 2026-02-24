@@ -236,7 +236,7 @@ function VideoThumbnail({ src, alt }: { src: string; alt?: string }) {
 
   // visible fallback video (paused on loadeddata so first frame is visible)
   return (
-    <div className="w-full h-56 md:h-64 lg:h-72 bg-gray-100 relative overflow-hidden rounded-t-md">
+    <div className="w-full h-40 md:h-44 lg:h-48 bg-gray-100 relative overflow-hidden rounded-t-md">
       <video
         ref={visibleVideoRef}
         src={src}
@@ -386,6 +386,15 @@ function VideoCarousel({
     return () => window.removeEventListener("keydown", onKey);
   }, [startIndex, itemsPerView, videos.length]);
 
+  // smaller center & side sizes for a more compact look
+  const sideStyle = {
+    width: "min(300px, 28vw)",
+  };
+
+  const centerStyle = {
+    width: "min(520px, 70vw)",
+  };
+
   return (
     <div className="mb-8">
       {title && <h3 className="text-lg font-semibold mb-4">{title}</h3>}
@@ -436,8 +445,8 @@ function VideoCarousel({
                     <div className="relative">
                       <VideoThumbnail src={item.src} alt={`${item.name} testimonial`} />
                       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                        <div className="rounded-full bg-green-700/90 text-white p-3 shadow-lg">
-                          <Play className="w-5 h-5" />
+                        <div className="rounded-full bg-green-700/90 text-white p-2 md:p-3 shadow-lg">
+                          <Play className="w-4 h-4 md:w-5 md:h-5" />
                         </div>
                       </div>
                     </div>
