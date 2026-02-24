@@ -512,10 +512,12 @@ export default function TestimonialsSection() {
         <div>
           <h3 className="text-2xl font-bold text-foreground mb-6 text-center">Client Testimonials</h3>
 
-          <div className="mb-8">
+          {/* *** IMPORTANT: testimonials-carousel wrapper added here to scope CSS changes *** */}
+          <div className="mb-8 testimonials-carousel">
             <VideoCarousel videos={clientVideoTestimonials} onOpen={(src) => setActiveVideo(src)} />
           </div>
 
+          {/* Written client testimonials (unchanged) */}
           <div className="grid md:grid-cols-3 gap-6">
             {writtenTestimonials.clients.map((testimonial, index) => (
               <Card key={index} className="p-6 bg-gradient-to-br from-card to-primary/12 border-primary/20" data-testid={`client-testimonial-${index}`}>
@@ -589,7 +591,7 @@ export default function TestimonialsSection() {
         </div>
       </div>
 
-      {/* Video modal / lightbox (unchanged) */}
+      {/* Video modal / lightbox */}
       {activeVideo && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4"
