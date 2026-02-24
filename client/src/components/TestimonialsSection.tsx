@@ -225,20 +225,20 @@ const writtenTestimonials = {
       quote: "They matched me with a company that perfectly aligns with my values and career goals.",
     },
 
-    // +6 new candidate testimonials (Philippines / India / Middle East / South Asia)
+    // +6 new candidate testimonials (Philippines / India / Pakistan / Bangladesh / Middle East)
     {
       name: "Arjun Patel",
-      role: "Virtual Assistant",
+      role: "Virtual Assistant (India)",
       quote: "Vita Talent connected me with a remote role where I could grow my skills and support a growing company.",
     },
     {
       name: "Priya Sharma",
-      role: "Customer Support Specialist",
+      role: "Customer Support Specialist (India)",
       quote: "The team helped me prepare and land a long-term remote position. Their support was fantastic.",
     },
     {
       name: "Miguel Reyes",
-      role: "E-commerce VA",
+      role: "E-commerce VA (Philippines)",
       quote: "I received clear guidance and a great match. Communication was fast and fair.",
     },
     {
@@ -248,12 +248,12 @@ const writtenTestimonials = {
     },
     {
       name: "Aisha Khan",
-      role: "Lead Generation Specialist",
+      role: "Lead Generation Specialist (Pakistan)",
       quote: "Vita Talent helped me find a role that suited my skills and provided ongoing coaching.",
     },
     {
       name: "Mohammad Rahman",
-      role: "Data Entry Specialist",
+      role: "Data Entry Specialist (Bangladesh)",
       quote: "Professional team, clear process, and I secured a steady remote contract through them.",
     },
   ],
@@ -268,12 +268,12 @@ function chunkRows<T>(arr: T[], size: number) {
 }
 
 /* Inline CSS for the testimonials marquee.
-   We intentionally mirror the existing ClientLogoMarquee approach (24s loop, leftwards).
+   Slowed the default to 48s (was 24s).
 */
 const testimonialsMarqueeCss = `
 .testimonials-marquee {
   --gap: 1.5rem;
-  --marquee-duration: 24s; /* same default as client logo marquee */
+  --marquee-duration: 48s; /* SLOWER: one loop = 48s */
   width: 100%;
   overflow: hidden;
   box-sizing: border-box;
@@ -291,7 +291,6 @@ const testimonialsMarqueeCss = `
   will-change: transform;
 }
 
-/* reverseable if data-direction="right" on the root */
 .testimonials-marquee[data-direction="right"] .testimonials-marquee__track {
   animation-direction: reverse;
 }
@@ -303,7 +302,6 @@ const testimonialsMarqueeCss = `
   justify-content: flex-start;
 }
 
-/* pause on hover to let users read */
 .testimonials-marquee__track:hover,
 .testimonials-marquee__track:focus-within {
   animation-play-state: paused;
@@ -311,10 +309,9 @@ const testimonialsMarqueeCss = `
 
 @keyframes testimonials-marquee {
   from { transform: translateX(0); }
-  to   { transform: translateX(-50%); } /* duplicated content means -50% loops */
+  to   { transform: translateX(-50%); }
 }
 
-/* Respect reduced motion */
 @media (prefers-reduced-motion: reduce) {
   .testimonials-marquee__track {
     animation: none;
@@ -354,9 +351,9 @@ const FilledStar = ({ className = "w-4 h-4 text-emerald-500" }: { className?: st
 /* TestimonialsMarquee component: duplicates items to create a seamless loop */
 function TestimonialsMarquee({
   items,
-  speed = 24,
+  speed = 48, // default longer = slower
   direction = "left",
-  itemWidth = "min(420px, 32vw)", // keeps three-ish cards visible on wide screens
+  itemWidth = "min(420px, 32vw)",
 }: {
   items: { name: string; role: string; quote: string }[];
   speed?: number;
@@ -364,7 +361,7 @@ function TestimonialsMarquee({
   itemWidth?: string;
 }) {
   if (!items || items.length === 0) return null;
-  const duplicated = [...items, ...items]; // duplicate for seamless scroll
+  const duplicated = [...items, ...items];
 
   return (
     <div
@@ -372,7 +369,6 @@ function TestimonialsMarquee({
       data-direction={direction}
       style={
         {
-          // expose CSS var for animation duration
           ["--marquee-duration" as any]: `${speed}s`,
         } as React.CSSProperties
       }
@@ -411,8 +407,7 @@ function VideoCarousel({
   const prevRef = useRef<HTMLDivElement | null>(null);
   const nextRef = useRef<HTMLDivElement | null>(null);
 
-  // We still measure the center content and set minHeight so the section below
-  // cannot be overlapped. But the center card is now in-flow (no vertical absolute centering).
+  // measure center height so we reserve vertical space; increased buffer to avoid overlap
   const centerWrapperRef = useRef<HTMLDivElement | null>(null);
   const centerContentRef = useRef<HTMLDivElement | null>(null);
 
@@ -440,7 +435,6 @@ function VideoCarousel({
     setIndex((i) => clamp(i - 1));
   }, [length]);
 
-  // reposition arrows so they sit just outside the peek cards
   useLayoutEffect(() => {
     function recompute() {
       const carouselEl = carouselRef.current;
@@ -482,12 +476,11 @@ function VideoCarousel({
       const el = centerContentRef.current ?? centerWrapperRef.current;
       const height = el ? (el as HTMLElement).offsetHeight : 0;
 
-      // Add a small buffer (shadows / spacing) so we never overlap the section below
-      const buffer = 28;
+      // Add a larger buffer so the center card and shadow cannot overlap below
+      const buffer = 80; // increased buffer to prevent overlap
       if (height && height > 0) {
         carouselEl.style.minHeight = `${Math.ceil(height + buffer)}px`;
       } else {
-        // fallback: reasonable height
         carouselEl.style.minHeight = `420px`;
       }
     }
@@ -694,9 +687,9 @@ export default function TestimonialsSection() {
             <VideoCarousel videos={clientVideoTestimonials} onOpen={(src) => setActiveVideo(src)} />
           </div>
 
-          {/* MARQUEE for client written testimonials (same direction & speed as logo marquee) */}
+          {/* MARQUEE for client written testimonials (slower: 48s loop) */}
           <div className="mb-8">
-            <TestimonialsMarquee items={writtenTestimonials.clients} speed={24} direction="left" itemWidth="min(420px, 32vw)" />
+            <TestimonialsMarquee items={writtenTestimonials.clients} speed={48} direction="left" itemWidth="min(420px, 32vw)" />
           </div>
         </div>
 
@@ -705,12 +698,13 @@ export default function TestimonialsSection() {
             <h3 className="text-2xl font-bold text-foreground mb-6 text-center">Candidate Testimonials</h3>
 
             <div className="mb-8">
-              <VideoCarousel videos={candidateVideoTestimonials.slice(0, 3)} onOpen={(src) => setActiveVideo(src)} />
+              {/* Show full candidate video list (fixed: previously was slice(0,3)) */}
+              <VideoCarousel videos={candidateVideoTestimonials} onOpen={(src) => setActiveVideo(src)} />
             </div>
 
             {/* MARQUEE for candidate written testimonials */}
             <div className="mb-8">
-              <TestimonialsMarquee items={writtenTestimonials.candidates} speed={24} direction="left" itemWidth="min(420px, 32vw)" />
+              <TestimonialsMarquee items={writtenTestimonials.candidates} speed={48} direction="left" itemWidth="min(420px, 32vw)" />
             </div>
           </div>
         </div>
