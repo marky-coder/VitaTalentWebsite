@@ -27,6 +27,7 @@ import videoNina from "@assets/Nina Hadidi - Acquisition Manager.mp4";
 /* =========================
    DATA
    ========================= */
+
 const clientVideoTestimonials = [
   { id: 1, name: "Kevin", role: "White Stone", src: videoKevin },
   { id: 2, name: "Sam", role: "Private Realtor", src: videoSam },
@@ -90,7 +91,7 @@ const marqueeCss = `
 `;
 
 /* =========================
-   VideoThumbnail (attempt capture frame -> fallback)
+   VideoThumbnail (explicit px heights + forced object-fit)
    ========================= */
 function VideoThumbnail({ src, alt }: { src: string; alt?: string }) {
   const hiddenVideoRef = useRef<HTMLVideoElement | null>(null);
@@ -105,15 +106,25 @@ function VideoThumbnail({ src, alt }: { src: string; alt?: string }) {
       try {
         const t = Math.min(0.05, (v.duration && v.duration / 10) || 0.05);
         await new Promise<void>((resolve) => {
-          const onSeeked = () => { v.removeEventListener("seeked", onSeeked); resolve(); };
+          const onSeeked = () => {
+            v.removeEventListener("seeked", onSeeked);
+            resolve();
+          };
           v.addEventListener("seeked", onSeeked);
-          try { v.currentTime = t; } catch { v.removeEventListener("seeked", onSeeked); resolve(); }
+          try {
+            v.currentTime = t;
+          } catch {
+            v.removeEventListener("seeked", onSeeked);
+            resolve();
+          }
         });
+
         try { v.pause(); } catch {}
         const width = v.videoWidth || 640;
         const height = v.videoHeight || Math.round((width * 9) / 16);
         const canvas = document.createElement("canvas");
-        canvas.width = width; canvas.height = height;
+        canvas.width = width;
+        canvas.height = height;
         const ctx = canvas.getContext("2d");
         if (!ctx) throw new Error("No canvas context");
         ctx.drawImage(v, 0, 0, width, height);
@@ -139,10 +150,28 @@ function VideoThumbnail({ src, alt }: { src: string; alt?: string }) {
     };
   }, [src]);
 
+  // force a fixed media height that cannot be overridden by global CSS
+  const mediaBoxStyle: React.CSSProperties = {
+    width: "100%",
+    height: 360, // px - change this value if you want smaller/larger
+    minHeight: 360,
+    maxHeight: 360,
+    overflow: "hidden",
+    background: "#f6f6f6",
+    position: "relative",
+  };
+
+  const mediaInnerStyle: React.CSSProperties = {
+    width: "100%",
+    height: "100%",
+    display: "block",
+    objectFit: "cover" as const,
+  };
+
   return (
-    <div className="w-full h-56 md:h-64 lg:h-72 bg-gray-100 relative overflow-hidden rounded-t-md">
+    <div style={mediaBoxStyle}>
       {thumbUrl ? (
-        <img src={thumbUrl} alt={alt ?? "video thumbnail"} className="w-full h-full object-cover" />
+        <img src={thumbUrl} alt={alt ?? "video thumbnail"} style={mediaInnerStyle} />
       ) : (
         <>
           <video
@@ -151,13 +180,14 @@ function VideoThumbnail({ src, alt }: { src: string; alt?: string }) {
             muted
             playsInline
             preload="metadata"
-            className={`w-full h-full object-cover ${captureFailed ? "block" : "hidden"}`}
+            style={{ ...mediaInnerStyle, display: captureFailed ? "block" : "none" }}
             aria-hidden={!captureFailed}
           />
+
           {!captureFailed && (
-            <div className="w-full h-full bg-gray-100 flex items-center justify-center">
-              <div className="rounded-full bg-green-700/90 text-white p-3 shadow-lg">
-                <Play className="w-5 h-5" />
+            <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <div style={{ borderRadius: "999px", background: "rgba(6, 95, 70, 0.95)", padding: 10, boxShadow: "0 6px 16px rgba(0,0,0,0.12)" }}>
+                <Play style={{ width: 20, height: 20, color: "white" }} />
               </div>
             </div>
           )}
@@ -261,6 +291,14 @@ function VideoCarousel({ videos, title, onPlay }: { videos: { id: number; name: 
   const centerOffset = Math.floor(itemsPerView / 2);
   const centerIndex = Math.min(videos.length - 1, startIndex + centerOffset);
 
+  // fixed card height to match Kevin/Nick
+  const cardOuterStyle: React.CSSProperties = {
+    height: 540,
+    maxHeight: 540,
+    display: "flex",
+    flexDirection: "column",
+  };
+
   return (
     <div>
       {title && <h3 className="text-base font-semibold mb-4">{title}</h3>}
@@ -283,20 +321,22 @@ function VideoCarousel({ videos, title, onPlay }: { videos: { id: number; name: 
               const isCenter = idx === centerIndex;
               return (
                 <div key={v.id} style={{ flex: `0 0 ${itemWidth}px`, maxWidth: `${itemWidth}px` }} className="px-2">
-                  <article className={`bg-white rounded-lg overflow-hidden border border-gray-100 flex flex-col ${"h-[540px] max-h-[540px]"}`}>
-                    <div className="relative overflow-hidden rounded-t-lg h-72 md:h-80 lg:h-96 bg-gray-100">
-                      <VideoThumbnail src={v.src} alt={v.name} />
-                      <div aria-hidden className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-green-700/95 flex items-center justify-center shadow" style={{ border: "4px solid rgba(255,255,255,0.06)" }}>
-                        <Play className="w-5 h-5 text-white" />
+                  <article style={cardOuterStyle} className="bg-white rounded-lg overflow-hidden border border-gray-100">
+                    <div style={{ width: "100%", height: 360, minHeight: 360, maxHeight: 360, overflow: "hidden", borderTopLeftRadius: 8, borderTopRightRadius: 8, background: "#f6f6f6" }}>
+                      <div style={{ width: "100%", height: "100%" }}>
+                        <VideoThumbnail src={v.src} alt={v.name} />
+                        <div aria-hidden style={{ pointerEvents: "none", position: "absolute", left: "50%", top: "50%", transform: "translate(-50%, -50%)", width: 44, height: 44, borderRadius: 999, background: "rgba(6,95,70,0.95)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 6px 16px rgba(0,0,0,0.12)", border: "4px solid rgba(255,255,255,0.06)" }}>
+                          <Play style={{ width: 18, height: 18, color: "white" }} />
+                        </div>
                       </div>
                     </div>
 
-                    <div className="p-4 flex-1 overflow-auto">
-                      <div className="font-semibold text-sm">{v.name}</div>
-                      <div className="text-xs text-gray-500 mt-1">{v.role}</div>
-                      <div className="mt-4">
-                        <button onClick={() => onPlay(v.src)} className="inline-flex items-center gap-2 px-3 py-2 bg-green-700 text-white rounded-md text-sm shadow">
-                          <Play className="w-4 h-4" /> Play
+                    <div style={{ padding: 16, flex: 1, overflow: "auto" }}>
+                      <div style={{ fontWeight: 700, fontSize: 14 }}>{v.name}</div>
+                      <div style={{ color: "#6b7280", fontSize: 12, marginTop: 6 }}>{v.role}</div>
+                      <div style={{ marginTop: 12 }}>
+                        <button onClick={() => onPlay(v.src)} style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "8px 12px", background: "#0b8d57", color: "white", borderRadius: 6, fontSize: 13 }}>
+                          <Play style={{ width: 14, height: 14 }} /> Play
                         </button>
                       </div>
                     </div>
@@ -322,36 +362,35 @@ export default function TestimonialsSection() {
   const [playingSrc, setPlayingSrc] = useState<string | null>(null);
 
   return (
-    <section className="px-6 py-10">
-      <div className="mb-14">
-        <h2 className="text-xl font-semibold mb-6">Client Video Testimonials</h2>
+    <section style={{ padding: "40px 24px" }}>
+      <div style={{ marginBottom: 56 }}>
+        <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 18 }}>Client Video Testimonials</h2>
         <VideoCarousel videos={clientVideoTestimonials} onPlay={(src) => setPlayingSrc(src)} />
       </div>
 
-      <div className="mb-14">
-        <h2 className="text-xl font-semibold mb-6">Candidate Video Testimonials</h2>
-        {/* this uses the full candidateVideoTestimonials list (all 9) */}
+      <div style={{ marginBottom: 56 }}>
+        <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 18 }}>Candidate Video Testimonials</h2>
         <VideoCarousel videos={candidateVideoTestimonials} onPlay={(src) => setPlayingSrc(src)} />
       </div>
 
-      <div className="mb-8">
-        <h2 className="text-xl font-semibold mb-6">Client Testimonials</h2>
+      <div style={{ marginBottom: 32 }}>
+        <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 18 }}>Client Testimonials</h2>
         <TestimonialsMarquee items={clientWrittenTestimonials} ariaLabel="Client testimonials" />
       </div>
 
       <div>
-        <h2 className="text-xl font-semibold mb-6">Candidate Testimonials</h2>
+        <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 18 }}>Candidate Testimonials</h2>
         <TestimonialsMarquee items={candidateTestimonials} ariaLabel="Candidate testimonials" />
       </div>
 
       <AnimatePresence>
         {playingSrc && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" onClick={() => setPlayingSrc(null)}>
-            <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }} className="w-full max-w-3xl bg-white rounded-lg overflow-hidden" onClick={(e) => e.stopPropagation()}>
-              <div className="relative">
-                <video src={playingSrc || undefined} controls autoPlay className="w-full h-[60vh] object-cover bg-black" />
-                <button aria-label="Close" onClick={() => setPlayingSrc(null)} className="absolute top-3 right-3 bg-white rounded-full p-2 shadow">
-                  <X className="w-4 h-4" />
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} style={{ position: "fixed", inset: 0, zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.6)", padding: 16 }} onClick={() => setPlayingSrc(null)}>
+            <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }} style={{ width: "100%", maxWidth: 900, background: "white", borderRadius: 8, overflow: "hidden" }} onClick={(e) => e.stopPropagation()}>
+              <div style={{ position: "relative" }}>
+                <video src={playingSrc || undefined} controls autoPlay style={{ width: "100%", height: "60vh", objectFit: "cover", background: "black" }} />
+                <button aria-label="Close" onClick={() => setPlayingSrc(null)} style={{ position: "absolute", top: 12, right: 12, background: "white", borderRadius: 999, padding: 8, boxShadow: "0 4px 12px rgba(0,0,0,0.12)" }}>
+                  <X style={{ width: 16, height: 16 }} />
                 </button>
               </div>
             </motion.div>
