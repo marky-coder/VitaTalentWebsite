@@ -58,19 +58,14 @@ const steps = [
 ];
 
 export default function WorkflowSection() {
-  // rootRef wraps the entire content so we can query for .workflow-step nodes (desktop + mobile)
   const rootRef = useRef<HTMLDivElement | null>(null);
-
-  // visibleStates: booleans for each step (true once the step has been revealed)
   const [visibleStates, setVisibleStates] = useState<boolean[]>(
     () => Array(steps.length).fill(false)
   );
 
   useEffect(() => {
-    // run only in browser
     if (!rootRef.current) return;
 
-    // Respect reduced motion: reveal everything immediately
     if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       setVisibleStates(Array(steps.length).fill(true));
       return;
@@ -78,7 +73,6 @@ export default function WorkflowSection() {
 
     const nodes = Array.from(rootRef.current.querySelectorAll<HTMLElement>(".workflow-step"));
 
-    // small helper to mark index visible once
     const markVisible = (idx: number) => {
       setVisibleStates((prev) => {
         if (prev[idx]) return prev;
@@ -96,7 +90,6 @@ export default function WorkflowSection() {
             const idx = idxAttr ? Number(idxAttr) : -1;
             if (idx >= 0) {
               markVisible(idx);
-              // we can unobserve this node since we want a one-time reveal
               observer.unobserve(entry.target);
             }
           }
@@ -104,7 +97,6 @@ export default function WorkflowSection() {
       },
       {
         root: null,
-        // trigger a little before the element is fully in view:
         rootMargin: "0px 0px -12% 0px",
         threshold: 0.12,
       }
@@ -133,60 +125,42 @@ export default function WorkflowSection() {
             {steps.map((step, index) => {
               const isEven = index % 2 === 0;
               const visible = visibleStates[index];
-              // We use transitionDelay to create a subtle stagger per-step
-              const baseDelay = index * 110; // ms, tweak for stronger/weaker stagger
+              const baseDelay = index * 110; // ms
 
               return (
                 <div
                   key={step.number}
-                  // animate the whole step (dot + connecting line + card)
                   data-step-index={index}
                   className={`relative workflow-step transform transition-all duration-700 ease-out ${
                     visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
                   }`}
-                  // subtle per-step delay on the parent's transition so the whole step moves together
                   style={{ transitionDelay: visible ? `${baseDelay}ms` : "0ms" }}
                 >
                   {/* Timeline dot */}
                   <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
-                    {/* Make the dot focusable so keyboard users can 'hover' with focus */}
                     <div
                       role="img"
                       aria-label={`Step ${step.number}`}
                       tabIndex={0}
-                      className={`w-14 h-14 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-xl shadow-lg border-4 border-background transform transition-all duration-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 motion-reduce:transition-none cursor-pointer ${
-                        visible ? "scale-100 opacity-100" : "scale-75 opacity-0"
-                      }`}
-                      // Slightly pop the dot on hover/focus; larger scale requested
-                      // Tailwind hover/focus classes work because they're part of the classname string.
-                      // Keep these after the conditional classes so the hover rules override the base scale.
                       onKeyDown={(e) => {
-                        // Allow Enter/Space to briefly toggle a small active effect for keyboard users
                         if (e.key === "Enter" || e.key === " ") {
-                          // Prevent scroll on Space
                           e.preventDefault();
-                          // Add small active class change via inline style for instant feedback
                           const el = e.currentTarget as HTMLDivElement;
+                          // quick local feedback for keyboard users
                           el.style.transform = "translateY(-4px) scale(1.18)";
                           setTimeout(() => {
-                            // only reset if still present
                             if (el) el.style.transform = "";
                           }, 150);
                         }
                       }}
-                      // use inline style for transitionDelay so it matches the dot popping timing
-                      style={{
-                        transitionDelay: visible ? `${Math.max(0, baseDelay - 80)}ms` : "0ms",
-                      }}
+                      // Tailwind classes below give hover/focus enlargement & lift; they work in Vite + Tailwind
+                      className={`w-14 h-14 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-xl shadow-lg border-4 border-background transform transition-transform duration-300 ease-out motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 cursor-pointer
+                        ${visible ? "scale-100 opacity-100" : "scale-75 opacity-0"}
+                        hover:-translate-y-[6px] hover:scale-125 hover:z-40 hover:shadow-2xl
+                        focus:-translate-y-[6px] focus:scale-125 focus:z-40 focus:shadow-2xl`}
+                      style={{ transitionDelay: visible ? `${Math.max(0, baseDelay - 80)}ms` : "0ms" }}
                     >
-                      <span
-                        // the inner span contains the number - we add hover/focus scale here as well to ensure it grows more
-                        className="pointer-events-none"
-                        // Also add CSS classes for hover/focus to scale bigger
-                        // Tailwind doesn't let us place hover: classes via JS concatenation reliably here, so we rely on the parent transform
-                      >
-                        {step.number}
-                      </span>
+                      <span className="pointer-events-none">{step.number}</span>
                     </div>
                   </div>
 
@@ -204,13 +178,11 @@ export default function WorkflowSection() {
                         visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
                       }`}
                       data-testid={`card-step-${step.number}`}
-                      // delay the card a little after the dot
                       style={{ transitionDelay: visible ? `${baseDelay + 80}ms` : "0ms" }}
                     >
                       <div className={`flex gap-4 ${isEven ? "flex-row" : "flex-row-reverse"}`}>
                         <div className="flex-shrink-0">
                           <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center">
-                            {/* icons animate with the card because they're children */}
                             <step.icon className="w-8 h-8 text-primary" strokeWidth={1.5} />
                           </div>
                         </div>
@@ -223,29 +195,6 @@ export default function WorkflowSection() {
                       </div>
                     </Card>
                   </div>
-
-                  {/* Small style override for stronger hover scale on the dot (applies when visible) */}
-                  <style jsx>{`
-                    /* Only apply the hover/focus enlargement when the dot is visible (has opacity 1) */
-                    .workflow-step :global(.w-14.h-14[tabindex]) {
-                      /* no-op to ensure specificity for later rules */
-                    }
-                    /* Larger hover scale + lift */
-                    .workflow-step :global(.w-14.h-14):hover,
-                    .workflow-step :global(.w-14.h-14):focus {
-                      transform: translateY(-6px) scale(1.25) !important;
-                      z-index: 40;
-                      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.14);
-                    }
-                    /* Respect reduced motion: remove transform changes */
-                    @media (prefers-reduced-motion: reduce) {
-                      .workflow-step :global(.w-14.h-14):hover,
-                      .workflow-step :global(.w-14.h-14):focus {
-                        transform: none !important;
-                        box-shadow: none !important;
-                      }
-                    }
-                  `}</style>
                 </div>
               );
             })}
@@ -277,10 +226,6 @@ export default function WorkflowSection() {
                       role="img"
                       aria-label={`Step ${step.number}`}
                       tabIndex={0}
-                      className={`w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm shadow-lg border-2 border-background transform transition-all duration-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 motion-reduce:transition-none cursor-pointer ${
-                        visible ? "scale-100 opacity-100" : "scale-75 opacity-0"
-                      }`}
-                      style={{ transitionDelay: visible ? `${Math.max(0, baseDelay - 80)}ms` : "0ms" }}
                       onKeyDown={(e) => {
                         if (e.key === "Enter" || e.key === " ") {
                           e.preventDefault();
@@ -291,6 +236,11 @@ export default function WorkflowSection() {
                           }, 150);
                         }
                       }}
+                      className={`w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm shadow-lg border-2 border-background transform transition-transform duration-300 ease-out motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 cursor-pointer
+                        ${visible ? "scale-100 opacity-100" : "scale-75 opacity-0"}
+                        hover:-translate-y-[5px] hover:scale-[1.18] hover:z-30 hover:shadow-xl
+                        focus:-translate-y-[5px] focus:scale-[1.18] focus:z-30 focus:shadow-xl`}
+                      style={{ transitionDelay: visible ? `${Math.max(0, baseDelay - 80)}ms` : "0ms" }}
                     >
                       {step.number}
                     </div>
@@ -317,23 +267,6 @@ export default function WorkflowSection() {
                       </div>
                     </div>
                   </Card>
-
-                  <style jsx>{`
-                    .workflow-step :global(.w-10.h-10):hover,
-                    .workflow-step :global(.w-10.h-10):focus {
-                      transform: translateY(-5px) scale(1.18) !important;
-                      z-index: 30;
-                      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.12);
-                    }
-
-                    @media (prefers-reduced-motion: reduce) {
-                      .workflow-step :global(.w-10.h-10):hover,
-                      .workflow-step :global(.w-10.h-10):focus {
-                        transform: none !important;
-                        box-shadow: none !important;
-                      }
-                    }
-                  `}</style>
                 </div>
               );
             })}
