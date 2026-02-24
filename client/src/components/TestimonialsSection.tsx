@@ -176,15 +176,36 @@ function VideoThumbnail({ src, alt }: { src: string; alt?: string }) {
 }
 
 /* =========================
-   Written testimonial card + marquee
+   WrittenTestimonialCard (RESTORED COLORS)
+   - pale-green gradient background
+   - subtle green border
+   - green divider
+   - small radius and box-sizing so it matches design
    ========================= */
 function WrittenTestimonialCard({ testimonial }: { testimonial: { name: string; role: string; quote: string } }) {
+  const cardStyle: React.CSSProperties = {
+    padding: 14,
+    borderRadius: 8,
+    boxSizing: "border-box",
+    // Pale green gradient similar to original
+    background: "linear-gradient(90deg, rgba(230,250,244,0.95), rgba(255,255,255,0.98))",
+    border: "1px solid rgba(6,95,70,0.08)", // subtle green border
+    color: "rgba(0,0,0,0.85)",
+    minHeight: 100,
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-between",
+  };
+
+  const quoteStyle: React.CSSProperties = { fontSize: 14, lineHeight: 1.35, margin: 0, color: "rgba(0,0,0,0.85)" };
+  const metaStyle: React.CSSProperties = { marginTop: 12, paddingTop: 10, borderTop: "1px solid rgba(6,95,70,0.06)", fontSize: 12, color: "#374151" }; // divider slightly darker
+
   return (
-    <div style={{ padding: 14, borderRadius: 8, background: "linear-gradient(90deg, rgba(244,250,248,0.98), white)", border: "1px solid rgba(6,95,70,0.06)", boxSizing: "border-box" }}>
-      <p style={{ fontSize: 14, color: "rgba(0,0,0,0.85)" }}>{testimonial.quote}</p>
-      <div style={{ marginTop: 10, borderTop: "1px solid rgba(6,95,70,0.06)", paddingTop: 10 }}>
+    <div style={cardStyle}>
+      <p style={quoteStyle}>{testimonial.quote}</p>
+      <div style={metaStyle}>
         <div style={{ fontWeight: 700 }}>{testimonial.name}</div>
-        <div style={{ fontSize: 12, color: "#6b7280" }}>{testimonial.role}</div>
+        <div style={{ fontSize: 12, color: "#6b7280", marginTop: 4 }}>{testimonial.role}</div>
       </div>
     </div>
   );
