@@ -128,10 +128,11 @@ export default function WorkflowSection() {
               const baseDelay = index * 110; // ms
 
               return (
+                // Add `group` here so hovering any child (dot or card) triggers group-hover styles
                 <div
                   key={step.number}
                   data-step-index={index}
-                  className={`relative workflow-step transform transition-all duration-700 ease-out ${
+                  className={`relative workflow-step group transform transition-all duration-700 ease-out ${
                     visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
                   }`}
                   style={{ transitionDelay: visible ? `${baseDelay}ms` : "0ms" }}
@@ -153,7 +154,6 @@ export default function WorkflowSection() {
                           }, 150);
                         }
                       }}
-                      // Tailwind classes below give hover/focus enlargement & lift; they work in Vite + Tailwind
                       className={`w-14 h-14 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-xl shadow-lg border-4 border-background transform transition-transform duration-300 ease-out motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 cursor-pointer
                         ${visible ? "scale-100 opacity-100" : "scale-75 opacity-0"}
                         hover:-translate-y-[6px] hover:scale-125 hover:z-40 hover:shadow-2xl
@@ -174,9 +174,10 @@ export default function WorkflowSection() {
                   {/* Card */}
                   <div className={`flex ${isEven ? "justify-start" : "justify-end"}`}>
                     <Card
-                      className={`w-[45%] p-6 hover-elevate bg-gradient-to-br from-card to-primary/10 border-primary/20 transform transition-all duration-700 ${
-                        visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-                      }`}
+                      // Add `group-hover` to card so it lifts/zooms slightly with the heading
+                      className={`w-[45%] p-6 bg-gradient-to-br from-card to-primary/10 border-primary/20 transform transition-all duration-700 hover-elevate
+                        ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}
+                        group-hover:-translate-y-2 group-hover:scale-[1.02] motion-reduce:group-hover:scale-100`}
                       data-testid={`card-step-${step.number}`}
                       style={{ transitionDelay: visible ? `${baseDelay + 80}ms` : "0ms" }}
                     >
@@ -187,7 +188,13 @@ export default function WorkflowSection() {
                           </div>
                         </div>
                         <div className={`flex-1 ${isEven ? "text-left" : "text-right"}`}>
-                          <h3 className="font-bold text-foreground text-lg mb-2">{step.title}</h3>
+                          {/* Title: scales and lifts with group hover */}
+                          <h3
+                            className={`font-bold text-foreground text-lg mb-2 transform transition-transform duration-200 ease-out
+                              group-hover:scale-105 group-hover:-translate-y-1 motion-reduce:group-hover:scale-100`}
+                          >
+                            {step.title}
+                          </h3>
                           <p className="text-sm font-medium text-muted-foreground leading-relaxed">
                             {step.description}
                           </p>
@@ -215,7 +222,8 @@ export default function WorkflowSection() {
                 <div
                   key={step.number}
                   data-step-index={index}
-                  className={`relative workflow-step transform transition-all duration-700 ease-out ${
+                  // add group for mobile too
+                  className={`relative workflow-step group transform transition-all duration-700 ease-out ${
                     visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
                   }`}
                   style={{ transitionDelay: visible ? `${baseDelay}ms` : "0ms" }}
@@ -247,9 +255,9 @@ export default function WorkflowSection() {
                   </div>
 
                   <Card
-                    className={`p-5 bg-gradient-to-br from-card to-primary/10 border-primary/20 transform transition-all duration-700 ${
-                      visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
-                    }`}
+                    className={`p-5 bg-gradient-to-br from-card to-primary/10 border-primary/20 transform transition-all duration-700
+                      ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}
+                      group-hover:-translate-y-2 group-hover:scale-[1.01] motion-reduce:group-hover:scale-100`}
                     data-testid={`card-step-mobile-${step.number}`}
                     style={{ transitionDelay: visible ? `${baseDelay + 80}ms` : "0ms" }}
                   >
@@ -260,7 +268,12 @@ export default function WorkflowSection() {
                         </div>
                       </div>
                       <div className="flex-1">
-                        <h3 className="font-bold text-foreground mb-1">{step.title}</h3>
+                        <h3
+                          className={`font-bold text-foreground mb-1 transform transition-transform duration-200 ease-out
+                            group-hover:scale-105 group-hover:-translate-y-1 motion-reduce:group-hover:scale-100`}
+                        >
+                          {step.title}
+                        </h3>
                         <p className="text-sm font-medium text-muted-foreground leading-relaxed">
                           {step.description}
                         </p>
