@@ -17,9 +17,7 @@ import videoDaniel from "@assets/Daniel Slobodyan - Land Creative Solutions.mp4"
 import videoZach from "@assets/Zach Nahas - CEO of Clear Path Land.mp4";
 import videoJoshPierce from "@assets/Josh Pierce - CEO of Higher Ground Land.mp4";
 
-/* ---- Candidate video imports (explicit) ----
-   Replace these paths with your real candidate video file paths if they differ.
-*/
+/* ---- Candidate video imports (restored) ---- */
 import videoXimena from "@assets/WhatsApp Video 2025-11-25 at 10.45.54.mp4";
 import videoHesham from "@assets/WhatsApp Video 2025-11-25 at 10.46.13.mp4";
 import videoSherif from "@assets/WhatsApp Video 2025-11-25 at 10.47.09.mp4";
@@ -128,6 +126,7 @@ const marqueeCss = `
 /* =========================
    VideoThumbnail
    - attempts off-screen canvas capture, falls back to visible <video>
+   - now renders landscape using aspect-video so cards are horizontal
    - robust and cleans up listeners
    ========================= */
 
@@ -215,7 +214,7 @@ function VideoThumbnail({ src, alt }: { src: string; alt?: string }) {
     // safety fallback
     fallbackTimer = window.setTimeout(() => {
       if (mounted && !thumbUrl) setCaptureTried(true);
-    }, 1600);
+    }, 1200); // short timeout
 
     return () => {
       mounted = false;
@@ -235,8 +234,9 @@ function VideoThumbnail({ src, alt }: { src: string; alt?: string }) {
   }
 
   // visible fallback video (paused on loadeddata so first frame is visible)
+  // NOTE: using aspect-video so thumbnails are landscape
   return (
-    <div className="w-full h-40 md:h-44 lg:h-48 bg-gray-100 relative overflow-hidden rounded-t-md">
+    <div className="w-full aspect-video bg-gray-100 relative overflow-hidden rounded-t-md">
       <video
         ref={visibleVideoRef}
         src={src}
@@ -261,8 +261,8 @@ function VideoThumbnail({ src, alt }: { src: string; alt?: string }) {
 
       {!captureTried && (
         <div className="absolute inset-0 w-full h-full flex items-center justify-center bg-gray-100">
-          <div className="rounded-full bg-green-700/90 text-white p-3 shadow-lg">
-            <Play className="w-5 h-5" />
+          <div className="rounded-full bg-green-700/90 text-white p-2 shadow-lg">
+            <Play className="w-4 h-4" />
           </div>
         </div>
       )}
@@ -386,13 +386,13 @@ function VideoCarousel({
     return () => window.removeEventListener("keydown", onKey);
   }, [startIndex, itemsPerView, videos.length]);
 
-  // smaller center & side sizes for a more compact look
+  // tighter sizes for a compact look
   const sideStyle = {
-    width: "min(300px, 28vw)",
+    width: "min(220px, 20vw)",
   };
 
   const centerStyle = {
-    width: "min(520px, 70vw)",
+    width: "min(380px, 58vw)",
   };
 
   return (
@@ -406,7 +406,7 @@ function VideoCarousel({
           className="absolute left-0 top-1/2 -translate-y-1/2 z-20 p-2 md:p-3 rounded-full bg-white shadow hover:bg-gray-100 transition"
           aria-label="Previous testimonials"
         >
-          <ChevronLeft size={18} />
+          <ChevronLeft size={16} />
         </button>
 
         <button
@@ -414,13 +414,13 @@ function VideoCarousel({
           className="absolute right-0 top-1/2 -translate-y-1/2 z-20 p-2 md:p-3 rounded-full bg-white shadow hover:bg-gray-100 transition"
           aria-label="Next testimonials"
         >
-          <ChevronRight size={18} />
+          <ChevronRight size={16} />
         </button>
 
         {/* visible window */}
         <div className="overflow-hidden">
           <div
-            className="flex gap-4 transition-transform duration-300"
+            className="flex gap-3 transition-transform duration-300"
             style={{ transform: `translateX(-${translatePercent}%)` }}
           >
             {videos.map((item, idx) => {
@@ -429,11 +429,11 @@ function VideoCarousel({
                 <div
                   key={item.id}
                   style={{ flex: `0 0 ${itemWidthPercent}%` }}
-                  className="px-2 py-1"
+                  className="px-1 py-1"
                 >
                   <div
                     className={`rounded-lg overflow-hidden bg-white border shadow-sm h-full transform transition-transform duration-300 ${
-                      isCenter ? "scale-105 shadow-lg" : ""
+                      isCenter ? "scale-102 shadow-lg" : ""
                     }`}
                     role="button"
                     tabIndex={0}
@@ -445,13 +445,13 @@ function VideoCarousel({
                     <div className="relative">
                       <VideoThumbnail src={item.src} alt={`${item.name} testimonial`} />
                       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                        <div className="rounded-full bg-green-700/90 text-white p-2 md:p-3 shadow-lg">
-                          <Play className="w-4 h-4 md:w-5 md:h-5" />
+                        <div className="rounded-full bg-green-700/90 text-white p-1 md:p-2 shadow-lg">
+                          <Play className="w-3 h-3 md:w-4 md:h-4" />
                         </div>
                       </div>
                     </div>
 
-                    <div className="p-3 bg-white">
+                    <div className="p-2 bg-white">
                       <p className="font-semibold text-sm">{item.name}</p>
                       <p className="text-xs text-muted-foreground">{item.role}</p>
                     </div>
