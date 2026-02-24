@@ -143,7 +143,7 @@ const clientVideoTestimonials = [
   { id: 6, name: "Josh Pierce", role: "CEO of Higher Ground Land", src: videoJoshPierce },
 ];
 
-/* Candidate videos and written testimonials are unchanged */
+/* Candidates videos (unchanged) */
 const candidateVideoTestimonials = [
   { id: 1, name: "Ximena Jimenez", role: "Lead Manager", src: videoXimena },
   { id: 2, name: "Sherif Daoud", role: "Acquisition Manager", src: videoSherif },
@@ -158,11 +158,11 @@ const candidateVideoTestimonials = [
 
 const writtenTestimonials = {
   clients: [
+    // original 3
     {
       name: "James Wilson",
       role: "CTO, InnovateLabs",
-      quote:
-        "Vita Talent found us the perfect engineering team in just 3 weeks. Their process is thorough and professional.",
+      quote: "Vita Talent found us the perfect engineering team in just 3 weeks. Their process is thorough and professional.",
     },
     {
       name: "Lisa Martinez",
@@ -172,11 +172,43 @@ const writtenTestimonials = {
     {
       name: "Robert Kim",
       role: "Operations Manager, ScaleUp Inc",
-      quote:
-        "Working with Vita Talent has transformed how we approach global hiring. Exceptional service.",
+      quote: "Working with Vita Talent has transformed how we approach global hiring. Exceptional service.",
+    },
+
+    // +6 new US/western client testimonials
+    {
+      name: "Michael Harper",
+      role: "CTO, Redwood Systems",
+      quote: "Vita Talent provided a high-quality engineering team that scaled with us quickly — exceptional delivery.",
+    },
+    {
+      name: "Stephanie Ross",
+      role: "VP of Product, HarborPoint Inc",
+      quote: "They found great product talent aligned with our roadmap — excellent communication throughout.",
+    },
+    {
+      name: "Daniel Turner",
+      role: "Founder, BlueHarbor Logistics",
+      quote: "Fast, professional, and reliable. Their remote hiring process just works for us.",
+    },
+    {
+      name: "Olivia Brooks",
+      role: "Head of HR, SummitWorks LLC",
+      quote: "Vita Talent's screening process saved our team time and got us great candidates rapidly.",
+    },
+    {
+      name: "Christopher Bennett",
+      role: "Director of Operations, ClearPeak Group",
+      quote: "Exceptional sourcing and onboarding support. We now rely on Vita Talent as a strategic partner.",
+    },
+    {
+      name: "Amanda Lewis",
+      role: "CEO, Brightfield Partners",
+      quote: "Their global hiring expertise helped us expand our team the right way — highly recommended.",
     },
   ],
   candidates: [
+    // original 3
     {
       name: "Maria Santos",
       role: "UX Designer",
@@ -192,6 +224,38 @@ const writtenTestimonials = {
       role: "Marketing Manager",
       quote: "They matched me with a company that perfectly aligns with my values and career goals.",
     },
+
+    // +6 new candidate testimonials (Philippines / India / Middle East / South Asia)
+    {
+      name: "Arjun Patel",
+      role: "Virtual Assistant",
+      quote: "Vita Talent connected me with a remote role where I could grow my skills and support a growing company.",
+    },
+    {
+      name: "Priya Sharma",
+      role: "Customer Support Specialist",
+      quote: "The team helped me prepare and land a long-term remote position. Their support was fantastic.",
+    },
+    {
+      name: "Miguel Reyes",
+      role: "E-commerce VA",
+      quote: "I received clear guidance and a great match. Communication was fast and fair.",
+    },
+    {
+      name: "Angela Cruz",
+      role: "Administrative VA (Philippines)",
+      quote: "They matched me with a client who appreciates my experience — grateful for the opportunity.",
+    },
+    {
+      name: "Aisha Khan",
+      role: "Lead Generation Specialist",
+      quote: "Vita Talent helped me find a role that suited my skills and provided ongoing coaching.",
+    },
+    {
+      name: "Mohammad Rahman",
+      role: "Data Entry Specialist",
+      quote: "Professional team, clear process, and I secured a steady remote contract through them.",
+    },
   ],
 };
 
@@ -203,7 +267,134 @@ function chunkRows<T>(arr: T[], size: number) {
   return rows;
 }
 
-/* ---------- VideoCarousel (horizontal-only) ---------- */
+/* Inline CSS for the testimonials marquee.
+   We intentionally mirror the existing ClientLogoMarquee approach (24s loop, leftwards).
+*/
+const testimonialsMarqueeCss = `
+.testimonials-marquee {
+  --gap: 1.5rem;
+  --marquee-duration: 24s; /* same default as client logo marquee */
+  width: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+  display: block;
+  padding: 0.5rem 0;
+  white-space: nowrap;
+}
+
+.testimonials-marquee__track {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--gap);
+  width: max-content;
+  animation: testimonials-marquee linear var(--marquee-duration) infinite;
+  will-change: transform;
+}
+
+/* reverseable if data-direction="right" on the root */
+.testimonials-marquee[data-direction="right"] .testimonials-marquee__track {
+  animation-direction: reverse;
+}
+
+.testimonials-marquee__item {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: stretch;
+  justify-content: flex-start;
+}
+
+/* pause on hover to let users read */
+.testimonials-marquee__track:hover,
+.testimonials-marquee__track:focus-within {
+  animation-play-state: paused;
+}
+
+@keyframes testimonials-marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); } /* duplicated content means -50% loops */
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .testimonials-marquee__track {
+    animation: none;
+  }
+}
+`;
+
+/* Render the small written testimonial card — same look as the grid cards */
+function WrittenTestimonialCard({ testimonial }: { testimonial: { name: string; role: string; quote: string } }) {
+  return (
+    <Card className="p-6 bg-gradient-to-br from-card to-primary/12 border-primary/20">
+      <div className="flex items-start gap-4">
+        <div className="flex items-center gap-1 text-emerald-500">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <FilledStar key={i} className="w-4 h-4" />
+          ))}
+        </div>
+      </div>
+
+      <p className="mt-4 text-sm text-foreground/90">{testimonial.quote}</p>
+
+      <div className="mt-6 border-t pt-4">
+        <p className="font-bold text-foreground">{testimonial.name}</p>
+        <p className="text-xs text-muted-foreground">{testimonial.role}</p>
+      </div>
+    </Card>
+  );
+}
+
+/* Inline filled star so icons are solid and pick up color */
+const FilledStar = ({ className = "w-4 h-4 text-emerald-500" }: { className?: string }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+    <path d="M12 .587l3.668 7.431L23.5 9.75l-5.75 5.6L19.335 24 12 19.897 4.665 24l1.585-8.65L.5 9.75l7.832-1.732L12 .587z" />
+  </svg>
+);
+
+/* TestimonialsMarquee component: duplicates items to create a seamless loop */
+function TestimonialsMarquee({
+  items,
+  speed = 24,
+  direction = "left",
+  itemWidth = "min(420px, 32vw)", // keeps three-ish cards visible on wide screens
+}: {
+  items: { name: string; role: string; quote: string }[];
+  speed?: number;
+  direction?: "left" | "right";
+  itemWidth?: string;
+}) {
+  if (!items || items.length === 0) return null;
+  const duplicated = [...items, ...items]; // duplicate for seamless scroll
+
+  return (
+    <div
+      className="testimonials-marquee"
+      data-direction={direction}
+      style={
+        {
+          // expose CSS var for animation duration
+          ["--marquee-duration" as any]: `${speed}s`,
+        } as React.CSSProperties
+      }
+      role="region"
+      aria-label="Testimonials rolling marquee"
+    >
+      <div className="testimonials-marquee__track" aria-hidden="false">
+        {duplicated.map((item, idx) => (
+          <div
+            key={`${item.name}-${idx}`}
+            className="testimonials-marquee__item"
+            style={{ width: itemWidth, minWidth: itemWidth }}
+          >
+            <WrittenTestimonialCard testimonial={item} />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ---------- VideoCarousel (unchanged from prior fix) ---------- */
 function VideoCarousel({
   videos,
   onOpen,
@@ -221,8 +412,7 @@ function VideoCarousel({
   const nextRef = useRef<HTMLDivElement | null>(null);
 
   // We still measure the center content and set minHeight so the section below
-  // cannot be overlapped. But the center card is now *in the flow*, so we don't
-  // absolute-center it vertically (that was causing the drop).
+  // cannot be overlapped. But the center card is now in-flow (no vertical absolute centering).
   const centerWrapperRef = useRef<HTMLDivElement | null>(null);
   const centerContentRef = useRef<HTMLDivElement | null>(null);
 
@@ -302,16 +492,13 @@ function VideoCarousel({
       }
     }
 
-    // recompute initially and whenever the index changes (center slide height may differ)
     recomputeCenterHeight();
     window.addEventListener("resize", recomputeCenterHeight);
     return () => window.removeEventListener("resize", recomputeCenterHeight);
-    // index and the refs changing will trigger updates via effects/hooks above
-  }, [index]);
+  }, [index, centerContentRef.current]);
 
   const dragThreshold = 80;
 
-  // Explicit horizontal-only motion: set y:0 to avoid vertical motion
   const centerVariants = {
     enter: (d: number) =>
       shouldReduceMotion ? { opacity: 1, x: 0, y: 0, scale: 1 } : { opacity: 0, x: d > 0 ? 260 : -260, y: 0, scale: 0.98 },
@@ -336,7 +523,6 @@ function VideoCarousel({
 
   return (
     <div className="w-full flex flex-col items-center">
-      {/* the carousel container is a flex center; prev/next are absolute, center is in-flow */}
       <div ref={carouselRef} className="relative w-full flex items-center justify-center" style={{ minHeight: 260 }}>
         {/* Left peek (behind center) */}
         <motion.div
@@ -366,7 +552,7 @@ function VideoCarousel({
           </Card>
         </motion.div>
 
-        {/* Center - REMOVED absolute vertical centering; kept in flow (centered by parent flex) */}
+        {/* Center — in flow (not absolute-vertically centered) */}
         <div ref={centerWrapperRef} className="relative z-50 flex-shrink-0" style={{ width: centerStyle.width }}>
           <AnimatePresence custom={direction} initial={false}>
             <motion.div
@@ -437,7 +623,7 @@ function VideoCarousel({
           </Card>
         </motion.div>
 
-        {/* Arrows positioned outside the peeks using computed positions */}
+        {/* Arrows */}
         <button
           aria-label="Previous"
           onClick={(e) => {
@@ -490,15 +676,11 @@ export default function TestimonialsSection() {
 
   const candidateRows = chunkRows(candidateVideoTestimonials, 3);
 
-  // Inline filled star used to ensure solid stars (fill=currentColor)
-  const FilledStar = ({ className = "w-4 h-4 text-emerald-500" }: { className?: string }) => (
-    <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-      <path d="M12 .587l3.668 7.431L23.5 9.75l-5.75 5.6L19.335 24 12 19.897 4.665 24l1.585-8.65L.5 9.75l7.832-1.732L12 .587z" />
-    </svg>
-  );
-
   return (
     <section className="py-24 bg-gradient-to-br from-primary/18 via-primary/10 to-background" data-testid="section-testimonials">
+      {/* Inject marquee CSS for testimonials */}
+      <style>{testimonialsMarqueeCss}</style>
+
       <div className="container max-w-7xl mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-foreground mb-4">What Our Clients & Candidates Say</h2>
@@ -512,26 +694,9 @@ export default function TestimonialsSection() {
             <VideoCarousel videos={clientVideoTestimonials} onOpen={(src) => setActiveVideo(src)} />
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6">
-            {writtenTestimonials.clients.map((testimonial, index) => (
-              <Card key={index} className="p-6 bg-gradient-to-br from-card to-primary/12 border-primary/20">
-                <div className="flex items-start gap-4">
-                  <div className="flex items-center gap-1">
-                    {/* five filled stars */}
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <FilledStar key={i} />
-                    ))}
-                  </div>
-                </div>
-
-                <p className="mt-4 text-sm text-foreground/90">{testimonial.quote}</p>
-
-                <div className="mt-6 border-t pt-4">
-                  <p className="font-bold text-foreground">{testimonial.name}</p>
-                  <p className="text-xs text-muted-foreground">{testimonial.role}</p>
-                </div>
-              </Card>
-            ))}
+          {/* MARQUEE for client written testimonials (same direction & speed as logo marquee) */}
+          <div className="mb-8">
+            <TestimonialsMarquee items={writtenTestimonials.clients} speed={24} direction="left" itemWidth="min(420px, 32vw)" />
           </div>
         </div>
 
@@ -543,25 +708,9 @@ export default function TestimonialsSection() {
               <VideoCarousel videos={candidateVideoTestimonials.slice(0, 3)} onOpen={(src) => setActiveVideo(src)} />
             </div>
 
-            <div className="grid md:grid-cols-3 gap-6">
-              {writtenTestimonials.candidates.map((testimonial, idx) => (
-                <Card key={idx} className="p-6 bg-gradient-to-br from-card to-primary/12 border-primary/20">
-                  <div className="flex items-start gap-4">
-                    <div className="flex items-center gap-1">
-                      {Array.from({ length: 5 }).map((_, i) => (
-                        <FilledStar key={i} />
-                      ))}
-                    </div>
-                  </div>
-
-                  <p className="mt-4 text-sm text-foreground/90">{testimonial.quote}</p>
-
-                  <div className="mt-6 border-t pt-4">
-                    <p className="font-bold text-foreground">{testimonial.name}</p>
-                    <p className="text-xs text-muted-foreground">{testimonial.role}</p>
-                  </div>
-                </Card>
-              ))}
+            {/* MARQUEE for candidate written testimonials */}
+            <div className="mb-8">
+              <TestimonialsMarquee items={writtenTestimonials.candidates} speed={24} direction="left" itemWidth="min(420px, 32vw)" />
             </div>
           </div>
         </div>
