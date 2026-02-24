@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 /* =========================
    VIDEO ASSETS
-   Update these paths to match the asset names in your repo.
+   Update these imports to match the asset paths in your repo
    ========================= */
 import videoKevin from "@assets/Kevin's Testimonial.mp4";
 import videoSam from "@assets/Sam's Testimonial .mov";
@@ -18,7 +18,8 @@ import videoJoshPierce from "@assets/Josh Pierce - CEO of Higher Ground Land.mp4
 
 /* =========================
    DATA: videos + written testimonials
-   Ensure you replace placeholder candidate video src's when real videos are available.
+   - candidateVideoTestimonials now has 6 items (replace src with real files)
+   - client video list left as-is
    ========================= */
 
 const clientVideoTestimonials = [
@@ -30,14 +31,22 @@ const clientVideoTestimonials = [
   { id: 6, name: "Josh Pierce", role: "CEO of Higher Ground Land", src: videoJoshPierce },
 ];
 
-/* Candidate video placeholders — replace src with real candidate videos */
+/* Candidate video placeholders: expanded to 6 items.
+   Replace src values with your real candidate video files. */
 const candidateVideoTestimonials = [
-  { id: 1, name: "Marcus Reyes", role: "Senior Land Manager", src: videoKevin },
-  { id: 2, name: "Hannah Lee", role: "Operations Coordinator", src: videoSam },
-  { id: 3, name: "Samuel Kim", role: "Project Lead", src: videoNewClient },
+  { id: 101, name: "Marcus Reyes", role: "Senior Land Manager", src: videoKevin },
+  { id: 102, name: "Hannah Lee", role: "Operations Coordinator", src: videoSam },
+  { id: 103, name: "Samuel Kim", role: "Project Lead", src: videoNewClient },
+  { id: 104, name: "Aisha Patel", role: "Site Supervisor", src: videoDaniel },
+  { id: 105, name: "Diego Morales", role: "Survey Engineer", src: videoZach },
+  { id: 106, name: "Renee Carter", role: "Regional Planner", src: videoJoshPierce },
 ];
 
-/* Written testimonial lists — 9 each (unchanged from your last request) */
+/* =========================
+   WRITTEN TESTIMONIAL DATA (9 each)
+   (unchanged content — kept 9 client & 9 candidate testimonials)
+   ========================= */
+
 const clientWrittenTestimonials = [
   {
     name: "Daniel Turner",
@@ -153,15 +162,16 @@ const candidateTestimonials = [
 ];
 
 /* =========================
-   MARQUEE CSS (for written cards)
-   (kept as before with slowed speed)
+   MARQUEE CSS (written testimonials)
+   - slowed to 96s (half speed)
+   - greenish aesthetic left for cards below
    ========================= */
 
 const marqueeCss = `
 :root {
   --testimonial-tile-width: 300px;
   --marquee-gap: 1rem;
-  --marquee-duration: 96s; /* slowed (48 -> 96) */
+  --marquee-duration: 96s;
 }
 
 .testimonials-marquee {
@@ -198,7 +208,7 @@ const marqueeCss = `
 
 /* =========================
    VIDEO THUMBNAIL
-   (Ensure first frame displays)
+   Use <video> so the first frame appears as the thumbnail.
    ========================= */
 
 function VideoThumbnail({ src, alt }: { src: string; alt?: string }) {
@@ -213,7 +223,7 @@ function VideoThumbnail({ src, alt }: { src: string; alt?: string }) {
         v.pause();
         v.currentTime = 0;
       } catch (e) {
-        // ignore timing/cross-origin issues
+        /* ignore timing/cross-origin issues */
       }
     };
 
@@ -235,7 +245,9 @@ function VideoThumbnail({ src, alt }: { src: string; alt?: string }) {
 }
 
 /* =========================
-   WrittenTestimonialCard (kept)
+   WRITTEN TESTIMONIAL CARD
+   - pale green background, green border
+   - green separator line between quote and name
    ========================= */
 
 function WrittenTestimonialCard({
@@ -244,13 +256,14 @@ function WrittenTestimonialCard({
   testimonial: { name: string; role: string; quote: string };
 }) {
   return (
-    <Card className="p-4 h-full flex flex-col justify-between rounded-lg shadow-sm">
+    <Card className="p-4 h-full flex flex-col justify-between rounded-lg shadow-sm overflow-hidden
+                    bg-gradient-to-r from-green-50/80 to-white border border-green-100">
       <div>
         <p className="text-sm text-foreground/90 line-clamp-4">{testimonial.quote}</p>
       </div>
 
-      <div className="mt-4 border-t pt-3">
-        <p className="font-semibold text-sm">{testimonial.name}</p>
+      <div className="mt-4 border-t-2 border-green-200 pt-3">
+        <p className="font-semibold text-sm text-foreground">{testimonial.name}</p>
         <p className="text-xs text-muted-foreground">{testimonial.role}</p>
       </div>
     </Card>
@@ -258,7 +271,7 @@ function WrittenTestimonialCard({
 }
 
 /* =========================
-   Written Marquee (kept)
+   MARQUEE COMPONENT (written testimonials)
    ========================= */
 
 function TestimonialsMarquee({
@@ -276,10 +289,8 @@ function TestimonialsMarquee({
 
       <div className="testimonials-marquee__track" aria-hidden="false">
         {duplicated.map((item, idx) => (
-          <div key={idx} className="testimonials-marquee__item">
-            <div className="p-2 h-full">
-              <WrittenTestimonialCard testimonial={item} />
-            </div>
+          <div key={idx} className="testimonials-marquee__item p-2 h-full">
+            <WrittenTestimonialCard testimonial={item} />
           </div>
         ))}
       </div>
@@ -288,11 +299,10 @@ function TestimonialsMarquee({
 }
 
 /* =========================
-   VideoCarousel
-   - responsive itemsPerView (1/2/3)
-   - left/right arrows, keyboard support
-   - highlight center item visually
-   - opens modal when clicking a video
+   VIDEO CAROUSEL (infinite wrap)
+   - responsive itemsPerView (1 / 2 / 3)
+   - arrows wrap (infinite): Next on last -> first, Prev on first -> last
+   - center item slightly emphasized
    ========================= */
 
 function VideoCarousel({
@@ -308,29 +318,39 @@ function VideoCarousel({
   const [itemsPerView, setItemsPerView] = useState(3);
 
   useEffect(() => {
-    function update() {
-      if (window.innerWidth < 640) setItemsPerView(1);
-      else if (window.innerWidth < 1024) setItemsPerView(2);
-      else setItemsPerView(3);
-      // ensure startIndex is valid after itemsPerView change
-      setStartIndex((s) => Math.min(s, Math.max(0, items.length - Math.max(1, itemsPerView))));
-    }
+    const update = () => {
+      let newItemsPerView = 3;
+      if (window.innerWidth < 640) newItemsPerView = 1;
+      else if (window.innerWidth < 1024) newItemsPerView = 2;
+      newItemsPerView = Math.min(newItemsPerView, items.length || 1);
+      setItemsPerView((prev) => {
+        if (prev !== newItemsPerView) {
+          // ensure startIndex is valid after itemsPerView changes
+          setStartIndex((s) => Math.min(s, Math.max(0, items.length - newItemsPerView)));
+          return newItemsPerView;
+        }
+        return prev;
+      });
+    };
 
     update();
     window.addEventListener("resize", update);
     return () => window.removeEventListener("resize", update);
-  }, [items.length, itemsPerView]);
+  }, [items.length]);
 
-  // maximum starting index so we don't show empty space at the end
   const maxStart = Math.max(0, items.length - itemsPerView);
 
-  const goPrev = () => setStartIndex((s) => Math.max(0, s - 1));
-  const goNext = () => setStartIndex((s) => Math.min(maxStart, s + 1));
+  // Wrap-around behavior: infinite carousel via wrapping startIndex
+  const goPrev = () => setStartIndex((s) => (s <= 0 ? maxStart : s - 1));
+  const goNext = () => setStartIndex((s) => (s >= maxStart ? 0 : s + 1));
 
+  // center index for emphasis
   const centerIndex = startIndex + Math.floor(itemsPerView / 2);
 
-  // percent to translate track left
-  const translatePercent = (startIndex * 100) / itemsPerView;
+  // Each visible item is (100 / itemsPerView)% of the visible container.
+  // translatePercent shifts the track left by startIndex * itemWidth%
+  const itemWidthPercent = 100 / Math.max(1, itemsPerView);
+  const translatePercent = startIndex * itemWidthPercent;
 
   // keyboard support
   useEffect(() => {
@@ -351,9 +371,7 @@ function VideoCarousel({
         {/* arrows */}
         <button
           onClick={goPrev}
-          className={`absolute left-0 top-1/2 -translate-y-1/2 z-20 p-2 md:p-3 rounded-full bg-white shadow hover:bg-gray-100 transition ${
-            startIndex === 0 ? "opacity-40 pointer-events-none" : "opacity-100"
-          }`}
+          className={`absolute left-0 top-1/2 -translate-y-1/2 z-20 p-2 md:p-3 rounded-full bg-white shadow hover:bg-gray-100 transition`}
           aria-label="Previous testimonials"
         >
           <ChevronLeft size={18} />
@@ -361,26 +379,19 @@ function VideoCarousel({
 
         <button
           onClick={goNext}
-          className={`absolute right-0 top-1/2 -translate-y-1/2 z-20 p-2 md:p-3 rounded-full bg-white shadow hover:bg-gray-100 transition ${
-            startIndex >= maxStart ? "opacity-40 pointer-events-none" : "opacity-100"
-          }`}
+          className={`absolute right-0 top-1/2 -translate-y-1/2 z-20 p-2 md:p-3 rounded-full bg-white shadow hover:bg-gray-100 transition`}
           aria-label="Next testimonials"
         >
           <ChevronRight size={18} />
         </button>
 
-        {/* track */}
+        {/* visible window */}
         <div className="overflow-hidden">
           <div
             className="flex gap-4 transition-transform duration-300"
-            style={{
-              transform: `translateX(-${translatePercent}%)`,
-              // ensure track is wide enough so % translation matches item width
-              width: `${(items.length * 100) / itemsPerView}%`,
-            }}
+            style={{ transform: `translateX(-${translatePercent}%)` }}
           >
             {items.map((item, idx) => {
-              const itemWidthPercent = 100 / items.length; // because track width scaled above
               const isCenter = idx === centerIndex;
               return (
                 <div
