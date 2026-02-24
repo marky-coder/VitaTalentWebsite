@@ -189,44 +189,19 @@ function chunkRows<T>(arr: T[], size: number) {
   return rows;
 }
 
-/* Inline CSS for the testimonials marquee + video cap.
-   - marquee slowed to 48s
-   - .testimonial-video caps height to shorter values to avoid overlap
-*/
+/* Inline CSS for the testimonials marquee + short video limit */
 const testimonialsMarqueeCss = `
-.testimonials-marquee {
-  --gap: 1.5rem;
-  --marquee-duration: 48s;
-  width: 100%;
-  overflow: hidden;
-  box-sizing: border-box;
-  display: block;
-  padding: 0.5rem 0;
-  white-space: nowrap;
-}
-.testimonials-marquee__track {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--gap);
-  width: max-content;
-  animation: testimonials-marquee linear var(--marquee-duration) infinite;
-  will-change: transform;
-}
+.testimonials-marquee { --gap: 1.5rem; --marquee-duration: 48s; width:100%; overflow:hidden; box-sizing:border-box; display:block; padding:0.5rem 0; white-space:nowrap; }
+.testimonials-marquee__track { display:flex; align-items:flex-start; gap:var(--gap); width:max-content; animation: testimonials-marquee linear var(--marquee-duration) infinite; will-change:transform; }
 .testimonials-marquee[data-direction="right"] .testimonials-marquee__track { animation-direction: reverse; }
-.testimonials-marquee__item { flex: 0 0 auto; display: inline-flex; align-items: stretch; justify-content: flex-start; }
+.testimonials-marquee__item { flex: 0 0 auto; display:inline-flex; align-items:stretch; justify-content:flex-start; }
 .testimonials-marquee__track:hover, .testimonials-marquee__track:focus-within { animation-play-state: paused; }
 @keyframes testimonials-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-@media (prefers-reduced-motion: reduce) { .testimonials-marquee__track { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .testimonials-marquee__track { animation:none; } }
 
-/* NEW: cap the video card height so tiles are shorter and won't overlap below.
-   Responsive: between 220px and 300px (you asked to make tiles shorter).
-*/
-.testimonial-video {
-  height: clamp(220px, 36vh, 300px);
-  width: 100%;
-  overflow: hidden;
-  position: relative;
-}
+/* cap the video card height so tiles are shorter and won't overlap below.
+   Responsive: between 220px and 300px */
+.testimonial-video { height: clamp(220px, 36vh, 300px); width:100%; overflow:hidden; position:relative; }
 `;
 
 /* Small filled-star SVG */
@@ -245,9 +220,7 @@ function WrittenTestimonialCard({ testimonial }: { testimonial: { name: string; 
           {Array.from({ length: 5 }).map((_, i) => (<FilledStar key={i} />))}
         </div>
       </div>
-
       <p className="mt-4 text-sm text-foreground/90">{testimonial.quote}</p>
-
       <div className="mt-6 border-t pt-4">
         <p className="font-bold text-foreground">{testimonial.name}</p>
         <p className="text-xs text-muted-foreground">{testimonial.role}</p>
@@ -257,20 +230,9 @@ function WrittenTestimonialCard({ testimonial }: { testimonial: { name: string; 
 }
 
 /* TestimonialsMarquee: duplicates items to loop seamlessly */
-function TestimonialsMarquee({
-  items,
-  speed = 48,
-  direction = "left",
-  itemWidth = "min(420px, 32vw)",
-}: {
-  items: { name: string; role: string; quote: string }[];
-  speed?: number;
-  direction?: "left" | "right";
-  itemWidth?: string;
-}) {
+function TestimonialsMarquee({ items, speed = 48, direction = "left", itemWidth = "min(420px, 32vw)" }: { items: { name: string; role: string; quote: string }[]; speed?: number; direction?: "left" | "right"; itemWidth?: string; }) {
   if (!items || items.length === 0) return null;
   const duplicated = [...items, ...items];
-
   return (
     <div className="testimonials-marquee" data-direction={direction} style={{ ["--marquee-duration" as any]: `${speed}s` } as React.CSSProperties} role="region" aria-label="Testimonials rolling marquee">
       <div className="testimonials-marquee__track" aria-hidden="false">
@@ -284,14 +246,8 @@ function TestimonialsMarquee({
   );
 }
 
-/* ---------- VideoCarousel with a layout spacer to guarantee no overlap ---------- */
-function VideoCarousel({
-  videos,
-  onOpen,
-}: {
-  videos: { id: number; name: string; role: string; src: string }[];
-  onOpen: (src: string) => void;
-}) {
+/* ---------- VideoCarousel with robust spacer (uses getBoundingClientRect + larger buffer) ---------- */
+function VideoCarousel({ videos, onOpen }: { videos: { id: number; name: string; role: string; src: string }[]; onOpen: (src: string) => void; }) {
   const shouldReduceMotion = useReducedMotion();
   const [index, setIndex] = useState(0);
   const [direction, setDirection] = useState(0);
@@ -301,7 +257,7 @@ function VideoCarousel({
   const prevRef = useRef<HTMLDivElement | null>(null);
   const nextRef = useRef<HTMLDivElement | null>(null);
 
-  // measure center height; also expose a spacer element that forces layout below
+  // measure center height; expose a spacer element that forces layout below
   const centerWrapperRef = useRef<HTMLDivElement | null>(null);
   const centerContentRef = useRef<HTMLDivElement | null>(null);
   const spacerRef = useRef<HTMLDivElement | null>(null);
@@ -319,7 +275,6 @@ function VideoCarousel({
   }, [index]);
 
   const clamp = (i: number) => ((i % length) + length) % length;
-
   const handleNext = useCallback(() => { setDirection(1); setIndex((i) => clamp(i + 1)); }, [length]);
   const handlePrev = useCallback(() => { setDirection(-1); setIndex((i) => clamp(i - 1)); }, [length]);
 
@@ -347,17 +302,18 @@ function VideoCarousel({
     return () => { window.removeEventListener("resize", recompute); window.removeEventListener("orientationchange", recompute); };
   }, [index]);
 
-  // robust spacer: measure center visual height and set spacer height so content below is pushed down
+  // robust spacer: measure center visual height with getBoundingClientRect and set spacer height
   useLayoutEffect(() => {
     const carouselEl = carouselRef.current;
     if (!carouselEl) return;
 
     function recomputeCenterHeight() {
       const el = centerContentRef.current ?? centerWrapperRef.current;
-      const height = el ? (el as HTMLElement).offsetHeight : 0;
-      const buffer = 80; // safety buffer for shadows/lift
+      // use getBoundingClientRect() so we reflect visual height including transforms/shadows
+      const rect = el ? (el as HTMLElement).getBoundingClientRect() : null;
+      const height = rect ? rect.height : 0;
+      const buffer = 140; // larger safety buffer (accounts for shadow/visual spill)
       const total = height && height > 0 ? Math.ceil(height + buffer) : 420;
-      // set spacer height to total so content below is pushed
       if (spacerRef.current) {
         spacerRef.current.style.height = `${total}px`;
       } else {
@@ -377,7 +333,7 @@ function VideoCarousel({
       try { ro.observe(observedEl); } catch { /* ignore */ }
     }
 
-    // fallback window resize
+    // fallback: window resize
     const onResize = () => recomputeCenterHeight();
     window.addEventListener("resize", onResize);
 
@@ -428,9 +384,7 @@ function VideoCarousel({
           <div ref={centerWrapperRef} className="relative z-50 flex-shrink-0" style={{ width: centerStyle.width }}>
             <AnimatePresence custom={direction} initial={false}>
               <motion.div ref={centerContentRef} key={videos[index].id} custom={direction} variants={centerVariants} initial="enter" animate="center" exit="exit" transition={{ duration: shouldReduceMotion ? 0 : 0.55, ease: "easeOut" }} drag="x" dragConstraints={{ left: 0, right: 0 }} dragElastic={0.16}
-                onDragEnd={(e, info) => {
-                  if (info.offset.x > dragThreshold) { handlePrev(); } else if (info.offset.x < -dragThreshold) { handleNext(); }
-                }}
+                onDragEnd={(e, info) => { if (info.offset.x > dragThreshold) { handlePrev(); } else if (info.offset.x < -dragThreshold) { handleNext(); } }}
                 className="cursor-grab"
                 style={{ width: centerStyle.width }}
               >
@@ -490,14 +444,12 @@ function VideoCarousel({
 export default function TestimonialsSection() {
   const [activeVideo, setActiveVideo] = useState<string | null>(null);
 
-  // ESC to close modal
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setActiveVideo(null); };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  // prevent body scroll while modal open
   useEffect(() => {
     const prev = document.body.style.overflow;
     if (activeVideo) document.body.style.overflow = "hidden";
