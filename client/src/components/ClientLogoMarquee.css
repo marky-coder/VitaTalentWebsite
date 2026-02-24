@@ -60,7 +60,7 @@
   margin: 0;
 
   /* smooth transform + shadow transition for hover/focus */
-  transition: transform 180ms cubic-bezier(.2,.9,.2,1), box-shadow 220ms ease, filter 220ms ease;
+  transition: transform 220ms cubic-bezier(.2,.9,.2,1), box-shadow 220ms ease, filter 220ms ease;
   transform-origin: center center;
   will-change: transform;
 }
@@ -68,15 +68,16 @@
 /* Enlarge + lift + raise z-index on hover/focus (also works while track is paused) */
 .client-marquee__item:hover,
 .client-marquee__item:focus {
-  z-index: 20; /* bring above neighbors */
+  z-index: 30; /* bring above neighbors */
 }
 
 /* scale the image itself (so we keep layout slightly compact) */
+/* Increased scale and lift per request */
 .client-marquee__item:hover img,
 .client-marquee__item:focus img {
-  transform: translateY(-4px) scale(1.12);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.12);
-  filter: drop-shadow(0 6px 14px rgba(0,0,0,0.10));
+  transform: translateY(-6px) scale(1.25);
+  box-shadow: 0 14px 40px rgba(0,0,0,0.15);
+  filter: drop-shadow(0 8px 20px rgba(0,0,0,0.10));
 }
 
 /* Pause on hover/focus for discoverability (existing behavior) */
