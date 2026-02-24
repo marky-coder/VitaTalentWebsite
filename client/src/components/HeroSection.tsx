@@ -29,18 +29,17 @@ export default function HeroSection({ onHireTalent, onJoinAsCandidate }: HeroSec
   ];
 
   // Utility classes used for the "jump" animation and motion-reduce support:
-  // transform transition-transform duration-200 hover:-translate-y-2 motion-reduce:transform-none motion-reduce:transition-none
-  // We apply these to buttons and social anchors.
   const jumpClasses =
     "transform transition-transform duration-200 hover:-translate-y-2 active:translate-y-0 motion-reduce:transform-none motion-reduce:transition-none";
 
   const greenButtonBase =
     "bg-primary text-primary-foreground border border-primary-border " + jumpClasses + " focus-visible:ring-2 focus-visible:ring-primary/40";
 
-  const socialBase =
-    "w-14 h-14 md:w-16 md:h-16 flex items-center justify-center rounded-md bg-primary text-primary-foreground " +
+  // Social anchors: neutral gray background (original look) + jump animation
+  const socialNeutralBase =
+    "w-14 h-14 md:w-16 md:h-16 flex items-center justify-center rounded-md bg-gray-100 hover:bg-primary/10 transition " +
     jumpClasses +
-    " focus-visible:ring-2 focus-visible:ring-primary/30 shadow-sm";
+    " focus-visible:ring-2 focus-visible:ring-primary/30";
 
   return (
     <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-primary/12 via-primary/6 to-background">
@@ -117,9 +116,9 @@ export default function HeroSection({ onHireTalent, onJoinAsCandidate }: HeroSec
                 rel="noopener noreferrer"
                 title="Facebook"
                 aria-label="VitaTalent Facebook"
-                className={socialBase}
+                className={socialNeutralBase}
               >
-                <svg viewBox="0 0 24 24" className="w-6 h-6 md:w-7 md:h-7 text-primary-foreground" aria-hidden="true" focusable="false">
+                <svg viewBox="0 0 24 24" className="w-6 h-6 md:w-7 md:h-7 text-foreground" aria-hidden="true" focusable="false">
                   <path d="M22 12C22 6.477 17.523 2 12 2S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.99H7.898v-2.888h2.54V9.845c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562v1.875h2.773l-.443 2.888h-2.33v6.99C18.343 21.128 22 16.991 22 12z" />
                 </svg>
               </a>
@@ -130,9 +129,9 @@ export default function HeroSection({ onHireTalent, onJoinAsCandidate }: HeroSec
                 rel="noopener noreferrer"
                 title="Instagram"
                 aria-label="VitaTalent Instagram"
-                className={socialBase}
+                className={socialNeutralBase}
               >
-                <svg viewBox="0 0 24 24" className="w-6 h-6 md:w-7 md:h-7 text-primary-foreground" aria-hidden="true" focusable="false">
+                <svg viewBox="0 0 24 24" className="w-6 h-6 md:w-7 md:h-7 text-foreground" aria-hidden="true" focusable="false">
                   <path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm5 6.1A4.9 4.9 0 1 0 16.9 13 4.9 4.9 0 0 0 12 8.1zm5.2-2.3a1.1 1.1 0 1 0 1.1 1.1 1.1 1.1 0 0 0-1.1-1.1zM12 15.3A3.3 3.3 0 1 1 15.3 12 3.3 3.3 0 0 1 12 15.3z" />
                 </svg>
               </a>
@@ -143,9 +142,9 @@ export default function HeroSection({ onHireTalent, onJoinAsCandidate }: HeroSec
                 rel="noopener noreferrer"
                 title="LinkedIn"
                 aria-label="VitaTalent LinkedIn"
-                className={socialBase}
+                className={socialNeutralBase}
               >
-                <svg viewBox="0 0 24 24" className="w-6 h-6 md:w-7 md:h-7 text-primary-foreground" aria-hidden="true" focusable="false">
+                <svg viewBox="0 0 24 24" className="w-6 h-6 md:w-7 md:h-7 text-foreground" aria-hidden="true" focusable="false">
                   <path d="M20 3H4a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1zM8.5 18H6v-8h2.5v8zM7.25 9.5a1.4 1.4 0 1 1 0-2.8 1.4 1.4 0 0 1 0 2.8zM18 18h-2.5v-4.2c0-1-0.4-1.7-1.4-1.7-0.8 0-1.2.5-1.4 1v4.9H10.5v-8H13v1.1c0.3-0.6 1-1.5 2.7-1.5 2 0 3.5 1.3 3.5 4.2V18z" />
                 </svg>
               </a>
