@@ -467,11 +467,13 @@ function VideoCarousel({
   }, [index]);
 
   // ensure the carousel wrapper reserves vertical space for the center tile
+  // this implementation uses ResizeObserver when available so any content changes
+  // (video thumbnail load, font load, etc.) trigger a recompute and prevent overlap.
   useLayoutEffect(() => {
-    function recomputeCenterHeight() {
-      const carouselEl = carouselRef.current;
-      if (!carouselEl) return;
+    const carouselEl = carouselRef.current;
+    if (!carouselEl) return;
 
+    function recomputeCenterHeight() {
       // Prefer measuring the actual motion content; fall back to wrapper
       const el = centerContentRef.current ?? centerWrapperRef.current;
       const height = el ? (el as HTMLElement).offsetHeight : 0;
@@ -486,9 +488,37 @@ function VideoCarousel({
     }
 
     recomputeCenterHeight();
-    window.addEventListener("resize", recomputeCenterHeight);
-    return () => window.removeEventListener("resize", recomputeCenterHeight);
-  }, [index, centerContentRef.current]);
+
+    // Observe size changes of the center content to recompute minHeight when the content changes later.
+    const observedEl = centerContentRef.current ?? centerWrapperRef.current;
+    const ResizeObs: any = (window as any).ResizeObserver;
+    let ro: any = null;
+
+    if (ResizeObs && observedEl) {
+      ro = new ResizeObs(() => recomputeCenterHeight());
+      try {
+        ro.observe(observedEl);
+      } catch {
+        // ignore observe errors in older browsers
+      }
+    }
+
+    // Always keep a window resize fallback
+    const onResize = () => recomputeCenterHeight();
+    window.addEventListener("resize", onResize);
+
+    return () => {
+      if (ro && observedEl) {
+        try {
+          ro.unobserve(observedEl);
+        } catch {
+          /* ignore */
+        }
+      }
+      window.removeEventListener("resize", onResize);
+    };
+    // re-run when the center slide changes
+  }, [index]);
 
   const dragThreshold = 80;
 
@@ -667,8 +697,6 @@ export default function TestimonialsSection() {
     };
   }, [activeVideo]);
 
-  const candidateRows = chunkRows(candidateVideoTestimonials, 3);
-
   return (
     <section className="py-24 bg-gradient-to-br from-primary/18 via-primary/10 to-background" data-testid="section-testimonials">
       {/* Inject marquee CSS for testimonials */}
@@ -698,7 +726,7 @@ export default function TestimonialsSection() {
             <h3 className="text-2xl font-bold text-foreground mb-6 text-center">Candidate Testimonials</h3>
 
             <div className="mb-8">
-              {/* Show full candidate video list (fixed: previously was slice(0,3)) */}
+              {/* Show full candidate video list */}
               <VideoCarousel videos={candidateVideoTestimonials} onOpen={(src) => setActiveVideo(src)} />
             </div>
 
