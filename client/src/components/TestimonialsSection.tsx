@@ -72,18 +72,21 @@ const candidateTestimonials = [
 ];
 
 /* =========================
-   Marquee CSS (inline, adjusted item size + centering)
+   Marquee CSS (inline)
+   - includes pause-on-hover and tile hover scale
    ========================= */
 const marqueeCss = `
-.testimonials-marquee { overflow: hidden; width: 100%; position: relative; padding: 8px 0;}
+.testimonials-marquee { overflow: hidden; width: 100%; position: relative; padding: 8px 0; }
 .testimonials-marquee__track { display:flex; gap:1rem; align-items:center; width:max-content; animation:marquee linear 96s infinite; }
-.testimonials-marquee__item { flex: 0 0 340px; box-sizing: border-box; }
+.testimonials-marquee__item { flex: 0 0 340px; box-sizing: border-box; transition: transform 220ms ease, box-shadow 220ms ease; }
+.testimonials-marquee__item .testimonial-tile { transition: transform 220ms ease, box-shadow 220ms ease; }
+.testimonials-marquee__item:hover .testimonial-tile { transform: scale(1.05); z-index: 30; box-shadow: 0 12px 28px rgba(0,0,0,0.12); }
+.testimonials-marquee:hover .testimonials-marquee__track { animation-play-state: paused; }
 @keyframes marquee { from { transform: translateX(0);} to { transform: translateX(-50%);} }
 `;
 
 /* =========================
    VideoThumbnail - capture a frame, fallback gracefully
-   - media box has fixed pixel height and object-fit: cover
    ========================= */
 function VideoThumbnail({ src, alt }: { src: string; alt?: string }) {
   const hiddenVideoRef = useRef<HTMLVideoElement | null>(null);
@@ -178,6 +181,7 @@ function VideoThumbnail({ src, alt }: { src: string; alt?: string }) {
 
 /* =========================
    WrittenTestimonialCard (bigger + restored pale-green styling)
+   and has class 'testimonial-tile' for hover animation
    ========================= */
 function WrittenTestimonialCard({ testimonial }: { testimonial: { name: string; role: string; quote: string } }) {
   const cardStyle: React.CSSProperties = {
@@ -187,7 +191,7 @@ function WrittenTestimonialCard({ testimonial }: { testimonial: { name: string; 
     background: "linear-gradient(90deg, rgba(236,252,245,0.95), rgba(255,255,255,0.98))", // pale-green
     border: "1px solid rgba(6,95,70,0.10)", // slightly stronger subtle green border
     color: "rgba(0,0,0,0.85)",
-    minHeight: 160, // bigger so content breathes
+    minHeight: 160,
     display: "flex",
     flexDirection: "column",
     justifyContent: "space-between",
@@ -197,7 +201,7 @@ function WrittenTestimonialCard({ testimonial }: { testimonial: { name: string; 
   const metaStyle: React.CSSProperties = { marginTop: 12, paddingTop: 10, borderTop: "1px solid rgba(6,95,70,0.08)", fontSize: 13, color: "#374151" };
 
   return (
-    <div style={cardStyle}>
+    <div className="testimonial-tile" style={cardStyle}>
       <p style={quoteStyle}>{testimonial.quote}</p>
       <div style={metaStyle}>
         <div style={{ fontWeight: 700 }}>{testimonial.name}</div>
@@ -209,34 +213,25 @@ function WrittenTestimonialCard({ testimonial }: { testimonial: { name: string; 
 
 /* =========================
    TestimonialsMarquee
-   - KEY FIX: marquee is wrapped in centered container (maxWidth:1200)
-     with overflow:hidden so tiles won't exceed the video carousel edges.
+   - wrapped in centered container (maxWidth:1200) and clips overflow
+   - pause-on-hover handled in CSS
    ========================= */
 function TestimonialsMarquee({ items }: { items: { name: string; role: string; quote: string }[] }) {
   const duplicated = [...items, ...items];
 
-  // match carousel max-width so both align visually
   const marqueeWrapperStyle: React.CSSProperties = {
     maxWidth: 1200,
     margin: "0 auto",
     width: "100%",
-    overflow: "hidden", // clip any overflow so tiles stop at edges
+    overflow: "hidden",
     boxSizing: "border-box",
     padding: "8px 0",
-  };
-
-  const trackStyle: React.CSSProperties = {
-    display: "flex",
-    gap: "1rem",
-    alignItems: "center",
-    width: "max-content",
-    // keep animation in CSS (inline style used above)
   };
 
   return (
     <div style={marqueeWrapperStyle}>
       <style>{marqueeCss}</style>
-      <div className="testimonials-marquee__track" aria-hidden="false" style={trackStyle}>
+      <div className="testimonials-marquee__track" aria-hidden="false" style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
         {duplicated.map((item, idx) => (
           <div key={idx} className="testimonials-marquee__item" style={{ flex: "0 0 340px" }}>
             <WrittenTestimonialCard testimonial={item} />
@@ -248,7 +243,10 @@ function TestimonialsMarquee({ items }: { items: { name: string; role: string; q
 }
 
 /* =========================
-   VideoCarousel - safe: track alignItems, constrained container, explicit card border
+   VideoCarousel
+   - track alignItems: 'flex-start'
+   - removed bottom Play button
+   - center play icon is a real button that calls onPlay()
    ========================= */
 function VideoCarousel({ videos, onPlay }: { videos: { id: number; name: string; role: string; src: string }[]; onPlay: (src: string) => void; }) {
   const [startIndex, setStartIndex] = useState(0);
@@ -318,26 +316,42 @@ function VideoCarousel({ videos, onPlay }: { videos: { id: number; name: string;
         </button>
 
         <div ref={viewportRef} style={{ overflow: "hidden", width: "100%" }}>
-          {/* IMPORTANT: prevent children from stretching to the tallest item */}
           <div style={{ display: "flex", alignItems: "flex-start", width: `${itemWidth * videos.length}px`, transform: `translateX(-${startIndex * itemWidth}px)`, transition: "transform 300ms ease" }}>
             {videos.map(v => (
               <div key={v.id} style={{ flex: `0 0 ${itemWidth}px`, maxWidth: `${itemWidth}px`, boxSizing: "border-box", padding: 12 }}>
                 <article style={cardStyle}>
                   <div style={{ width: "100%", height: 360, minHeight: 360, maxHeight: 360, overflow: "hidden", position: "relative", background: "#f6f6f6" }}>
                     <VideoThumbnail src={v.src} alt={v.name} />
-                    <div aria-hidden style={{ pointerEvents: "none", position: "absolute", left: "50%", top: "50%", transform: "translate(-50%, -50%)", width: 44, height: 44, borderRadius: 999, background: "rgba(6,95,70,0.95)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 6px 16px rgba(0,0,0,0.12)", border: "4px solid rgba(255,255,255,0.06)" }}>
+
+                    {/* Center play button: real button that opens modal */}
+                    <button
+                      aria-label={`Play ${v.name}`}
+                      onClick={() => onPlay(v.src)}
+                      style={{
+                        position: "absolute",
+                        left: "50%",
+                        top: "50%",
+                        transform: "translate(-50%, -50%)",
+                        width: 44,
+                        height: 44,
+                        borderRadius: 999,
+                        background: "rgba(6,95,70,0.95)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        boxShadow: "0 6px 16px rgba(0,0,0,0.12)",
+                        border: "4px solid rgba(255,255,255,0.06)",
+                        cursor: "pointer",
+                      }}
+                    >
                       <Play style={{ width: 18, height: 18, color: "white" }} />
-                    </div>
+                    </button>
                   </div>
 
                   <div style={{ padding: 16, flex: 1, overflow: "auto" }}>
                     <div style={{ fontWeight: 700, fontSize: 14 }}>{v.name}</div>
                     <div style={{ color: "#6b7280", fontSize: 12, marginTop: 6 }}>{v.role}</div>
-                    <div style={{ marginTop: 12 }}>
-                      <button onClick={() => onPlay(v.src)} style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "8px 12px", background: "#0b8d57", color: "white", borderRadius: 6, fontSize: 13 }}>
-                        <Play style={{ width: 14, height: 14 }} /> Play
-                      </button>
-                    </div>
+                    {/* Removed the duplicate Play button below the name/company per request */}
                   </div>
                 </article>
               </div>
@@ -354,7 +368,7 @@ function VideoCarousel({ videos, onPlay }: { videos: { id: number; name: string;
 }
 
 /* =========================
-   Main component (videos + written testimonials)
+   Main component
    ========================= */
 export default function TestimonialsSection() {
   const [playingSrc, setPlayingSrc] = useState<string | null>(null);
@@ -393,10 +407,35 @@ export default function TestimonialsSection() {
 
       <AnimatePresence>
         {playingSrc && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} style={{ position: "fixed", inset: 0, zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.6)", padding: 16 }} onClick={() => setPlayingSrc(null)}>
-            <motion.div initial={{ scale: 0.95 }} animate={{ scale: 1 }} exit={{ scale: 0.95 }} style={{ width: "100%", maxWidth: 900, background: "white", borderRadius: 8, overflow: "hidden" }} onClick={e => e.stopPropagation()}>
-              <div style={{ position: "relative" }}>
-                <video src={playingSrc || undefined} controls autoPlay style={{ width: "100%", height: "60vh", objectFit: "cover", background: "black" }} />
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            style={{ position: "fixed", inset: 0, zIndex: 9999, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(0,0,0,0.6)", padding: 16 }}
+            onClick={() => setPlayingSrc(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.95 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.95 }}
+              style={{ width: "100%", maxWidth: 1200, background: "white", borderRadius: 8, overflow: "hidden" }}
+              onClick={e => e.stopPropagation()}
+            >
+              <div style={{ position: "relative", display: "flex", justifyContent: "center", alignItems: "center", padding: 20 }}>
+                {/* Use max dimensions and preserve aspect ratio (contain) so original size is respected */}
+                <video
+                  src={playingSrc || undefined}
+                  controls
+                  autoPlay
+                  style={{
+                    maxWidth: "90vw",
+                    maxHeight: "90vh",
+                    width: "auto",
+                    height: "auto",
+                    display: "block",
+                    background: "black",
+                  }}
+                />
                 <button aria-label="Close" onClick={() => setPlayingSrc(null)} style={{ position: "absolute", top: 12, right: 12, background: "white", borderRadius: 999, padding: 8, boxShadow: "0 4px 12px rgba(0,0,0,0.12)" }}>
                   <X style={{ width: 16, height: 16 }} />
                 </button>
