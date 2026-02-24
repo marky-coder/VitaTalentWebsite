@@ -246,7 +246,7 @@ function TestimonialsMarquee({ items, speed = 48, direction = "left", itemWidth 
   );
 }
 
-/* ---------- VideoCarousel with robust spacer (uses getBoundingClientRect + larger buffer) ---------- */
+/* ---------- VideoCarousel with robust spacer (uses getBoundingClientRect + visual bottom) ---------- */
 function VideoCarousel({ videos, onOpen }: { videos: { id: number; name: string; role: string; src: string }[]; onOpen: (src: string) => void; }) {
   const shouldReduceMotion = useReducedMotion();
   const [index, setIndex] = useState(0);
@@ -302,26 +302,56 @@ function VideoCarousel({ videos, onOpen }: { videos: { id: number; name: string;
     return () => { window.removeEventListener("resize", recompute); window.removeEventListener("orientationchange", recompute); };
   }, [index]);
 
-  // robust spacer: measure center visual height with getBoundingClientRect and set spacer height
+  // robust spacer: measure center visual bottom using getBoundingClientRect and set spacer height
   useLayoutEffect(() => {
     const carouselEl = carouselRef.current;
     if (!carouselEl) return;
 
+    let rafHandles: number[] = [];
+
     function recomputeCenterHeight() {
       const el = centerContentRef.current ?? centerWrapperRef.current;
-      // use getBoundingClientRect() so we reflect visual height including transforms/shadows
-      const rect = el ? (el as HTMLElement).getBoundingClientRect() : null;
-      const height = rect ? rect.height : 0;
-      const buffer = 140; // larger safety buffer (accounts for shadow/visual spill)
-      const total = height && height > 0 ? Math.ceil(height + buffer) : 420;
+      if (!el) {
+        // fallback
+        if (spacerRef.current) spacerRef.current.style.height = `420px`;
+        else carouselEl.style.minHeight = `420px`;
+        return;
+      }
+
+      // visual rects (includes transform & scale)
+      const centerRect = (el as HTMLElement).getBoundingClientRect();
+      const carouselRect = carouselEl.getBoundingClientRect();
+
+      // buffer to account for shadows and visual spill — increased for safety
+      const buffer = 140;
+
+      // desired total (distance from carousel top to center visual bottom) + buffer
+      const desiredTotal = Math.ceil((centerRect.bottom - carouselRect.top) + buffer);
+
+      // how much extra we need to add beneath the carousel so total >= desiredTotal
+      const currentCarouselHeight = Math.ceil(carouselRect.height);
+      const extraNeeded = Math.max(0, desiredTotal - currentCarouselHeight);
+
       if (spacerRef.current) {
-        spacerRef.current.style.height = `${total}px`;
+        spacerRef.current.style.height = `${extraNeeded}px`;
       } else {
-        carouselEl.style.minHeight = `${total}px`;
+        carouselEl.style.minHeight = `${Math.max(currentCarouselHeight, desiredTotal)}px`;
       }
     }
 
+    // run immediately
     recomputeCenterHeight();
+
+    // run a few rAF iterations to capture transforms / animation frames
+    let frames = 0;
+    function tick() {
+      recomputeCenterHeight();
+      frames += 1;
+      if (frames < 6) {
+        rafHandles.push(window.requestAnimationFrame(tick));
+      }
+    }
+    rafHandles.push(window.requestAnimationFrame(tick));
 
     // Observe size changes of the center content and update spacer
     const observedEl = centerContentRef.current ?? centerWrapperRef.current;
@@ -329,7 +359,16 @@ function VideoCarousel({ videos, onOpen }: { videos: { id: number; name: string;
     let ro: any = null;
 
     if (ResizeObs && observedEl) {
-      ro = new ResizeObs(() => recomputeCenterHeight());
+      ro = new ResizeObs(() => {
+        // small rAF burst on resize to allow animated layout to settle
+        let rFrames = 0;
+        function rTick() {
+          recomputeCenterHeight();
+          rFrames += 1;
+          if (rFrames < 6) rafHandles.push(window.requestAnimationFrame(rTick));
+        }
+        rafHandles.push(window.requestAnimationFrame(rTick));
+      });
       try { ro.observe(observedEl); } catch { /* ignore */ }
     }
 
@@ -338,6 +377,8 @@ function VideoCarousel({ videos, onOpen }: { videos: { id: number; name: string;
     window.addEventListener("resize", onResize);
 
     return () => {
+      // cancel any rAFs we scheduled
+      for (const h of rafHandles) cancelAnimationFrame(h);
       if (ro && observedEl) {
         try { ro.unobserve(observedEl); } catch { /* ignore */ }
       }
