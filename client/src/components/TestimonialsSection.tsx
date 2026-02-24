@@ -269,6 +269,7 @@ function chunkRows<T>(arr: T[], size: number) {
 
 /* Inline CSS for the testimonials marquee.
    Slowed the default to 48s (was 24s).
+   Also add .testimonial-video to cap video height (shorter tiles).
 */
 const testimonialsMarqueeCss = `
 .testimonials-marquee {
@@ -316,6 +317,16 @@ const testimonialsMarqueeCss = `
   .testimonials-marquee__track {
     animation: none;
   }
+}
+
+/* NEW: cap the video card height so tiles are shorter and won't overlap below.
+   Responsive: between 260px and 360px, using viewport for mid sizes.
+*/
+.testimonial-video {
+  height: clamp(260px, 40vh, 360px);
+  width: 100%;
+  overflow: hidden;
+  position: relative;
 }
 `;
 
@@ -560,7 +571,7 @@ function VideoCarousel({
             className="cursor-pointer overflow-hidden transform transition-transform duration-300 hover:scale-95"
             aria-label={`Previous: ${videos[prevIndex].name}`}
           >
-            <div className="aspect-video bg-muted relative">
+            <div className="testimonial-video bg-muted relative">
               <VideoThumbnail src={videos[prevIndex].src} alt={videos[prevIndex].name} />
               <div className="absolute inset-0 bg-background/60 flex items-center justify-center pointer-events-none">
                 <div className="w-12 h-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
@@ -601,7 +612,7 @@ function VideoCarousel({
               style={{ width: centerStyle.width }}
             >
               <Card onClick={() => onOpen(videos[index].src)} className="relative overflow-hidden cursor-pointer" aria-label={`Play testimonial from ${videos[index].name}`}>
-                <div className="aspect-video bg-muted relative">
+                <div className="testimonial-video bg-muted relative">
                   <VideoThumbnail src={videos[index].src} alt={videos[index].name} />
                   <div className="absolute inset-0 bg-background/60 flex items-center justify-center pointer-events-none">
                     <div className="w-16 h-16 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
@@ -631,7 +642,7 @@ function VideoCarousel({
             className="cursor-pointer overflow-hidden transform transition-transform duration-300 hover:scale-95"
             aria-label={`Next: ${videos[nextIndex].name}`}
           >
-            <div className="aspect-video bg-muted relative">
+            <div className="testimonial-video bg-muted relative">
               <VideoThumbnail src={videos[nextIndex].src} alt={videos[nextIndex].name} />
               <div className="absolute inset-0 bg-background/60 flex items-center justify-center pointer-events-none">
                 <div className="w-12 h-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
@@ -699,7 +710,7 @@ export default function TestimonialsSection() {
 
   return (
     <section className="py-24 bg-gradient-to-br from-primary/18 via-primary/10 to-background" data-testid="section-testimonials">
-      {/* Inject marquee CSS for testimonials */}
+      {/* Inject marquee CSS for testimonials + testimonial-video height */}
       <style>{testimonialsMarqueeCss}</style>
 
       <div className="container max-w-7xl mx-auto px-4">
