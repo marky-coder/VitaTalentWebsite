@@ -1,13 +1,13 @@
 // client/src/components/TestimonialsSection.tsx
 
 import { Card } from "@/components/ui/card";
-import { Play, X } from "lucide-react";
+import { Play, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 /* =========================
    VIDEO ASSETS
-   Update these imports to match the asset paths in your repo
+   Update these paths to match the asset names in your repo.
    ========================= */
 import videoKevin from "@assets/Kevin's Testimonial.mp4";
 import videoSam from "@assets/Sam's Testimonial .mov";
@@ -18,8 +18,7 @@ import videoJoshPierce from "@assets/Josh Pierce - CEO of Higher Ground Land.mp4
 
 /* =========================
    DATA: videos + written testimonials
-   NOTE: I included 9 items for clients and 9 for candidates.
-   Replace the strings below with your real copy if needed.
+   Ensure you replace placeholder candidate video src's when real videos are available.
    ========================= */
 
 const clientVideoTestimonials = [
@@ -31,6 +30,14 @@ const clientVideoTestimonials = [
   { id: 6, name: "Josh Pierce", role: "CEO of Higher Ground Land", src: videoJoshPierce },
 ];
 
+/* Candidate video placeholders — replace src with real candidate videos */
+const candidateVideoTestimonials = [
+  { id: 1, name: "Marcus Reyes", role: "Senior Land Manager", src: videoKevin },
+  { id: 2, name: "Hannah Lee", role: "Operations Coordinator", src: videoSam },
+  { id: 3, name: "Samuel Kim", role: "Project Lead", src: videoNewClient },
+];
+
+/* Written testimonial lists — 9 each (unchanged from your last request) */
 const clientWrittenTestimonials = [
   {
     name: "Daniel Turner",
@@ -50,8 +57,6 @@ const clientWrittenTestimonials = [
     quote:
       "Exceptional sourcing and onboarding support. We now rely on Vita Talent as a strategic partner.",
   },
-
-  // 6 more client quotes to make it 9 total
   {
     name: "Janet Morales",
     role: "COO, Redwood Estates",
@@ -109,8 +114,6 @@ const candidateTestimonials = [
     quote:
       "Thoughtful feedback, great prep, and a smooth negotiation — I felt supported every step of the way.",
   },
-
-  // 6 more candidate quotes to make it 9 total
   {
     name: "Aisha Patel",
     role: "Site Supervisor — Placed at Stonebridge",
@@ -150,9 +153,8 @@ const candidateTestimonials = [
 ];
 
 /* =========================
-   MARQUEE STYLE
-   - reduced tile width and added line-clamp
-   - marquee duration doubled (48 -> 96) to slow to half
+   MARQUEE CSS (for written cards)
+   (kept as before with slowed speed)
    ========================= */
 
 const marqueeCss = `
@@ -162,14 +164,12 @@ const marqueeCss = `
   --marquee-duration: 96s; /* slowed (48 -> 96) */
 }
 
-/* marquee wrapper */
 .testimonials-marquee {
   overflow: hidden;
   width: 100%;
   position: relative;
 }
 
-/* track that scrolls */
 .testimonials-marquee__track {
   display: flex;
   gap: var(--marquee-gap);
@@ -178,23 +178,19 @@ const marqueeCss = `
   animation: marquee linear var(--marquee-duration) infinite;
 }
 
-/* item sizing */
 .testimonials-marquee__item {
   flex: 0 0 var(--testimonial-tile-width);
 }
 
-/* continuous animation with duplicated content */
 @keyframes marquee {
   from { transform: translateX(0); }
   to { transform: translateX(-50%); }
 }
 
-/* pause on hover */
 .testimonials-marquee:hover .testimonials-marquee__track {
   animation-play-state: paused;
 }
 
-/* responsive tweak */
 @media (max-width: 640px) {
   :root { --testimonial-tile-width: 260px; }
 }
@@ -202,7 +198,7 @@ const marqueeCss = `
 
 /* =========================
    VIDEO THUMBNAIL
-   Use <video/> to ensure first frame visible as a thumbnail.
+   (Ensure first frame displays)
    ========================= */
 
 function VideoThumbnail({ src, alt }: { src: string; alt?: string }) {
@@ -217,7 +213,7 @@ function VideoThumbnail({ src, alt }: { src: string; alt?: string }) {
         v.pause();
         v.currentTime = 0;
       } catch (e) {
-        // ignore timing/cross-origin issues; the browser will show poster/first frame
+        // ignore timing/cross-origin issues
       }
     };
 
@@ -232,15 +228,14 @@ function VideoThumbnail({ src, alt }: { src: string; alt?: string }) {
       muted
       playsInline
       preload="metadata"
-      className="w-full h-56 md:h-72 object-cover bg-gray-200"
+      className="w-full h-56 md:h-64 lg:h-72 object-cover bg-gray-100"
       aria-label={alt ?? "video testimonial thumbnail"}
     />
   );
 }
 
 /* =========================
-   Written Testimonial Card
-   - uses line-clamp to avoid overflow (requires tailwind line-clamp plugin)
+   WrittenTestimonialCard (kept)
    ========================= */
 
 function WrittenTestimonialCard({
@@ -263,8 +258,7 @@ function WrittenTestimonialCard({
 }
 
 /* =========================
-   Marquee component
-   - duplicates the list to create seamless scroll
+   Written Marquee (kept)
    ========================= */
 
 function TestimonialsMarquee({
@@ -274,7 +268,6 @@ function TestimonialsMarquee({
   items: { name: string; role: string; quote: string }[];
   ariaLabel?: string;
 }) {
-  // Duplicate the items for continuous scrolling
   const duplicated = [...items, ...items];
 
   return (
@@ -295,7 +288,143 @@ function TestimonialsMarquee({
 }
 
 /* =========================
-   Main component
+   VideoCarousel
+   - responsive itemsPerView (1/2/3)
+   - left/right arrows, keyboard support
+   - highlight center item visually
+   - opens modal when clicking a video
+   ========================= */
+
+function VideoCarousel({
+  items,
+  title,
+  onPlay,
+}: {
+  items: { id: number; name: string; role: string; src: string }[];
+  title?: string;
+  onPlay: (src: string) => void;
+}) {
+  const [startIndex, setStartIndex] = useState(0);
+  const [itemsPerView, setItemsPerView] = useState(3);
+
+  useEffect(() => {
+    function update() {
+      if (window.innerWidth < 640) setItemsPerView(1);
+      else if (window.innerWidth < 1024) setItemsPerView(2);
+      else setItemsPerView(3);
+      // ensure startIndex is valid after itemsPerView change
+      setStartIndex((s) => Math.min(s, Math.max(0, items.length - Math.max(1, itemsPerView))));
+    }
+
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, [items.length, itemsPerView]);
+
+  // maximum starting index so we don't show empty space at the end
+  const maxStart = Math.max(0, items.length - itemsPerView);
+
+  const goPrev = () => setStartIndex((s) => Math.max(0, s - 1));
+  const goNext = () => setStartIndex((s) => Math.min(maxStart, s + 1));
+
+  const centerIndex = startIndex + Math.floor(itemsPerView / 2);
+
+  // percent to translate track left
+  const translatePercent = (startIndex * 100) / itemsPerView;
+
+  // keyboard support
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "ArrowLeft") goPrev();
+      if (e.key === "ArrowRight") goNext();
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [startIndex, itemsPerView, items.length]);
+
+  return (
+    <div className="mb-8">
+      {title && <h3 className="text-lg font-semibold mb-4">{title}</h3>}
+
+      <div className="relative">
+        {/* arrows */}
+        <button
+          onClick={goPrev}
+          className={`absolute left-0 top-1/2 -translate-y-1/2 z-20 p-2 md:p-3 rounded-full bg-white shadow hover:bg-gray-100 transition ${
+            startIndex === 0 ? "opacity-40 pointer-events-none" : "opacity-100"
+          }`}
+          aria-label="Previous testimonials"
+        >
+          <ChevronLeft size={18} />
+        </button>
+
+        <button
+          onClick={goNext}
+          className={`absolute right-0 top-1/2 -translate-y-1/2 z-20 p-2 md:p-3 rounded-full bg-white shadow hover:bg-gray-100 transition ${
+            startIndex >= maxStart ? "opacity-40 pointer-events-none" : "opacity-100"
+          }`}
+          aria-label="Next testimonials"
+        >
+          <ChevronRight size={18} />
+        </button>
+
+        {/* track */}
+        <div className="overflow-hidden">
+          <div
+            className="flex gap-4 transition-transform duration-300"
+            style={{
+              transform: `translateX(-${translatePercent}%)`,
+              // ensure track is wide enough so % translation matches item width
+              width: `${(items.length * 100) / itemsPerView}%`,
+            }}
+          >
+            {items.map((item, idx) => {
+              const itemWidthPercent = 100 / items.length; // because track width scaled above
+              const isCenter = idx === centerIndex;
+              return (
+                <div
+                  key={item.id}
+                  style={{ flex: `0 0 ${itemWidthPercent}%` }}
+                  className="px-2 py-1"
+                >
+                  <div
+                    className={`rounded-lg overflow-hidden bg-white border shadow-sm h-full transform transition-transform duration-300 ${
+                      isCenter ? "scale-105 shadow-lg" : ""
+                    }`}
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => onPlay(item.src)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") onPlay(item.src);
+                    }}
+                  >
+                    <div className="relative">
+                      <VideoThumbnail src={item.src} alt={`${item.name} testimonial`} />
+                      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                        <div className="rounded-full bg-green-700/90 text-white p-3 shadow-lg">
+                          <Play className="w-5 h-5" />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="p-3 bg-white">
+                      <p className="font-semibold text-sm">{item.name}</p>
+                      <p className="text-xs text-muted-foreground">{item.role}</p>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* =========================
+   MAIN COMPONENT
    ========================= */
 
 export default function TestimonialsSection() {
@@ -308,49 +437,33 @@ export default function TestimonialsSection() {
         Real stories from businesses and professionals we've helped
       </p>
 
-      {/* Video grid (clients) */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-        {clientVideoTestimonials.map((video) => (
-          <div
-            key={video.id}
-            className="relative rounded-xl overflow-hidden cursor-pointer group shadow-sm"
-            onClick={() => setActiveVideo(video.src)}
-            aria-label={`Play testimonial from ${video.name}`}
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") setActiveVideo(video.src);
-            }}
-          >
-            <VideoThumbnail src={video.src} alt={`${video.name} testimonial`} />
+      {/* Client Video Carousel */}
+      <VideoCarousel
+        items={clientVideoTestimonials}
+        title="Client Video Testimonials"
+        onPlay={(src) => setActiveVideo(src)}
+      />
 
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div className="rounded-full bg-green-700/90 text-white p-3 shadow-lg transform scale-100 group-hover:scale-105 transition-transform">
-                <Play className="w-6 h-6" />
-              </div>
-            </div>
+      {/* Candidate Video Carousel */}
+      <VideoCarousel
+        items={candidateVideoTestimonials}
+        title="Candidate Video Testimonials"
+        onPlay={(src) => setActiveVideo(src)}
+      />
 
-            <div className="bg-white/90 p-3 border-t">
-              <p className="font-semibold text-sm">{video.name}</p>
-              <p className="text-xs text-muted-foreground">{video.role}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Client written testimonials marquee */}
-      <div className="mb-10">
+      {/* Written Client Testimonials (marquee) */}
+      <div className="mb-8">
         <h3 className="text-lg font-semibold mb-4">Client Testimonials</h3>
         <TestimonialsMarquee items={clientWrittenTestimonials} ariaLabel="Client testimonials" />
       </div>
 
-      {/* Candidate written testimonials marquee */}
-      <div className="mb-6">
+      {/* Written Candidate Testimonials (marquee) */}
+      <div className="mt-10">
         <h3 className="text-lg font-semibold mb-4">Candidate Testimonials</h3>
         <TestimonialsMarquee items={candidateTestimonials} ariaLabel="Candidate testimonials" />
       </div>
 
-      {/* Video modal */}
+      {/* Video Modal */}
       <AnimatePresence>
         {activeVideo && (
           <motion.div
