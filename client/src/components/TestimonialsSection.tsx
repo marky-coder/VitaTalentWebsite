@@ -72,17 +72,18 @@ const candidateTestimonials = [
 ];
 
 /* =========================
-   Marquee CSS (inline so it always exists)
+   Marquee CSS (inline, adjusted item size + centering)
    ========================= */
 const marqueeCss = `
-.testimonials-marquee { overflow: hidden; width: 100%; position: relative; }
-.testimonials-marquee__track { display:flex; gap:1rem; align-items:stretch; width:max-content; animation:marquee linear 96s infinite; }
-.testimonials-marquee__item { flex: 0 0 300px; }
+.testimonials-marquee { overflow: hidden; width: 100%; position: relative; padding: 8px 0;}
+.testimonials-marquee__track { display:flex; gap:1rem; align-items:center; width:max-content; animation:marquee linear 96s infinite; }
+.testimonials-marquee__item { flex: 0 0 340px; box-sizing: border-box; }
 @keyframes marquee { from { transform: translateX(0);} to { transform: translateX(-50%);} }
 `;
 
 /* =========================
    VideoThumbnail - capture a frame, fallback gracefully
+   - media box has fixed pixel height and object-fit: cover
    ========================= */
 function VideoThumbnail({ src, alt }: { src: string; alt?: string }) {
   const hiddenVideoRef = useRef<HTMLVideoElement | null>(null);
@@ -176,49 +177,68 @@ function VideoThumbnail({ src, alt }: { src: string; alt?: string }) {
 }
 
 /* =========================
-   WrittenTestimonialCard (RESTORED COLORS)
-   - pale-green gradient background
-   - subtle green border
-   - green divider
-   - small radius and box-sizing so it matches design
+   WrittenTestimonialCard (bigger + restored pale-green styling)
    ========================= */
 function WrittenTestimonialCard({ testimonial }: { testimonial: { name: string; role: string; quote: string } }) {
   const cardStyle: React.CSSProperties = {
-    padding: 14,
+    padding: 18,
     borderRadius: 8,
     boxSizing: "border-box",
-    // Pale green gradient similar to original
-    background: "linear-gradient(90deg, rgba(230,250,244,0.95), rgba(255,255,255,0.98))",
-    border: "1px solid rgba(6,95,70,0.08)", // subtle green border
+    background: "linear-gradient(90deg, rgba(236,252,245,0.95), rgba(255,255,255,0.98))", // pale-green
+    border: "1px solid rgba(6,95,70,0.10)", // slightly stronger subtle green border
     color: "rgba(0,0,0,0.85)",
-    minHeight: 100,
+    minHeight: 160, // bigger so content breathes
     display: "flex",
     flexDirection: "column",
     justifyContent: "space-between",
   };
 
-  const quoteStyle: React.CSSProperties = { fontSize: 14, lineHeight: 1.35, margin: 0, color: "rgba(0,0,0,0.85)" };
-  const metaStyle: React.CSSProperties = { marginTop: 12, paddingTop: 10, borderTop: "1px solid rgba(6,95,70,0.06)", fontSize: 12, color: "#374151" }; // divider slightly darker
+  const quoteStyle: React.CSSProperties = { fontSize: 14, lineHeight: 1.4, margin: 0, color: "rgba(0,0,0,0.85)" };
+  const metaStyle: React.CSSProperties = { marginTop: 12, paddingTop: 10, borderTop: "1px solid rgba(6,95,70,0.08)", fontSize: 13, color: "#374151" };
 
   return (
     <div style={cardStyle}>
       <p style={quoteStyle}>{testimonial.quote}</p>
       <div style={metaStyle}>
         <div style={{ fontWeight: 700 }}>{testimonial.name}</div>
-        <div style={{ fontSize: 12, color: "#6b7280", marginTop: 4 }}>{testimonial.role}</div>
+        <div style={{ fontSize: 12, color: "#6b7280", marginTop: 6 }}>{testimonial.role}</div>
       </div>
     </div>
   );
 }
 
+/* =========================
+   TestimonialsMarquee
+   - KEY FIX: marquee is wrapped in centered container (maxWidth:1200)
+     with overflow:hidden so tiles won't exceed the video carousel edges.
+   ========================= */
 function TestimonialsMarquee({ items }: { items: { name: string; role: string; quote: string }[] }) {
   const duplicated = [...items, ...items];
+
+  // match carousel max-width so both align visually
+  const marqueeWrapperStyle: React.CSSProperties = {
+    maxWidth: 1200,
+    margin: "0 auto",
+    width: "100%",
+    overflow: "hidden", // clip any overflow so tiles stop at edges
+    boxSizing: "border-box",
+    padding: "8px 0",
+  };
+
+  const trackStyle: React.CSSProperties = {
+    display: "flex",
+    gap: "1rem",
+    alignItems: "center",
+    width: "max-content",
+    // keep animation in CSS (inline style used above)
+  };
+
   return (
-    <div style={{ position: "relative", width: "100%" }}>
+    <div style={marqueeWrapperStyle}>
       <style>{marqueeCss}</style>
-      <div className="testimonials-marquee__track" aria-hidden="false" style={{ display: "flex", gap: "1rem" }}>
+      <div className="testimonials-marquee__track" aria-hidden="false" style={trackStyle}>
         {duplicated.map((item, idx) => (
-          <div key={idx} className="testimonials-marquee__item" style={{ flex: "0 0 300px" }}>
+          <div key={idx} className="testimonials-marquee__item" style={{ flex: "0 0 340px" }}>
             <WrittenTestimonialCard testimonial={item} />
           </div>
         ))}
@@ -228,7 +248,7 @@ function TestimonialsMarquee({ items }: { items: { name: string; role: string; q
 }
 
 /* =========================
-   VideoCarousel - pixel-based sizing + track align-items fix
+   VideoCarousel - safe: track alignItems, constrained container, explicit card border
    ========================= */
 function VideoCarousel({ videos, onPlay }: { videos: { id: number; name: string; role: string; src: string }[]; onPlay: (src: string) => void; }) {
   const [startIndex, setStartIndex] = useState(0);
@@ -298,7 +318,7 @@ function VideoCarousel({ videos, onPlay }: { videos: { id: number; name: string;
         </button>
 
         <div ref={viewportRef} style={{ overflow: "hidden", width: "100%" }}>
-          {/* KEY: alignItems:'flex-start' prevents children stretching to the tallest child */}
+          {/* IMPORTANT: prevent children from stretching to the tallest item */}
           <div style={{ display: "flex", alignItems: "flex-start", width: `${itemWidth * videos.length}px`, transform: `translateX(-${startIndex * itemWidth}px)`, transition: "transform 300ms ease" }}>
             {videos.map(v => (
               <div key={v.id} style={{ flex: `0 0 ${itemWidth}px`, maxWidth: `${itemWidth}px`, boxSizing: "border-box", padding: 12 }}>
