@@ -203,7 +203,7 @@ function chunkRows<T>(arr: T[], size: number) {
   return rows;
 }
 
-/* ---------- VideoCarousel (updated: horizontal-only motion + arrow positioning) ---------- */
+/* ---------- VideoCarousel (horizontal-only motion, center absolutely positioned) ---------- */
 function VideoCarousel({
   videos,
   onOpen,
@@ -283,7 +283,7 @@ function VideoCarousel({
   // drag threshold px
   const dragThreshold = 80;
 
-  // Center motion: only X and opacity (no vertical motion, no rotate)
+  // Center motion: only X and opacity (no vertical motion)
   const centerVariants = {
     enter: (d: number) =>
       shouldReduceMotion
@@ -328,7 +328,7 @@ function VideoCarousel({
         >
           <Card
             onClick={handlePrev}
-            className="cursor-pointer overflow-hidden transform transition-transform duration-300 hover:-translate-y-2 hover:scale-95"
+            className="cursor-pointer overflow-hidden transform transition-transform duration-300 hover:scale-95"
             aria-label={`Previous: ${videos[prevIndex].name}`}
           >
             <div className="aspect-video bg-muted relative">
@@ -346,8 +346,11 @@ function VideoCarousel({
           </Card>
         </motion.div>
 
-        {/* Center - always higher z so it sits above the peeks */}
-        <div className="mx-6 md:mx-0 relative z-50" style={centerStyle}>
+        {/* Center - absolutely positioned to avoid layout reflow (so no vertical push) */}
+        <div
+          className="absolute left-1/2 top-1/2 z-50"
+          style={{ transform: "translate(-50%, -50%)", width: centerStyle.width }}
+        >
           <AnimatePresence custom={direction} initial={false}>
             <motion.div
               key={videos[index].id}
@@ -368,7 +371,7 @@ function VideoCarousel({
                 }
               }}
               className="cursor-grab"
-              style={centerStyle}
+              style={{ width: centerStyle.width }}
             >
               <Card
                 onClick={() => onOpen(videos[index].src)}
@@ -407,7 +410,7 @@ function VideoCarousel({
         >
           <Card
             onClick={handleNext}
-            className="cursor-pointer overflow-hidden transform transition-transform duration-300 hover:-translate-y-2 hover:scale-95"
+            className="cursor-pointer overflow-hidden transform transition-transform duration-300 hover:scale-95"
             aria-label={`Next: ${videos[nextIndex].name}`}
           >
             <div className="aspect-video bg-muted relative">
