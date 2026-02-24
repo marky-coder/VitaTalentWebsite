@@ -6,7 +6,7 @@ import { SiTrustpilot, SiGoogle } from "react-icons/si";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 
-/* (your existing video imports here — keep the same names and paths) */
+/* (keep your existing imports — update paths if necessary) */
 import videoXimena from "@assets/WhatsApp Video 2025-11-25 at 10.45.54.mp4";
 import videoHesham from "@assets/WhatsApp Video 2025-11-25 at 10.46.13.mp4";
 import videoSherif from "@assets/WhatsApp Video 2025-11-25 at 10.47.09.mp4";
@@ -23,11 +23,7 @@ import videoMohamed from "@assets/Mohamed Sobhy.mp4";
 import videoNina from "@assets/Nina Hadidi - Acquisition Manager.mp4";
 import videoJoshPierce from "@assets/Josh Pierce - CEO of Higher Ground Land.mp4";
 
-/**
- * VideoThumbnail: captures a frame from the provided video URL on the client,
- * and returns an <img> with that data URL. Falls back to a subtle placeholder.
- * (kept your original implementation)
- */
+/** VideoThumbnail (unchanged) */
 function VideoThumbnail({ src, alt }: { src: string; alt?: string }) {
   const [thumb, setThumb] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -137,7 +133,7 @@ function VideoThumbnail({ src, alt }: { src: string; alt?: string }) {
   );
 }
 
-/* Data arrays (client videos kept — only these will be used in the carousel) */
+/* Data arrays (6 client videos for carousel) */
 const clientVideoTestimonials = [
   { id: 1, name: "Kevin", role: "White Stone", src: videoKevin },
   { id: 2, name: "Sam", role: "Private Realtor", src: videoSam },
@@ -147,7 +143,7 @@ const clientVideoTestimonials = [
   { id: 6, name: "Josh Pierce", role: "CEO of Higher Ground Land", src: videoJoshPierce },
 ];
 
-/* Keep the written testimonials and candidate lists as-is (unchanged from your file) */
+/* Candidate videos + written testimonials left unchanged (kept from your file) */
 const candidateVideoTestimonials = [
   { id: 1, name: "Ximena Jimenez", role: "Lead Manager", src: videoXimena },
   { id: 2, name: "Sherif Daoud", role: "Acquisition Manager", src: videoSherif },
@@ -199,7 +195,6 @@ const writtenTestimonials = {
   ],
 };
 
-/** Utility: chunk an array into rows of size n */
 function chunkRows<T>(arr: T[], size: number) {
   const rows: T[][] = [];
   for (let i = 0; i < arr.length; i += size) {
@@ -247,24 +242,25 @@ function VideoCarousel({
   // drag threshold (px)
   const dragThreshold = 80;
 
-  // autoplay (optional). I leave it disabled by default. Uncomment to enable.
-  useEffect(() => {
-    if (isHovered) return;
-    // const timer = setInterval(handleNext, 5000);
-    // return () => clearInterval(timer);
-  }, [index, isHovered, handleNext]);
-
-  // Motion variants for the center card
+  // Motion variants: use smoother spring transitions
   const centerVariants = {
     enter: (d: number) =>
       shouldReduceMotion
         ? { opacity: 1, x: 0, rotate: 0, scale: 1 }
-        : { opacity: 0, x: d > 0 ? 220 : -220, rotate: d > 0 ? -8 : 8, scale: 0.96 },
-    center: { opacity: 1, x: 0, rotate: 0, scale: 1 },
+        : { opacity: 0, x: d > 0 ? 260 : -260, rotate: d > 0 ? -10 : 10, scale: 0.96 },
+    center: {
+      opacity: 1,
+      x: 0,
+      rotate: 0,
+      scale: 1,
+      transition: shouldReduceMotion
+        ? { duration: 0 }
+        : { type: "spring", stiffness: 260, damping: 28, mass: 0.9 },
+    },
     exit: (d: number) =>
       shouldReduceMotion
-        ? { opacity: 0, x: 0, rotate: 0, scale: 1 }
-        : { opacity: 0, x: d > 0 ? -220 : 220, rotate: d > 0 ? 8 : -8, scale: 0.96 },
+        ? { opacity: 0 }
+        : { opacity: 0, x: d > 0 ? -260 : 260, rotate: d > 0 ? 10 : -10, scale: 0.96, transition: { type: "spring", stiffness: 200, damping: 24 } },
   };
 
   // small side card style (left / right)
@@ -287,10 +283,10 @@ function VideoCarousel({
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        {/* Left peek (previous) */}
+        {/* Left peek (previous) — lower z-index so it sits behind */}
         <motion.div
-          className="absolute left-4 top-1/2 -translate-y-1/2 hidden md:block"
-          initial={{ opacity: 0.9 }}
+          className="absolute left-4 top-1/2 -translate-y-1/2 hidden md:block z-10"
+          initial={{ opacity: 0.95 }}
           animate={{ opacity: 1 }}
           style={sideStyle}
         >
@@ -314,8 +310,8 @@ function VideoCarousel({
           </Card>
         </motion.div>
 
-        {/* Center animated card (AnimatePresence replaces center card when index changes) */}
-        <div className="mx-6 md:mx-0">
+        {/* Center animated card (ensure it sits on top with z-50) */}
+        <div className="mx-6 md:mx-0 relative z-50" style={centerStyle}>
           <div className="relative">
             <AnimatePresence custom={direction} initial={false}>
               <motion.div
@@ -325,10 +321,10 @@ function VideoCarousel({
                 initial="enter"
                 animate="center"
                 exit="exit"
-                transition={{ duration: shouldReduceMotion ? 0 : 0.45, ease: "easeOut" }}
+                transition={{ duration: shouldReduceMotion ? 0 : 0.6, ease: "easeOut" }}
                 drag="x"
                 dragConstraints={{ left: 0, right: 0 }}
-                dragElastic={0.18}
+                dragElastic={0.16}
                 onDragEnd={(e, info) => {
                   if (info.offset.x > dragThreshold) {
                     handlePrev();
@@ -337,6 +333,8 @@ function VideoCarousel({
                   }
                 }}
                 className="cursor-grab"
+                layout
+                layoutId={`card-${videos[index].id}`}
                 style={centerStyle}
               >
                 <Card
@@ -393,10 +391,10 @@ function VideoCarousel({
           </div>
         </div>
 
-        {/* Right peek (next) */}
+        {/* Right peek (next) — lower z-index so it stays behind center */}
         <motion.div
-          className="absolute right-4 top-1/2 -translate-y-1/2 hidden md:block"
-          initial={{ opacity: 0.9 }}
+          className="absolute right-4 top-1/2 -translate-y-1/2 hidden md:block z-10"
+          initial={{ opacity: 0.95 }}
           animate={{ opacity: 1 }}
           style={sideStyle}
         >
@@ -440,7 +438,7 @@ function VideoCarousel({
   );
 }
 
-/* ---------- TestimonialsSection component (main) ---------- */
+/* ---------- TestimonialsSection main component ---------- */
 export default function TestimonialsSection() {
   const [activeVideo, setActiveVideo] = useState<string | null>(null);
 
