@@ -6,7 +6,7 @@ import { SiTrustpilot, SiGoogle } from "react-icons/si";
 import { useState, useEffect, useRef, useCallback, useLayoutEffect } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 
-/* keep all your existing video imports (paths unchanged) */
+/* keep your existing video imports (paths unchanged) */
 import videoXimena from "@assets/WhatsApp Video 2025-11-25 at 10.45.54.mp4";
 import videoHesham from "@assets/WhatsApp Video 2025-11-25 at 10.46.13.mp4";
 import videoSherif from "@assets/WhatsApp Video 2025-11-25 at 10.47.09.mp4";
@@ -143,7 +143,7 @@ const clientVideoTestimonials = [
   { id: 6, name: "Josh Pierce", role: "CEO of Higher Ground Land", src: videoJoshPierce },
 ];
 
-/* Candidate videos and written testimonials are unchanged from your file */
+/* Candidate videos and written testimonials are unchanged */
 const candidateVideoTestimonials = [
   { id: 1, name: "Ximena Jimenez", role: "Lead Manager", src: videoXimena },
   { id: 2, name: "Sherif Daoud", role: "Acquisition Manager", src: videoSherif },
@@ -203,7 +203,7 @@ function chunkRows<T>(arr: T[], size: number) {
   return rows;
 }
 
-/* ---------- VideoCarousel (horizontal-only motion, center absolutely positioned) ---------- */
+/* ---------- VideoCarousel (horizontal-only) ---------- */
 function VideoCarousel({
   videos,
   onOpen,
@@ -213,8 +213,7 @@ function VideoCarousel({
 }) {
   const shouldReduceMotion = useReducedMotion();
   const [index, setIndex] = useState(0);
-  const [direction, setDirection] = useState(0); // 1 forward, -1 back
-  const [isHovered, setIsHovered] = useState(false);
+  const [direction, setDirection] = useState(0);
   const length = videos.length;
 
   const carouselRef = useRef<HTMLDivElement | null>(null);
@@ -222,7 +221,6 @@ function VideoCarousel({
   const nextRef = useRef<HTMLDivElement | null>(null);
   const [arrowPos, setArrowPos] = useState<{ left?: number; right?: number } | null>(null);
 
-  // Keyboard nav
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "ArrowLeft") handlePrev();
@@ -230,6 +228,7 @@ function VideoCarousel({
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [index]);
 
   const clamp = (i: number) => ((i % length) + length) % length;
@@ -244,7 +243,7 @@ function VideoCarousel({
     setIndex((i) => clamp(i - 1));
   }, [length]);
 
-  // compute arrow positions so they sit just outside the peek cards
+  // compute arrow positions
   useLayoutEffect(() => {
     function recompute() {
       const carouselEl = carouselRef.current;
@@ -255,22 +254,18 @@ function VideoCarousel({
         return;
       }
       const cRect = carouselEl.getBoundingClientRect();
-      // fallback offsets if prev/next not visible (mobile)
-      let left = 24; // default fallback
+      let left = 24;
       let right = 24;
       if (prevEl) {
         const pRect = prevEl.getBoundingClientRect();
-        // place arrow left to prev's left edge with 12px gap
-        left = Math.max(8, pRect.left - cRect.left - 40);
+        left = Math.max(8, pRect.left - cRect.left - 44);
       }
       if (nextEl) {
         const nRect = nextEl.getBoundingClientRect();
-        // place arrow just right of next's right edge with 12px gap
-        right = Math.max(8, cRect.right - nRect.right - 40);
+        right = Math.max(8, cRect.right - nRect.right - 44);
       }
       setArrowPos({ left, right });
     }
-
     recompute();
     window.addEventListener("resize", recompute);
     window.addEventListener("orientationchange", recompute);
@@ -280,27 +275,23 @@ function VideoCarousel({
     };
   }, [index]);
 
-  // drag threshold px
   const dragThreshold = 80;
 
-  // Center motion: only X and opacity (no vertical motion)
+  // Explicit horizontal-only motion: set y:0 to avoid any vertical motion
   const centerVariants = {
     enter: (d: number) =>
-      shouldReduceMotion
-        ? { opacity: 1, x: 0, scale: 1 }
-        : { opacity: 0, x: d > 0 ? 260 : -260, scale: 0.98 },
+      shouldReduceMotion ? { opacity: 1, x: 0, y: 0, scale: 1 } : { opacity: 0, x: d > 0 ? 260 : -260, y: 0, scale: 0.98 },
     center: {
       opacity: 1,
       x: 0,
+      y: 0,
       scale: 1,
-      transition: shouldReduceMotion
-        ? { duration: 0 }
-        : { type: "spring", stiffness: 220, damping: 28, mass: 0.8 },
+      transition: shouldReduceMotion ? { duration: 0 } : { type: "spring", stiffness: 220, damping: 28, mass: 0.8 },
     },
     exit: (d: number) =>
       shouldReduceMotion
-        ? { opacity: 0 }
-        : { opacity: 0, x: d > 0 ? -260 : 260, scale: 0.98, transition: { type: "spring", stiffness: 200, damping: 26 } },
+        ? { opacity: 0, y: 0 }
+        : { opacity: 0, x: d > 0 ? -260 : 260, y: 0, scale: 0.98, transition: { type: "spring", stiffness: 200, damping: 26 } },
   };
 
   const sideStyle = { width: "min(420px, 40vw)" };
@@ -314,11 +305,9 @@ function VideoCarousel({
       <div
         ref={carouselRef}
         className="relative w-full flex items-center justify-center"
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
         style={{ minHeight: 260 }}
       >
-        {/* Left peek (previous) - behind center (lower z) */}
+        {/* Left peek (behind center) */}
         <motion.div
           ref={prevRef}
           className="absolute left-4 top-1/2 -translate-y-1/2 hidden md:block z-10"
@@ -346,10 +335,15 @@ function VideoCarousel({
           </Card>
         </motion.div>
 
-        {/* Center - absolutely positioned to avoid layout reflow (so no vertical push) */}
+        {/* Center - absolutely positioned and on its own composite layer */}
         <div
           className="absolute left-1/2 top-1/2 z-50"
-          style={{ transform: "translate(-50%, -50%)", width: centerStyle.width }}
+          style={{
+            transform: "translate(-50%, -50%)",
+            width: centerStyle.width,
+            willChange: "transform",
+            transformStyle: "preserve-3d",
+          }}
         >
           <AnimatePresence custom={direction} initial={false}>
             <motion.div
@@ -375,7 +369,7 @@ function VideoCarousel({
             >
               <Card
                 onClick={() => onOpen(videos[index].src)}
-                className="relative overflow-hidden hover-elevate cursor-pointer"
+                className="relative overflow-hidden cursor-pointer"
                 aria-label={`Play testimonial from ${videos[index].name}`}
               >
                 <div className="aspect-video bg-muted relative">
@@ -400,7 +394,7 @@ function VideoCarousel({
           </AnimatePresence>
         </div>
 
-        {/* Right peek (next) - behind center */}
+        {/* Right peek */}
         <motion.div
           ref={nextRef}
           className="absolute right-4 top-1/2 -translate-y-1/2 hidden md:block z-10"
@@ -428,7 +422,7 @@ function VideoCarousel({
           </Card>
         </motion.div>
 
-        {/* ARROWS: positioned outside the peeks using computed positions */}
+        {/* Arrows positioned outside peeks */}
         <button
           onClick={(e) => {
             e.stopPropagation();
@@ -487,7 +481,6 @@ function VideoCarousel({
 export default function TestimonialsSection() {
   const [activeVideo, setActiveVideo] = useState<string | null>(null);
 
-  // ESC to close
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setActiveVideo(null);
@@ -496,7 +489,6 @@ export default function TestimonialsSection() {
     return () => window.removeEventListener("keydown", onKey);
   }, [activeVideo]);
 
-  // prevent body scroll while modal open
   useEffect(() => {
     const prev = document.body.style.overflow;
     if (activeVideo) document.body.style.overflow = "hidden";
@@ -505,13 +497,11 @@ export default function TestimonialsSection() {
     };
   }, [activeVideo]);
 
-  // Candidate rows (unchanged)
   const candidateRows = chunkRows(candidateVideoTestimonials, 3);
 
   return (
     <section className="py-24 bg-gradient-to-br from-primary/18 via-primary/10 to-background" data-testid="section-testimonials">
       <div className="container max-w-7xl mx-auto px-4">
-        {/* Header */}
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-foreground mb-4">What Our Clients & Candidates Say</h2>
           <p className="text-lg font-medium text-muted-foreground">
@@ -519,7 +509,6 @@ export default function TestimonialsSection() {
           </p>
         </div>
 
-        {/* CLIENT: VideoCarousel */}
         <div>
           <h3 className="text-2xl font-bold text-foreground mb-6 text-center">Client Testimonials</h3>
 
@@ -527,7 +516,6 @@ export default function TestimonialsSection() {
             <VideoCarousel videos={clientVideoTestimonials} onOpen={(src) => setActiveVideo(src)} />
           </div>
 
-          {/* Written client testimonials (unchanged) */}
           <div className="grid md:grid-cols-3 gap-6">
             {writtenTestimonials.clients.map((testimonial, index) => (
               <Card key={index} className="p-6 bg-gradient-to-br from-card to-primary/12 border-primary/20" data-testid={`client-testimonial-${index}`}>
@@ -546,7 +534,6 @@ export default function TestimonialsSection() {
           </div>
         </div>
 
-        {/* Candidate Testimonials (unchanged) */}
         <div className="space-y-12 mt-12">
           <div>
             <h3 className="text-2xl font-bold text-foreground mb-6 text-center">Candidate Testimonials</h3>
@@ -582,7 +569,6 @@ export default function TestimonialsSection() {
               ))}
             </div>
 
-            {/* Written candidate testimonials */}
             <div className="grid md:grid-cols-3 gap-6">
               {writtenTestimonials.candidates.map((testimonial, idx) => (
                 <Card key={idx} className="p-6 bg-gradient-to-br from-card to-primary/12 border-primary/20">
