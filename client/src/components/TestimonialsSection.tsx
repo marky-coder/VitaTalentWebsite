@@ -1,25 +1,148 @@
 // client/src/components/TestimonialsSection.tsx
 import { Card } from "@/components/ui/card";
-import { Play, X, ChevronLeft, ChevronRight } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { Play, Star, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { SiTrustpilot, SiGoogle } from "react-icons/si";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 
-/* =========================
-   VIDEO ASSETS - update paths if necessary
-   ========================= */
+/* (your existing video imports here — keep the same names and paths) */
+import videoXimena from "@assets/WhatsApp Video 2025-11-25 at 10.45.54.mp4";
+import videoHesham from "@assets/WhatsApp Video 2025-11-25 at 10.46.13.mp4";
+import videoSherif from "@assets/WhatsApp Video 2025-11-25 at 10.47.09.mp4";
 import videoKevin from "@assets/Kevin's Testimonial.mp4";
 import videoSam from "@assets/Sam's Testimonial .mov";
 import videoNewClient from "@assets/4030993537cf451ca9872ad031c744b9-1764688585496.mp4";
+import videoRuben from "@assets/Ruben.mp4";
+import videoAshleyMark from "@assets/Ashley Mark.mp4";
+import videoMary from "@assets/Mary.mp4";
 import videoDaniel from "@assets/Daniel Slobodyan - Land Creative Solutions.mp4";
 import videoZach from "@assets/Zach Nahas - CEO of Clear Path Land.mp4";
+import videoHadeer from "@assets/Hadeer Ezz.mp4";
+import videoMohamed from "@assets/Mohamed Sobhy.mp4";
+import videoNina from "@assets/Nina Hadidi - Acquisition Manager.mp4";
 import videoJoshPierce from "@assets/Josh Pierce - CEO of Higher Ground Land.mp4";
 
-/* =========================
-   Data (videos + written testimonials)
-   - Candidate video list expanded (6 placeholders)
-   - 9 written testimonials each for clients and candidates
-   ========================= */
+/**
+ * VideoThumbnail: captures a frame from the provided video URL on the client,
+ * and returns an <img> with that data URL. Falls back to a subtle placeholder.
+ * (kept your original implementation)
+ */
+function VideoThumbnail({ src, alt }: { src: string; alt?: string }) {
+  const [thumb, setThumb] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
 
+  useEffect(() => {
+    let cancelled = false;
+    let videoEl: HTMLVideoElement | null = document.createElement("video");
+    videoEl.crossOrigin = "anonymous";
+    videoEl.muted = true;
+    videoEl.playsInline = true;
+    videoEl.preload = "metadata";
+
+    const cleanup = () => {
+      if (videoEl) {
+        try {
+          videoEl.pause();
+          videoEl.src = "";
+          videoEl.load();
+        } catch {
+          /* ignore */
+        }
+        // @ts-ignore
+        videoEl = null;
+      }
+    };
+
+    const capture = () => {
+      if (!videoEl) return;
+      try {
+        const vw = videoEl.videoWidth || 640;
+        const vh = videoEl.videoHeight || 360;
+        const maxW = 1200;
+        let w = vw;
+        let h = vh;
+        if (w > maxW) {
+          h = Math.round((maxW / w) * h);
+          w = maxW;
+        }
+        const canvas = document.createElement("canvas");
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) throw new Error("No canvas context");
+        ctx.drawImage(videoEl as HTMLVideoElement, 0, 0, w, h);
+        const data = canvas.toDataURL("image/jpeg", 0.78);
+        if (!cancelled) {
+          setThumb(data);
+          setLoading(false);
+        }
+      } catch {
+        if (!cancelled) {
+          setLoading(false);
+          setThumb(null);
+        }
+      }
+    };
+
+    const handleLoaded = () => {
+      if (!videoEl) return;
+      try {
+        const seekTime = Math.min(0.5, Math.max(0.0, (videoEl.duration || 0) / 10));
+        const onSeeked = () => {
+          capture();
+          videoEl && videoEl.removeEventListener("seeked", onSeeked);
+        };
+        videoEl.addEventListener("seeked", onSeeked);
+        videoEl.currentTime = seekTime;
+      } catch {
+        capture();
+      }
+    };
+
+    const fallbackTimer = window.setTimeout(() => {
+      if (!cancelled && loading) {
+        try {
+          capture();
+        } catch {
+          setLoading(false);
+        }
+      }
+    }, 2500);
+
+    if (videoEl) {
+      videoEl.addEventListener("loadeddata", handleLoaded, { once: true });
+      videoEl.src = src;
+      try {
+        videoEl.load();
+      } catch {
+        /* ignore */
+      }
+    }
+
+    return () => {
+      cancelled = true;
+      clearTimeout(fallbackTimer);
+      cleanup();
+    };
+  }, [src]);
+
+  if (thumb) {
+    return <img src={thumb} alt={alt ?? "video thumbnail"} className="w-full h-full object-cover" />;
+  }
+
+  return (
+    <div className="w-full h-full flex items-center justify-center bg-muted text-muted-foreground">
+      <div className="flex flex-col items-center justify-center gap-2">
+        <div className="w-14 h-14 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
+          <Play className="w-6 h-6 ml-0.5" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* Data arrays (client videos kept — only these will be used in the carousel) */
 const clientVideoTestimonials = [
   { id: 1, name: "Kevin", role: "White Stone", src: videoKevin },
   { id: 2, name: "Sam", role: "Private Realtor", src: videoSam },
@@ -29,472 +152,456 @@ const clientVideoTestimonials = [
   { id: 6, name: "Josh Pierce", role: "CEO of Higher Ground Land", src: videoJoshPierce },
 ];
 
+/* Keep the written testimonials and candidate lists as-is (unchanged from your file) */
 const candidateVideoTestimonials = [
-  { id: 101, name: "Marcus Reyes", role: "Senior Land Manager", src: videoKevin },
-  { id: 102, name: "Hannah Lee", role: "Operations Coordinator", src: videoSam },
-  { id: 103, name: "Samuel Kim", role: "Project Lead", src: videoNewClient },
-  { id: 104, name: "Aisha Patel", role: "Site Supervisor", src: videoDaniel },
-  { id: 105, name: "Diego Morales", role: "Survey Engineer", src: videoZach },
-  { id: 106, name: "Renee Carter", role: "Regional Planner", src: videoJoshPierce },
+  { id: 1, name: "Ximena Jimenez", role: "Lead Manager", src: videoXimena },
+  { id: 2, name: "Sherif Daoud", role: "Acquisition Manager", src: videoSherif },
+  { id: 3, name: "Hesham Salama", role: "Acquisition Manager", src: videoHesham },
+  { id: 4, name: "Ruben", role: "Sales Closer", src: videoRuben },
+  { id: 5, name: "Ashley Mark", role: "Appointment Setter", src: videoAshleyMark },
+  { id: 6, name: "Mary Jane", role: "Lead Manager", src: videoMary },
+  { id: 7, name: "Hadeer Ezz", role: "Acquisition Manager", src: videoHadeer },
+  { id: 8, name: "Mohamed Sobhy", role: "Land Acquisition Manager", src: videoMohamed },
+  { id: 9, name: "Nina Hadidi", role: "Acquisition Manager", src: videoNina },
 ];
 
-const clientWrittenTestimonials = [
-  { name: "Daniel Turner", role: "Founder, BlueHarbor Logistics", quote: "Fast, professional, and reliable. Their remote hiring process just works for us." },
-  { name: "Olivia Brooks", role: "Head of HR, SummitWorks LLC", quote: "Vita Talent's screening process saved our team time and got us great candidates rapidly." },
-  { name: "Christopher Bennett", role: "Director of Operations, ClearPeak Group", quote: "Exceptional sourcing and onboarding support. We now rely on Vita Talent as a strategic partner." },
-  { name: "Janet Morales", role: "COO, Redwood Estates", quote: "They matched us with senior leadership quickly — the candidates were thoughtful and well-vetted." },
-  { name: "Ethan Cole", role: "VP Sales, TerraPoint", quote: "Clear communication, excellent candidate quality and a hiring speed that impressed our execs." },
-  { name: "Priya Shah", role: "Head of Talent, Greenline Partners", quote: "A consistent partner for hard-to-fill roles — thorough screening and transparent timelines." },
-  { name: "Marcus Allen", role: "Founder, Eastern Land Co.", quote: "They took the time to understand our workflow and delivered candidates who fit right in." },
-  { name: "Laura Finch", role: "Talent Acquisition Lead, Summit Ridge", quote: "Onboarding support was excellent — the new hires were productive from week one." },
-  { name: "Omar Ruiz", role: "CTO, LandLogic", quote: "Their screening eliminated cycles of bad interviews and gave us quality choices fast." },
-];
+const writtenTestimonials = {
+  clients: [
+    {
+      name: "James Wilson",
+      role: "CTO, InnovateLabs",
+      quote:
+        "Vita Talent found us the perfect engineering team in just 3 weeks. Their process is thorough and professional.",
+    },
+    {
+      name: "Lisa Martinez",
+      role: "Founder, StartupHub",
+      quote: "The quality of candidates exceeded our expectations. They truly understand what we need.",
+    },
+    {
+      name: "Robert Kim",
+      role: "Operations Manager, ScaleUp Inc",
+      quote:
+        "Working with Vita Talent has transformed how we approach global hiring. Exceptional service.",
+    },
+  ],
+  candidates: [
+    {
+      name: "Maria Santos",
+      role: "UX Designer",
+      quote: "Vita Talent helped me land my dream job. They supported me throughout the entire process.",
+    },
+    {
+      name: "Ahmed Hassan",
+      role: "Backend Developer",
+      quote: "Professional, caring, and genuinely invested in my success. Highly recommend!",
+    },
+    {
+      name: "Sophie Dubois",
+      role: "Marketing Manager",
+      quote: "They matched me with a company that perfectly aligns with my values and career goals.",
+    },
+  ],
+};
 
-const candidateTestimonials = [
-  { name: "Marcus Reyes", role: "Senior Land Manager — Placed at Greenridge", quote: "The team guided me through the whole interview process and found a role that matched my goals. Communication was clear and consistent." },
-  { name: "Hannah Lee", role: "Operations Coordinator — Placed at HarborPoint", quote: "I was nervous about remote onboarding, but they made it painless. The hiring timeline matched what they promised." },
-  { name: "Samuel Kim", role: "Project Lead — Placed at Terranov", quote: "Thoughtful feedback, great prep, and a smooth negotiation — I felt supported every step of the way." },
-  { name: "Aisha Patel", role: "Site Supervisor — Placed at Stonebridge", quote: "They helped me prepare for the technical interview and coached me through the salary discussion." },
-  { name: "Diego Morales", role: "Survey Engineer — Placed at ClearPath", quote: "Fast responses and real support. The recruiter checked in at every milestone." },
-  { name: "Renee Carter", role: "Regional Planner — Placed at BlueHarbor", quote: "Great prep materials and clear expectations — I appreciated the transparent process." },
-  { name: "Tom Watkins", role: "Land Analyst — Placed at White Stone", quote: "I found a role that matched my skills, and the onboarding was handled professionally." },
-  { name: "Maya Singh", role: "Project Coordinator — Placed at Vale Partners", quote: "Helpful interview coaching, timely feedback, and a smooth contract negotiation." },
-  { name: "Noah Fischer", role: "Acquisitions Associate — Placed at Greenridge", quote: "They lined up excellent opportunities and helped me choose the best fit for my career." },
-];
-
-/* =========================
-   Marquee CSS (written testimonials)
-   - slowed to 96s
-   - ensures overflow visible for scaling cards
-   ========================= */
-
-const marqueeCss = `
-:root {
-  --testimonial-tile-width: 300px;
-  --marquee-gap: 1rem;
-  --marquee-duration: 96s;
+/** Utility: chunk an array into rows of size n */
+function chunkRows<T>(arr: T[], size: number) {
+  const rows: T[][] = [];
+  for (let i = 0; i < arr.length; i += size) {
+    rows.push(arr.slice(i, i + size));
+  }
+  return rows;
 }
 
-.testimonials-marquee {
-  overflow: hidden; /* keep the marquee clipped to the container */
-  width: 100%;
-  position: relative;
-}
-
-.testimonials-marquee__track {
-  display: flex;
-  gap: var(--marquee-gap);
-  align-items: stretch;
-  width: max-content;
-  animation: marquee linear var(--marquee-duration) infinite;
-  /* allow items to overflow their own boxes when they scale */
-  overflow: visible;
-}
-
-.testimonials-marquee__item {
-  flex: 0 0 var(--testimonial-tile-width);
-  /* allow the card inside to overflow/scale without being clipped by this box */
-  overflow: visible;
-  display: block;
-}
-
-@keyframes marquee {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
-}
-
-.testimonials-marquee:hover .testimonials-marquee__track {
-  animation-play-state: paused;
-}
-
-@media (max-width: 640px) {
-  :root { --testimonial-tile-width: 260px; }
-}
-`;
-
-/* =========================
-   VideoThumbnail
-   - attempts to capture a frame into a canvas (most reliable)
-   - fallback to showing the <video> element if capture fails
-   ========================= */
-
-function VideoThumbnail({ src, alt }: { src: string; alt?: string }) {
-  const hiddenVideoRef = useRef<HTMLVideoElement | null>(null);
-  const [thumbUrl, setThumbUrl] = useState<string | null>(null);
-  const [captureFailed, setCaptureFailed] = useState(false);
-
-  useEffect(() => {
-    let mounted = true;
-    let fallbackTimer: number | undefined;
-
-    async function captureFrame(v: HTMLVideoElement) {
-      try {
-        // pick a small time to capture (0.05s or a fraction of duration)
-        const t = Math.min(0.05, (v.duration && v.duration / 10) || 0.05);
-
-        // Seek (wrap with promise to wait for 'seeked')
-        await new Promise<void>((resolve, reject) => {
-          const onSeeked = () => {
-            v.removeEventListener("seeked", onSeeked);
-            resolve();
-          };
-          v.addEventListener("seeked", onSeeked);
-
-          try {
-            v.currentTime = t;
-          } catch (e) {
-            // Some browsers throw if seeking too early; resolve so we can still attempt draw
-            v.removeEventListener("seeked", onSeeked);
-            resolve();
-          }
-        });
-
-        // Pause to ensure frame is stable
-        try { v.pause(); } catch (e) { /* ignore */ }
-
-        // draw to canvas
-        const width = v.videoWidth || 640;
-        const height = v.videoHeight || Math.round((width * 9) / 16);
-        const canvas = document.createElement("canvas");
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext("2d");
-        if (!ctx) throw new Error("No canvas context");
-        ctx.drawImage(v, 0, 0, width, height);
-
-        const dataUrl = canvas.toDataURL("image/png");
-        if (mounted) setThumbUrl(dataUrl);
-      } catch (err) {
-        // capture failed (likely cross-origin or timing). We'll fallback.
-        if (mounted) setCaptureFailed(true);
-      }
-    }
-
-    const v = hiddenVideoRef.current;
-    if (!v) return;
-
-    // Attach loadeddata listener
-    const onLoadedData = () => {
-      // try capturing — but also set a fallback timer so we don't wait forever
-      captureFrame(v);
-      fallbackTimer = window.setTimeout(() => {
-        if (mounted && !thumbUrl) {
-          setCaptureFailed(true);
-        }
-      }, 1500);
-    };
-
-    v.addEventListener("loadeddata", onLoadedData, { once: true });
-
-    // Trigger load
-    try {
-      v.load();
-    } catch (e) {
-      // ignore
-    }
-
-    return () => {
-      mounted = false;
-      v.removeEventListener("loadeddata", onLoadedData);
-      if (fallbackTimer) window.clearTimeout(fallbackTimer);
-    };
-  }, [src]);
-
-  // If we got a data URL, show <img> thumbnail. If capture failed, show visible <video>.
-  return (
-    <div className="w-full h-56 md:h-64 lg:h-72 bg-gray-100 relative overflow-hidden rounded-t-md">
-      {thumbUrl ? (
-        <img src={thumbUrl} alt={alt ?? "video thumbnail"} className="w-full h-full object-cover" />
-      ) : (
-        <>
-          {/* Hidden video used for capture (keeps it out of layout) */}
-          <video
-            ref={hiddenVideoRef}
-            src={src}
-            muted
-            playsInline
-            preload="metadata"
-            // keep it visually present as fallback if capture fails
-            className={`w-full h-full object-cover ${captureFailed ? "block" : "hidden"}`}
-            aria-hidden={!captureFailed}
-          />
-
-          {/* If capture hasn't finished yet, show a light gray box so UI isn't jarring.
-              If capture fails, the video element becomes visible instead. */}
-          {!captureFailed && (
-            <div className="w-full h-full bg-gray-100 flex items-center justify-center">
-              {/* subtle play icon while thumbnail is being built */}
-              <div className="rounded-full bg-green-700/90 text-white p-3 shadow-lg">
-                <Play className="w-5 h-5" />
-              </div>
-            </div>
-          )}
-        </>
-      )}
-    </div>
-  );
-}
-
-/* =========================
-   WrittenTestimonialCard
-   - pale green background, green separator line
-   - scales on hover to 1.25x (hover handled on wrapper in Marquee)
-   ========================= */
-
-function WrittenTestimonialCard({
-  testimonial,
-}: {
-  testimonial: { name: string; role: string; quote: string };
-}) {
-  return (
-    <Card
-      className="p-4 h-full flex flex-col justify-between rounded-lg shadow-sm
-                 bg-gradient-to-r from-green-50/80 to-white border border-green-100"
-      // NOTE: do not set overflow-hidden here — allow scaling to show shadow
-    >
-      <div>
-        <p className="text-sm text-foreground/90 line-clamp-4">{testimonial.quote}</p>
-      </div>
-
-      <div className="mt-4 border-t-2 border-green-200 pt-3">
-        <p className="font-semibold text-sm text-foreground">{testimonial.name}</p>
-        <p className="text-xs text-muted-foreground">{testimonial.role}</p>
-      </div>
-    </Card>
-  );
-}
-
-/* =========================
-   TestimonialsMarquee
-   - wraps items, duplicates for continuous scroll
-   - each item wrapper is the hover target for scaling
-   ========================= */
-
-function TestimonialsMarquee({
-  items,
-  ariaLabel,
-}: {
-  items: { name: string; role: string; quote: string }[];
-  ariaLabel?: string;
-}) {
-  const duplicated = [...items, ...items];
-
-  return (
-    <div className="relative testimonials-marquee" role="region" aria-label={ariaLabel ?? "Testimonials"}>
-      <style>{marqueeCss}</style>
-
-      <div className="testimonials-marquee__track" aria-hidden="false">
-        {duplicated.map((item, idx) => (
-          <div
-            key={idx}
-            className="testimonials-marquee__item p-2 h-full"
-            // group used so we can animate the inner card on hover
-          >
-            {/* wrapper responsible for scale on hover */}
-            <div className="transform-gpu transition-transform duration-300 will-change-transform hover:scale-125 hover:z-30">
-              <WrittenTestimonialCard testimonial={item} />
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/* =========================
-   VideoCarousel (infinite wrap)
-   - responsive itemsPerView (1 / 2 / 3)
-   - arrows wrap infinitely
-   - center item emphasized
-   ========================= */
-
+/* ---------- VideoCarousel: book-like shuffling carousel for 6 client videos ---------- */
 function VideoCarousel({
-  items,
-  title,
-  onPlay,
+  videos,
+  onOpen,
 }: {
-  items: { id: number; name: string; role: string; src: string }[];
-  title?: string;
-  onPlay: (src: string) => void;
+  videos: { id: number; name: string; role: string; src: string }[];
+  onOpen: (src: string) => void;
 }) {
-  const [startIndex, setStartIndex] = useState(0);
-  const [itemsPerView, setItemsPerView] = useState(3);
-
-  useEffect(() => {
-    const update = () => {
-      let newItemsPerView = 3;
-      if (window.innerWidth < 640) newItemsPerView = 1;
-      else if (window.innerWidth < 1024) newItemsPerView = 2;
-      newItemsPerView = Math.min(newItemsPerView, Math.max(1, items.length));
-      setItemsPerView((prev) => {
-        if (prev !== newItemsPerView) {
-          setStartIndex((s) => Math.min(s, Math.max(0, items.length - newItemsPerView)));
-          return newItemsPerView;
-        }
-        return prev;
-      });
-    };
-
-    update();
-    window.addEventListener("resize", update);
-    return () => window.removeEventListener("resize", update);
-  }, [items.length]);
-
-  const maxStart = Math.max(0, items.length - itemsPerView);
-
-  // wrap-around (infinite)
-  const goPrev = () => setStartIndex((s) => (s <= 0 ? maxStart : s - 1));
-  const goNext = () => setStartIndex((s) => (s >= maxStart ? 0 : s + 1));
-
-  const centerIndex = startIndex + Math.floor(itemsPerView / 2);
-  const itemWidthPercent = 100 / Math.max(1, itemsPerView);
-  const translatePercent = startIndex * itemWidthPercent;
+  const shouldReduceMotion = useReducedMotion();
+  const [index, setIndex] = useState(0);
+  const [direction, setDirection] = useState(0); // 1 forward, -1 back
+  const [isHovered, setIsHovered] = useState(false);
+  const length = videos.length;
 
   // keyboard navigation
   useEffect(() => {
-    function onKey(e: KeyboardEvent) {
-      if (e.key === "ArrowLeft") goPrev();
-      if (e.key === "ArrowRight") goNext();
-    }
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") handlePrev();
+      if (e.key === "ArrowRight") handleNext();
+    };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [startIndex, itemsPerView, items.length]);
+  }, [index]);
+
+  const clamp = (i: number) => ((i % length) + length) % length;
+
+  const handleNext = useCallback(() => {
+    setDirection(1);
+    setIndex((i) => clamp(i + 1));
+  }, [length]);
+
+  const handlePrev = useCallback(() => {
+    setDirection(-1);
+    setIndex((i) => clamp(i - 1));
+  }, [length]);
+
+  // drag threshold (px)
+  const dragThreshold = 80;
+
+  // autoplay (optional). I leave it disabled by default. Uncomment to enable.
+  useEffect(() => {
+    if (isHovered) return;
+    // const timer = setInterval(handleNext, 5000);
+    // return () => clearInterval(timer);
+  }, [index, isHovered, handleNext]);
+
+  // Motion variants for the center card
+  const centerVariants = {
+    enter: (d: number) =>
+      shouldReduceMotion
+        ? { opacity: 1, x: 0, rotate: 0, scale: 1 }
+        : { opacity: 0, x: d > 0 ? 220 : -220, rotate: d > 0 ? -8 : 8, scale: 0.96 },
+    center: { opacity: 1, x: 0, rotate: 0, scale: 1 },
+    exit: (d: number) =>
+      shouldReduceMotion
+        ? { opacity: 0, x: 0, rotate: 0, scale: 1 }
+        : { opacity: 0, x: d > 0 ? -220 : 220, rotate: d > 0 ? 8 : -8, scale: 0.96 },
+  };
+
+  // small side card style (left / right)
+  const sideStyle = {
+    width: "min(420px, 40vw)",
+  };
+
+  // center card max width
+  const centerStyle = {
+    width: "min(680px, 80vw)",
+  };
+
+  const prevIndex = clamp(index - 1);
+  const nextIndex = clamp(index + 1);
 
   return (
-    <div className="mb-8">
-      {title && <h3 className="text-lg font-semibold mb-4">{title}</h3>}
-
-      <div className="relative">
-        <button
-          onClick={goPrev}
-          className="absolute left-0 top-1/2 -translate-y-1/2 z-20 p-2 md:p-3 rounded-full bg-white shadow hover:bg-gray-100 transition"
-          aria-label="Previous testimonials"
+    <div className="w-full flex flex-col items-center">
+      {/* center the entire carousel within a max width so peeks + center sit nicely */}
+      <div className="w-full max-w-6xl mx-auto">
+        <div
+          className="relative w-full flex items-center justify-center"
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
         >
-          <ChevronLeft size={18} />
-        </button>
-
-        <button
-          onClick={goNext}
-          className="absolute right-0 top-1/2 -translate-y-1/2 z-20 p-2 md:p-3 rounded-full bg-white shadow hover:bg-gray-100 transition"
-          aria-label="Next testimonials"
-        >
-          <ChevronRight size={18} />
-        </button>
-
-        <div className="overflow-hidden">
-          <div
-            className="flex gap-4 transition-transform duration-300"
-            style={{ transform: `translateX(-${translatePercent}%)` }}
+          {/* Left peek (previous) */}
+          <motion.div
+            className="absolute left-6 top-1/2 -translate-y-1/2 hidden md:block"
+            initial={{ opacity: 0.9 }}
+            animate={{ opacity: 1 }}
+            style={sideStyle}
           >
-            {items.map((item, idx) => {
-              const isCenter = idx === centerIndex;
-              return (
-                <div key={item.id} style={{ flex: `0 0 ${itemWidthPercent}%` }} className="px-2 py-1">
-                  <div
-                    className={`rounded-lg overflow-hidden bg-white border shadow-sm h-full transform transition-transform duration-300 ${
-                      isCenter ? "scale-105 shadow-lg" : ""
-                    }`}
-                    role="button"
-                    tabIndex={0}
-                    onClick={() => onPlay(item.src)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" || e.key === " ") onPlay(item.src);
-                    }}
-                  >
-                    <div className="relative">
-                      <VideoThumbnail src={item.src} alt={`${item.name} testimonial`} />
-                      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                        <div className="rounded-full bg-green-700/90 text-white p-3 shadow-lg">
-                          <Play className="w-5 h-5" />
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="p-3 bg-white">
-                      <p className="font-semibold text-sm">{item.name}</p>
-                      <p className="text-xs text-muted-foreground">{item.role}</p>
-                    </div>
+            <Card
+              onClick={handlePrev}
+              className="cursor-pointer overflow-hidden transform transition-transform duration-300 hover:-translate-y-2 hover:scale-95"
+              aria-label={`Previous: ${videos[prevIndex].name}`}
+            >
+              <div className="aspect-video bg-muted relative">
+                <VideoThumbnail src={videos[prevIndex].src} alt={videos[prevIndex].name} />
+                <div className="absolute inset-0 bg-background/60 flex items-center justify-center pointer-events-none">
+                  <div className="w-12 h-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
+                    <Play className="w-6 h-6" />
                   </div>
                 </div>
-              );
-            })}
+              </div>
+              <div className="p-3">
+                <p className="font-bold text-foreground text-sm">{videos[prevIndex].name}</p>
+                <p className="text-xs text-muted-foreground">{videos[prevIndex].role}</p>
+              </div>
+            </Card>
+          </motion.div>
+
+          {/* Center animated card (AnimatePresence replaces center card when index changes) */}
+          <div className="mx-6 md:mx-0 flex justify-center">
+            <div className="relative">
+              <AnimatePresence custom={direction} initial={false}>
+                <motion.div
+                  key={videos[index].id}
+                  custom={direction}
+                  variants={centerVariants}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  transition={{ duration: shouldReduceMotion ? 0 : 0.45, ease: "easeOut" }}
+                  drag="x"
+                  dragConstraints={{ left: 0, right: 0 }}
+                  dragElastic={0.18}
+                  onDragEnd={(e, info) => {
+                    if (info.offset.x > dragThreshold) {
+                      handlePrev();
+                    } else if (info.offset.x < -dragThreshold) {
+                      handleNext();
+                    }
+                  }}
+                  className="cursor-grab"
+                  style={centerStyle}
+                >
+                  <Card
+                    onClick={() => onOpen(videos[index].src)}
+                    className="relative overflow-hidden hover-elevate cursor-pointer"
+                    aria-label={`Play testimonial from ${videos[index].name}`}
+                  >
+                    <div className="aspect-video bg-muted relative">
+                      <VideoThumbnail src={videos[index].src} alt={videos[index].name} />
+                      <div className="absolute inset-0 bg-background/60 flex items-center justify-center pointer-events-none">
+                        <motion.div
+                          className="w-16 h-16 rounded-full bg-primary text-primary-foreground flex items-center justify-center"
+                          initial={{ scale: 1 }}
+                          whileHover={{ scale: 1.08 }}
+                          transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                        >
+                          <Play className="w-8 h-8 ml-1" fill="currentColor" />
+                        </motion.div>
+                      </div>
+                    </div>
+                    <div className="p-4">
+                      <p className="font-bold text-foreground text-lg">{videos[index].name}</p>
+                      <p className="text-sm font-medium text-muted-foreground">{videos[index].role}</p>
+                    </div>
+                  </Card>
+                </motion.div>
+              </AnimatePresence>
+
+              {/* left arrow (visible on all sizes as small button) */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handlePrev();
+                }}
+                aria-label="Previous"
+                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 rounded-full bg-background/90 shadow-lg p-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                style={{ zIndex: 60 }}
+              >
+                <ChevronLeft className="w-6 h-6 text-foreground" />
+              </button>
+
+              {/* right arrow */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleNext();
+                }}
+                aria-label="Next"
+                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 rounded-full bg-background/90 shadow-lg p-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                style={{ zIndex: 60 }}
+              >
+                <ChevronRight className="w-6 h-6 text-foreground" />
+              </button>
+            </div>
           </div>
+
+          {/* Right peek (next) */}
+          <motion.div
+            className="absolute right-6 top-1/2 -translate-y-1/2 hidden md:block"
+            initial={{ opacity: 0.9 }}
+            animate={{ opacity: 1 }}
+            style={sideStyle}
+          >
+            <Card
+              onClick={handleNext}
+              className="cursor-pointer overflow-hidden transform transition-transform duration-300 hover:-translate-y-2 hover:scale-95"
+              aria-label={`Next: ${videos[nextIndex].name}`}
+            >
+              <div className="aspect-video bg-muted relative">
+                <VideoThumbnail src={videos[nextIndex].src} alt={videos[nextIndex].name} />
+                <div className="absolute inset-0 bg-background/60 flex items-center justify-center pointer-events-none">
+                  <div className="w-12 h-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
+                    <Play className="w-6 h-6" />
+                  </div>
+                </div>
+              </div>
+              <div className="p-3">
+                <p className="font-bold text-foreground text-sm">{videos[nextIndex].name}</p>
+                <p className="text-xs text-muted-foreground">{videos[nextIndex].role}</p>
+              </div>
+            </Card>
+          </motion.div>
+        </div>
+
+        {/* Dots */}
+        <div className="mt-6 flex items-center gap-3 justify-center">
+          {videos.map((v, i) => (
+            <button
+              key={v.id}
+              onClick={() => {
+                if (i === index) return;
+                setDirection(i > index ? 1 : -1);
+                setIndex(i);
+              }}
+              aria-label={`Go to ${v.name}`}
+              className={`w-3 h-3 rounded-full ${i === index ? "bg-primary" : "bg-muted-foreground/40"}`}
+            />
+          ))}
         </div>
       </div>
     </div>
   );
 }
 
-/* =========================
-   Main component
-   ========================= */
-
+/* ---------- TestimonialsSection component (main) ---------- */
 export default function TestimonialsSection() {
   const [activeVideo, setActiveVideo] = useState<string | null>(null);
 
+  // ESC to close
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setActiveVideo(null);
+    };
+    if (activeVideo) window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [activeVideo]);
+
+  // prevent body scroll while modal open
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    if (activeVideo) document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [activeVideo]);
+
+  // Prepare rows for candidates (unchanged)
+  const candidateRows = chunkRows(candidateVideoTestimonials, 3);
+
   return (
-    <section className="py-16 container mx-auto px-4">
-      <h2 className="text-3xl md:text-4xl font-bold text-center mb-3">What Our Clients & Candidates Say</h2>
-      <p className="text-center text-sm text-muted-foreground mb-10">Real stories from businesses and professionals we've helped</p>
+    <section className="py-24 bg-gradient-to-br from-primary/18 via-primary/10 to-background" data-testid="section-testimonials">
+      <div className="container max-w-7xl mx-auto px-4">
+        {/* Header */}
+        <div className="text-center mb-16">
+          <h2 className="text-4xl font-bold text-foreground mb-4">What Our Clients & Candidates Say</h2>
+          <p className="text-lg font-medium text-muted-foreground">
+            Real stories from businesses and professionals we've helped
+          </p>
+        </div>
 
-      {/* Client Video Carousel */}
-      <VideoCarousel
-        items={clientVideoTestimonials}
-        title="Client Video Testimonials"
-        onPlay={(src) => setActiveVideo(src)}
-      />
+        {/* CLIENT: replaced grid with VideoCarousel */}
+        <div>
+          <h3 className="text-2xl font-bold text-foreground mb-6 text-center">Client Testimonials</h3>
 
-      {/* Candidate Video Carousel */}
-      <VideoCarousel
-        items={candidateVideoTestimonials}
-        title="Candidate Video Testimonials"
-        onPlay={(src) => setActiveVideo(src)}
-      />
+          {/* VideoCarousel uses only the 6 client videos and opens the same modal */}
+          <div className="mb-8">
+            <VideoCarousel videos={clientVideoTestimonials} onOpen={(src) => setActiveVideo(src)} />
+          </div>
 
-      {/* Written Client Testimonials (marquee) */}
-      <div className="mb-8">
-        <h3 className="text-lg font-semibold mb-4">Client Testimonials</h3>
-        <TestimonialsMarquee items={clientWrittenTestimonials} ariaLabel="Client testimonials" />
+          {/* Written client testimonials (unchanged) */}
+          <div className="grid md:grid-cols-3 gap-6">
+            {writtenTestimonials.clients.map((testimonial, index) => (
+              <Card key={index} className="p-6 bg-gradient-to-br from-card to-primary/12 border-primary/20" data-testid={`client-testimonial-${index}`}>
+                <div className="flex gap-1 mb-4">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="w-4 h-4 fill-primary text-primary" />
+                  ))}
+                </div>
+                <p className="text-base font-medium text-foreground mb-4 leading-relaxed">"{testimonial.quote}"</p>
+                <div className="border-t border-border pt-4">
+                  <p className="font-bold text-foreground text-sm">{testimonial.name}</p>
+                  <p className="text-sm font-medium text-muted-foreground">{testimonial.role}</p>
+                </div>
+              </Card>
+            ))}
+          </div>
+        </div>
+
+        {/* Candidate Testimonials: videos then written testimonials (unchanged) */}
+        <div className="space-y-12 mt-12">
+          <div>
+            <h3 className="text-2xl font-bold text-foreground mb-6 text-center">Candidate Testimonials</h3>
+
+            <div className="mb-8 space-y-6">
+              {candidateRows.map((row, rowIndex) => (
+                // center each row inside a max-width container so rows align
+                <div key={rowIndex} className="w-full max-w-6xl mx-auto">
+                  <div className={row.length === 3 ? "grid md:grid-cols-3 gap-6" : "flex justify-center"}>
+                    <div className={row.length === 3 ? "" : "grid grid-cols-1 sm:grid-cols-2 gap-6 w-full max-w-4xl"}>
+                      {row.map((video) => (
+                        <Card
+                          key={video.id}
+                          onClick={() => setActiveVideo(video.src)}
+                          className="relative overflow-hidden cursor-pointer hover-elevate"
+                          data-testid={`candidate-video-testimonial-${video.id}`}
+                          aria-label={`Play testimonial from ${video.name}`}
+                        >
+                          <div className="aspect-video bg-muted relative">
+                            <VideoThumbnail src={video.src} alt={video.name} />
+                            <div className="absolute inset-0 bg-background/60 flex items-center justify-center pointer-events-none">
+                              <div className="w-16 h-16 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
+                                <Play className="w-8 h-8 ml-1" fill="currentColor" />
+                              </div>
+                            </div>
+                          </div>
+                          <div className="p-4">
+                            <p className="font-bold text-foreground">{video.name}</p>
+                            <p className="text-sm font-medium text-muted-foreground">{video.role}</p>
+                          </div>
+                        </Card>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Written candidate testimonials */}
+            <div className="grid md:grid-cols-3 gap-6">
+              {writtenTestimonials.candidates.map((testimonial, idx) => (
+                <Card key={idx} className="p-6 bg-gradient-to-br from-card to-primary/12 border-primary/20">
+                  <div className="flex gap-1 mb-4">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className="w-4 h-4 fill-primary text-primary" />
+                    ))}
+                  </div>
+                  <p className="text-base font-medium text-foreground mb-4 leading-relaxed">"{testimonial.quote}"</p>
+                  <div className="border-t border-border pt-4">
+                    <p className="font-bold text-foreground text-sm">{testimonial.name}</p>
+                    <p className="text-sm font-medium text-muted-foreground">{testimonial.role}</p>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* Written Candidate Testimonials (marquee) */}
-      <div className="mt-10">
-        <h3 className="text-lg font-semibold mb-4">Candidate Testimonials</h3>
-        <TestimonialsMarquee items={candidateTestimonials} ariaLabel="Candidate testimonials" />
-      </div>
-
-      {/* Video Modal */}
-      <AnimatePresence>
-        {activeVideo && (
-          <motion.div
-            className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setActiveVideo(null)}
+      {/* Video modal / lightbox (unchanged) */}
+      {activeVideo && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Testimonial video"
+          onClick={() => setActiveVideo(null)}
+        >
+          <div
+            className="relative w-full max-w-4xl mx-auto"
+            onClick={(e) => {
+              // prevent overlay clicks from closing when interacting with video
+              e.stopPropagation();
+            }}
           >
-            <motion.video
-              src={activeVideo}
-              controls
-              autoPlay
-              className="max-w-5xl w-full rounded-md shadow-lg"
-              initial={{ scale: 0.95 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0.95 }}
-              onClick={(e) => e.stopPropagation()}
-            />
-
             <button
-              className="absolute top-6 right-6 text-white p-2 rounded-full bg-black/50 hover:bg-black/70"
               onClick={() => setActiveVideo(null)}
               aria-label="Close video"
+              className="absolute -top-8 right-0 md:-top-10 md:-right-6 z-60 inline-flex items-center justify-center rounded-full bg-background p-2 shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
             >
-              <X size={28} />
+              <X className="w-5 h-5 text-foreground" />
             </button>
-          </motion.div>
-        )}
-      </AnimatePresence>
+
+            <div className="aspect-video bg-black">
+              <video src={activeVideo} controls autoPlay className="w-full h-full object-contain bg-black" />
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
