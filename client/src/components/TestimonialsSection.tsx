@@ -24,7 +24,7 @@ import videoMohamed from "@assets/Mohamed Sobhy.mp4";
 import videoNina from "@assets/Nina Hadidi - Acquisition Manager.mp4";
 
 /* =========================
-   Data
+   Data arrays
    ========================= */
 const clientVideoTestimonials = [
   { id: 1, name: "Kevin", role: "White Stone", src: videoKevin },
@@ -47,32 +47,8 @@ const candidateVideoTestimonials = [
   { id: 9, name: "Nina Hadidi", role: "Acquisition Manager", src: videoNina },
 ];
 
-const clientWrittenTestimonials = [
-  { name: "Daniel Turner", role: "Founder, BlueHarbor Logistics", quote: "Fast, professional, and reliable. Their remote hiring process just works for us." },
-  { name: "Olivia Brooks", role: "Head of HR, SummitWorks LLC", quote: "Vita Talent's screening process saved our team time and got us great candidates rapidly." },
-  { name: "Christopher Bennett", role: "Director of Operations, ClearPeak Group", quote: "Exceptional sourcing and onboarding support. We now rely on Vita Talent as a strategic partner." },
-  { name: "Janet Morales", role: "COO, Redwood Estates", quote: "They matched us with senior leadership quickly — the candidates were thoughtful and well-vetted." },
-  { name: "Ethan Cole", role: "VP Sales, TerraPoint", quote: "Clear communication, excellent candidate quality and a hiring speed that impressed our execs." },
-  { name: "Priya Shah", role: "Head of Talent, Greenline Partners", quote: "A consistent partner for hard-to-fill roles — thorough screening and transparent timelines." },
-  { name: "Marcus Allen", role: "Founder, Eastern Land Co.", quote: "They took the time to understand our workflow and delivered candidates who fit right in." },
-  { name: "Laura Finch", role: "Talent Acquisition Lead, Summit Ridge", quote: "Onboarding support was excellent — the new hires were productive from week one." },
-  { name: "Omar Ruiz", role: "CTO, LandLogic", quote: "Their screening eliminated cycles of bad interviews and gave us quality choices fast." },
-];
-
-const candidateTestimonials = [
-  { name: "Marcus Reyes", role: "Senior Land Manager — Placed at Greenridge", quote: "The team guided me through the whole interview process and found a role that matched my goals. Communication was clear and consistent." },
-  { name: "Hannah Lee", role: "Operations Coordinator — Placed at HarborPoint", quote: "I was nervous about remote onboarding, but they made it painless. The hiring timeline matched what they promised." },
-  { name: "Samuel Kim", role: "Project Lead — Placed at Terranov", quote: "Thoughtful feedback, great prep, and a smooth negotiation — I felt supported every step of the way." },
-  { name: "Aisha Patel", role: "Site Supervisor — Placed at Stonebridge", quote: "They helped me prepare for the technical interview and coached me through the salary discussion." },
-  { name: "Diego Morales", role: "Survey Engineer — Placed at ClearPath", quote: "Fast responses and real support. The recruiter checked in at every milestone." },
-  { name: "Renee Carter", role: "Regional Planner — Placed at BlueHarbor", quote: "Great prep materials and clear expectations — I appreciated the transparent process." },
-  { name: "Tom Watkins", role: "Land Analyst — Placed at White Stone", quote: "I found a role that matched my skills, and the onboarding was handled professionally." },
-  { name: "Maya Singh", role: "Project Coordinator — Placed at Vale Partners", quote: "Helpful interview coaching, timely feedback, and a smooth contract negotiation." },
-  { name: "Noah Fischer", role: "Acquisitions Associate — Placed at Greenridge", quote: "They lined up excellent opportunities and helped me choose the best fit for my career." },
-];
-
 /* =========================
-   Minimal marquee CSS for written testimonials (kept inline)
+   Minimal marquee CSS (inline)
    ========================= */
 const marqueeCss = `
 :root { --testimonial-tile-width: 300px; --marquee-gap: 1rem; --marquee-duration: 96s; }
@@ -83,8 +59,8 @@ const marqueeCss = `
 `;
 
 /* =========================
-   VideoThumbnail - captures a frame, falls back to showing the video
-   (keeps a fixed px height so global rules can't blow it up)
+   VideoThumbnail - capture a frame, fallback gracefully.
+   Media box has a hard pixel height and object-fit:cover.
    ========================= */
 function VideoThumbnail({ src, alt }: { src: string; alt?: string }) {
   const hiddenVideoRef = useRef<HTMLVideoElement | null>(null);
@@ -99,9 +75,17 @@ function VideoThumbnail({ src, alt }: { src: string; alt?: string }) {
       try {
         const t = Math.min(0.05, (v.duration && v.duration / 10) || 0.05);
         await new Promise<void>((resolve) => {
-          const onSeeked = () => { v.removeEventListener("seeked", onSeeked); resolve(); };
+          const onSeeked = () => {
+            v.removeEventListener("seeked", onSeeked);
+            resolve();
+          };
           v.addEventListener("seeked", onSeeked);
-          try { v.currentTime = t; } catch { v.removeEventListener("seeked", onSeeked); resolve(); }
+          try {
+            v.currentTime = t;
+          } catch {
+            v.removeEventListener("seeked", onSeeked);
+            resolve();
+          }
         });
         try { v.pause(); } catch {}
         const width = v.videoWidth || 640;
@@ -133,10 +117,9 @@ function VideoThumbnail({ src, alt }: { src: string; alt?: string }) {
     };
   }, [src]);
 
-  // hard pixel heights that cannot be overridden by global CSS
   const mediaBoxStyle: React.CSSProperties = {
     width: "100%",
-    height: 360,
+    height: 360, // fixed px height so portrait videos are cropped, not stretched
     minHeight: 360,
     maxHeight: 360,
     overflow: "hidden",
@@ -179,7 +162,7 @@ function VideoThumbnail({ src, alt }: { src: string; alt?: string }) {
 }
 
 /* =========================
-   Written Testimonial Card + Marquee
+   Written testimonial and marquee (kept minimal)
    ========================= */
 function WrittenTestimonialCard({ testimonial }: { testimonial: { name: string; role: string; quote: string } }) {
   return (
@@ -192,7 +175,6 @@ function WrittenTestimonialCard({ testimonial }: { testimonial: { name: string; 
     </div>
   );
 }
-
 function TestimonialsMarquee({ items }: { items: { name: string; role: string; quote: string }[] }) {
   const duplicated = [...items, ...items];
   return (
@@ -210,7 +192,9 @@ function TestimonialsMarquee({ items }: { items: { name: string; role: string; q
 }
 
 /* =========================
-   VideoCarousel (pixel-based sizing + explicit card borders)
+   VideoCarousel
+   - KEY FIX: track uses alignItems: 'flex-start' to prevent stretch
+   - card has explicit border and fixed height
    ========================= */
 function VideoCarousel({ videos, onPlay }: { videos: { id: number; name: string; role: string; src: string }[]; onPlay: (src: string) => void; }) {
   const [startIndex, setStartIndex] = useState(0);
@@ -253,28 +237,35 @@ function VideoCarousel({ videos, onPlay }: { videos: { id: number; name: string;
   const goPrev = () => setStartIndex(s => (s <= 0 ? maxStart : s - 1));
   const goNext = () => setStartIndex(s => (s >= maxStart ? 0 : s + 1));
 
-  // explicit card style (guarantees border + radius)
   const cardStyle: React.CSSProperties = {
     height: 540,
     maxHeight: 540,
     display: "flex",
     flexDirection: "column",
-    border: "1px solid rgba(229,231,235,1)", // subtle light gray border
+    border: "1px solid rgba(6,95,70,0.10)",
     borderRadius: 8,
     overflow: "hidden",
     background: "#ffffff",
     boxSizing: "border-box",
   };
 
+  const carouselContainerStyle: React.CSSProperties = {
+    maxWidth: 1200,
+    margin: "0 auto",
+    width: "100%",
+    boxSizing: "border-box",
+  };
+
   return (
-    <div>
+    <div style={carouselContainerStyle}>
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
         <button aria-label="Previous" onClick={goPrev} style={{ padding: 8, borderRadius: 999, background: "white", border: "1px solid rgba(0,0,0,0.06)" }}>
           <ChevronLeft style={{ width: 18, height: 18 }} />
         </button>
 
         <div ref={viewportRef} style={{ overflow: "hidden", width: "100%" }}>
-          <div style={{ display: "flex", width: `${itemWidth * videos.length}px`, transform: `translateX(-${startIndex * itemWidth}px)`, transition: "transform 300ms ease" }}>
+          {/* IMPORTANT: prevent children from stretching to the tallest item */}
+          <div style={{ display: "flex", alignItems: "flex-start", width: `${itemWidth * videos.length}px`, transform: `translateX(-${startIndex * itemWidth}px)`, transition: "transform 300ms ease" }}>
             {videos.map(v => (
               <div key={v.id} style={{ flex: `0 0 ${itemWidth}px`, maxWidth: `${itemWidth}px`, boxSizing: "border-box", padding: 12 }}>
                 <article style={cardStyle}>
@@ -314,26 +305,25 @@ function VideoCarousel({ videos, onPlay }: { videos: { id: number; name: string;
 export default function TestimonialsSection() {
   const [playingSrc, setPlayingSrc] = useState<string | null>(null);
 
+  const pageContainerStyle: React.CSSProperties = {
+    maxWidth: 1200,
+    margin: "0 auto",
+    padding: "40px 24px",
+    boxSizing: "border-box",
+  };
+
   return (
-    <section style={{ padding: "40px 24px", boxSizing: "border-box" }}>
-      <div style={{ marginBottom: 56 }}>
-        <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 18 }}>Client Video Testimonials</h2>
-        <VideoCarousel videos={clientVideoTestimonials} onPlay={src => setPlayingSrc(src)} />
-      </div>
+    <section style={{ padding: "40px 0" }}>
+      <div style={pageContainerStyle}>
+        <div style={{ marginBottom: 56 }}>
+          <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 18 }}>Client Video Testimonials</h2>
+          <VideoCarousel videos={clientVideoTestimonials} onPlay={src => setPlayingSrc(src)} />
+        </div>
 
-      <div style={{ marginBottom: 56 }}>
-        <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 18 }}>Candidate Video Testimonials</h2>
-        <VideoCarousel videos={candidateVideoTestimonials} onPlay={src => setPlayingSrc(src)} />
-      </div>
-
-      <div style={{ marginBottom: 32 }}>
-        <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 18 }}>Client Testimonials</h2>
-        <TestimonialsMarquee items={clientWrittenTestimonials} />
-      </div>
-
-      <div>
-        <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 18 }}>Candidate Testimonials</h2>
-        <TestimonialsMarquee items={candidateTestimonials} />
+        <div style={{ marginBottom: 56 }}>
+          <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 18 }}>Candidate Video Testimonials</h2>
+          <VideoCarousel videos={candidateVideoTestimonials} onPlay={src => setPlayingSrc(src)} />
+        </div>
       </div>
 
       <AnimatePresence>
