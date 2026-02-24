@@ -219,6 +219,13 @@ function VideoCarousel({
   const carouselRef = useRef<HTMLDivElement | null>(null);
   const prevRef = useRef<HTMLDivElement | null>(null);
   const nextRef = useRef<HTMLDivElement | null>(null);
+
+  // These refs are the important fix: we measure the center item's height
+  // and set the wrapper minHeight to that value so the center cannot overlap
+  // content beneath the carousel.
+  const centerWrapperRef = useRef<HTMLDivElement | null>(null);
+  const centerContentRef = useRef<HTMLDivElement | null>(null);
+
   const [arrowPos, setArrowPos] = useState<{ left?: number; right?: number } | null>(null);
 
   useEffect(() => {
@@ -243,7 +250,7 @@ function VideoCarousel({
     setIndex((i) => clamp(i - 1));
   }, [length]);
 
-  // compute arrow positions
+  // reposition arrows so they sit just outside the peek cards
   useLayoutEffect(() => {
     function recompute() {
       const carouselEl = carouselRef.current;
@@ -275,9 +282,35 @@ function VideoCarousel({
     };
   }, [index]);
 
+  // ensure the carousel wrapper reserves vertical space for the center tile
+  useLayoutEffect(() => {
+    function recomputeCenterHeight() {
+      const carouselEl = carouselRef.current;
+      if (!carouselEl) return;
+
+      // Prefer measuring the actual motion content; fall back to wrapper
+      const el = centerContentRef.current ?? centerWrapperRef.current;
+      const height = el ? (el as HTMLElement).offsetHeight : 0;
+
+      // Add a small buffer (shadows / spacing) so we never overlap the section below
+      const buffer = 28;
+      if (height && height > 0) {
+        carouselEl.style.minHeight = `${Math.ceil(height + buffer)}px`;
+      } else {
+        // fallback: reasonable height
+        carouselEl.style.minHeight = `420px`;
+      }
+    }
+
+    // recompute initially and whenever the index changes (center slide height may differ)
+    recomputeCenterHeight();
+    window.addEventListener("resize", recomputeCenterHeight);
+    return () => window.removeEventListener("resize", recomputeCenterHeight);
+  }, [index, centerContentRef.current]);
+
   const dragThreshold = 80;
 
-  // Explicit horizontal-only motion: set y:0 to avoid any vertical motion
+  // Explicit horizontal-only motion: set y:0 to avoid vertical motion
   const centerVariants = {
     enter: (d: number) =>
       shouldReduceMotion ? { opacity: 1, x: 0, y: 0, scale: 1 } : { opacity: 0, x: d > 0 ? 260 : -260, y: 0, scale: 0.98 },
@@ -302,11 +335,7 @@ function VideoCarousel({
 
   return (
     <div className="w-full flex flex-col items-center">
-      <div
-        ref={carouselRef}
-        className="relative w-full flex items-center justify-center"
-        style={{ minHeight: 260 }}
-      >
+      <div ref={carouselRef} className="relative w-full flex items-center justify-center" style={{ minHeight: 260 }}>
         {/* Left peek (behind center) */}
         <motion.div
           ref={prevRef}
@@ -335,8 +364,9 @@ function VideoCarousel({
           </Card>
         </motion.div>
 
-        {/* Center - absolutely positioned and on its own composite layer */}
+        {/* Center - absolutely positioned and measured so wrapper can reserve space */}
         <div
+          ref={centerWrapperRef}
           className="absolute left-1/2 top-1/2 z-50"
           style={{
             transform: "translate(-50%, -50%)",
@@ -347,6 +377,7 @@ function VideoCarousel({
         >
           <AnimatePresence custom={direction} initial={false}>
             <motion.div
+              ref={centerContentRef}
               key={videos[index].id}
               custom={direction}
               variants={centerVariants}
@@ -367,27 +398,18 @@ function VideoCarousel({
               className="cursor-grab"
               style={{ width: centerStyle.width }}
             >
-              <Card
-                onClick={() => onOpen(videos[index].src)}
-                className="relative overflow-hidden cursor-pointer"
-                aria-label={`Play testimonial from ${videos[index].name}`}
-              >
+              <Card onClick={() => onOpen(videos[index].src)} className="relative overflow-hidden cursor-pointer" aria-label={`Play testimonial from ${videos[index].name}`}>
                 <div className="aspect-video bg-muted relative">
                   <VideoThumbnail src={videos[index].src} alt={videos[index].name} />
                   <div className="absolute inset-0 bg-background/60 flex items-center justify-center pointer-events-none">
-                    <motion.div
-                      className="w-16 h-16 rounded-full bg-primary text-primary-foreground flex items-center justify-center"
-                      initial={{ scale: 1 }}
-                      whileHover={{ scale: 1.08 }}
-                      transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                    >
-                      <Play className="w-8 h-8 ml-1" fill="currentColor" />
-                    </motion.div>
+                    <div className="w-16 h-16 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
+                      <Play className="w-7 h-7" />
+                    </div>
                   </div>
                 </div>
-                <div className="p-4">
-                  <p className="font-bold text-foreground text-lg">{videos[index].name}</p>
-                  <p className="text-sm font-medium text-muted-foreground">{videos[index].role}</p>
+                <div className="p-4 border-t border-muted-foreground/10 bg-card">
+                  <p className="font-bold text-lg text-foreground">{videos[index].name}</p>
+                  <p className="text-sm text-muted-foreground">{videos[index].role}</p>
                 </div>
               </Card>
             </motion.div>
@@ -422,73 +444,49 @@ function VideoCarousel({
           </Card>
         </motion.div>
 
-        {/* Arrows positioned outside peeks */}
+        {/* Arrows positioned outside the peeks using computed positions */}
         <button
+          aria-label="Previous"
           onClick={(e) => {
             e.stopPropagation();
             handlePrev();
           }}
-          aria-label="Previous"
-          className="absolute rounded-full bg-background/90 shadow-lg p-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
-          style={{
-            zIndex: 60,
-            left: arrowPos ? `${Math.max(8, arrowPos.left)}px` : 8,
-            top: "50%",
-            transform: "translateY(-50%)",
-          }}
+          className="hidden md:flex items-center justify-center w-10 h-10 rounded-full bg-white shadow-md absolute z-40 left-0 -translate-x-1/2"
+          style={{ left: arrowPos?.left ?? 12 }}
         >
-          <ChevronLeft className="w-6 h-6 text-foreground" />
+          <ChevronLeft className="w-5 h-5 text-foreground" />
         </button>
 
         <button
+          aria-label="Next"
           onClick={(e) => {
             e.stopPropagation();
             handleNext();
           }}
-          aria-label="Next"
-          className="absolute rounded-full bg-background/90 shadow-lg p-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
-          style={{
-            zIndex: 60,
-            right: arrowPos ? `${Math.max(8, arrowPos.right)}px` : 8,
-            top: "50%",
-            transform: "translateY(-50%)",
-          }}
+          className="hidden md:flex items-center justify-center w-10 h-10 rounded-full bg-white shadow-md absolute z-40 right-0 translate-x-1/2"
+          style={{ right: arrowPos?.right ?? 12 }}
         >
-          <ChevronRight className="w-6 h-6 text-foreground" />
+          <ChevronRight className="w-5 h-5 text-foreground" />
         </button>
-      </div>
-
-      {/* Dots */}
-      <div className="mt-6 flex items-center gap-3">
-        {videos.map((v, i) => (
-          <button
-            key={v.id}
-            onClick={() => {
-              if (i === index) return;
-              setDirection(i > index ? 1 : -1);
-              setIndex(i);
-            }}
-            aria-label={`Go to ${v.name}`}
-            className={`w-3 h-3 rounded-full ${i === index ? "bg-primary" : "bg-muted-foreground/40"}`}
-          />
-        ))}
       </div>
     </div>
   );
 }
 
-/* ---------- TestimonialsSection main component (unchanged modal + rest) ---------- */
+/* ---------- TestimonialsSection (page section) ---------- */
 export default function TestimonialsSection() {
   const [activeVideo, setActiveVideo] = useState<string | null>(null);
 
+  // ESC to close modal
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setActiveVideo(null);
     };
-    if (activeVideo) window.addEventListener("keydown", onKey);
+    window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [activeVideo]);
+  }, []);
 
+  // prevent body scroll while modal open
   useEffect(() => {
     const prev = document.body.style.overflow;
     if (activeVideo) document.body.style.overflow = "hidden";
@@ -504,32 +502,32 @@ export default function TestimonialsSection() {
       <div className="container max-w-7xl mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-foreground mb-4">What Our Clients & Candidates Say</h2>
-          <p className="text-lg font-medium text-muted-foreground">
-            Real stories from businesses and professionals we've helped
-          </p>
+          <p className="text-lg font-medium text-muted-foreground">Real stories from businesses and professionals we've helped</p>
         </div>
 
         <div>
           <h3 className="text-2xl font-bold text-foreground mb-6 text-center">Client Testimonials</h3>
 
-          {/* *** IMPORTANT: testimonials-carousel wrapper added here to scope CSS changes *** */}
-          <div className="mb-8 testimonials-carousel">
+          <div className="mb-8">
             <VideoCarousel videos={clientVideoTestimonials} onOpen={(src) => setActiveVideo(src)} />
           </div>
 
-          {/* Written client testimonials (unchanged) */}
           <div className="grid md:grid-cols-3 gap-6">
             {writtenTestimonials.clients.map((testimonial, index) => (
-              <Card key={index} className="p-6 bg-gradient-to-br from-card to-primary/12 border-primary/20" data-testid={`client-testimonial-${index}`}>
-                <div className="flex gap-1 mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="w-4 h-4 fill-primary text-primary" />
-                  ))}
+              <Card key={index} className="p-6 bg-gradient-to-br from-card to-primary/12 border-primary/20">
+                <div className="flex items-start gap-4">
+                  <div className="flex items-center gap-1 text-emerald-500">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <Star key={i} className="w-4 h-4" />
+                    ))}
+                  </div>
                 </div>
-                <p className="text-base font-medium text-foreground mb-4 leading-relaxed">"{testimonial.quote}"</p>
-                <div className="border-t border-border pt-4">
-                  <p className="font-bold text-foreground text-sm">{testimonial.name}</p>
-                  <p className="text-sm font-medium text-muted-foreground">{testimonial.role}</p>
+
+                <p className="mt-4 text-sm text-foreground/90">{testimonial.quote}</p>
+
+                <div className="mt-6 border-t pt-4">
+                  <p className="font-bold text-foreground">{testimonial.name}</p>
+                  <p className="text-xs text-muted-foreground">{testimonial.role}</p>
                 </div>
               </Card>
             ))}
@@ -540,49 +538,27 @@ export default function TestimonialsSection() {
           <div>
             <h3 className="text-2xl font-bold text-foreground mb-6 text-center">Candidate Testimonials</h3>
 
-            <div className="mb-8 space-y-6">
-              {candidateRows.map((row, rowIndex) => (
-                <div key={rowIndex} className={row.length === 3 ? "grid md:grid-cols-3 gap-6" : "flex justify-center"}>
-                  <div className={row.length === 3 ? "" : "grid grid-cols-1 sm:grid-cols-2 gap-6 w-full max-w-4xl"}>
-                    {row.map((video) => (
-                      <Card
-                        key={video.id}
-                        onClick={() => setActiveVideo(video.src)}
-                        className="relative overflow-hidden cursor-pointer hover-elevate"
-                        data-testid={`candidate-video-testimonial-${video.id}`}
-                        aria-label={`Play testimonial from ${video.name}`}
-                      >
-                        <div className="aspect-video bg-muted relative">
-                          <VideoThumbnail src={video.src} alt={video.name} />
-                          <div className="absolute inset-0 bg-background/60 flex items-center justify-center pointer-events-none">
-                            <div className="w-16 h-16 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
-                              <Play className="w-8 h-8 ml-1" fill="currentColor" />
-                            </div>
-                          </div>
-                        </div>
-                        <div className="p-4">
-                          <p className="font-bold text-foreground">{video.name}</p>
-                          <p className="text-sm font-medium text-muted-foreground">{video.role}</p>
-                        </div>
-                      </Card>
-                    ))}
-                  </div>
-                </div>
-              ))}
+            <div className="mb-8">
+              {/* For candidates we can reuse the same carousel or render differently — keep simple */}
+              <VideoCarousel videos={candidateVideoTestimonials.slice(0, 3)} onOpen={(src) => setActiveVideo(src)} />
             </div>
 
             <div className="grid md:grid-cols-3 gap-6">
               {writtenTestimonials.candidates.map((testimonial, idx) => (
                 <Card key={idx} className="p-6 bg-gradient-to-br from-card to-primary/12 border-primary/20">
-                  <div className="flex gap-1 mb-4">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-4 h-4 fill-primary text-primary" />
-                    ))}
+                  <div className="flex items-start gap-4">
+                    <div className="flex items-center gap-1 text-emerald-500">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <Star key={i} className="w-4 h-4" />
+                      ))}
+                    </div>
                   </div>
-                  <p className="text-base font-medium text-foreground mb-4 leading-relaxed">"{testimonial.quote}"</p>
-                  <div className="border-t border-border pt-4">
-                    <p className="font-bold text-foreground text-sm">{testimonial.name}</p>
-                    <p className="text-sm font-medium text-muted-foreground">{testimonial.role}</p>
+
+                  <p className="mt-4 text-sm text-foreground/90">{testimonial.quote}</p>
+
+                  <div className="mt-6 border-t pt-4">
+                    <p className="font-bold text-foreground">{testimonial.name}</p>
+                    <p className="text-xs text-muted-foreground">{testimonial.role}</p>
                   </div>
                 </Card>
               ))}
@@ -591,35 +567,31 @@ export default function TestimonialsSection() {
         </div>
       </div>
 
-      {/* Video modal / lightbox */}
-      {activeVideo && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Testimonial video"
-          onClick={() => setActiveVideo(null)}
-        >
-          <div
-            className="relative w-full max-w-4xl mx-auto"
-            onClick={(e) => {
-              e.stopPropagation();
-            }}
-          >
-            <button
-              onClick={() => setActiveVideo(null)}
-              aria-label="Close video"
-              className="absolute -top-8 right-0 md:-top-10 md:-right-6 z-60 inline-flex items-center justify-center rounded-full bg-background p-2 shadow-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+      {/* Simple modal for playing the selected video */}
+      <AnimatePresence>
+        {activeVideo && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center">
+            <div className="fixed inset-0 bg-black/60" onClick={() => setActiveVideo(null)} />
+            <motion.div
+              initial={{ scale: 0.98, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.98, opacity: 0 }}
+              className="relative z-60 w-full max-w-4xl mx-4"
             >
-              <X className="w-5 h-5 text-foreground" />
-            </button>
-
-            <div className="aspect-video bg-black">
-              <video src={activeVideo} controls autoPlay className="w-full h-full object-contain bg-black" />
-            </div>
-          </div>
-        </div>
-      )}
+              <Card className="overflow-hidden">
+                <div className="relative aspect-video bg-black">
+                  <video controls autoPlay className="w-full h-full object-contain bg-black" src={activeVideo ?? undefined} />
+                </div>
+                <div className="p-3 flex justify-end">
+                  <Button variant="ghost" onClick={() => setActiveVideo(null)} aria-label="Close video">
+                    <X />
+                  </Button>
+                </div>
+              </Card>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }
