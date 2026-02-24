@@ -1,7 +1,7 @@
 // client/src/components/TestimonialsSection.tsx
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Play, Star, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { Play, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { SiTrustpilot, SiGoogle } from "react-icons/si";
 import { useState, useEffect, useRef, useCallback, useLayoutEffect } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
@@ -220,9 +220,9 @@ function VideoCarousel({
   const prevRef = useRef<HTMLDivElement | null>(null);
   const nextRef = useRef<HTMLDivElement | null>(null);
 
-  // These refs are the important fix: we measure the center item's height
-  // and set the wrapper minHeight to that value so the center cannot overlap
-  // content beneath the carousel.
+  // We still measure the center content and set minHeight so the section below
+  // cannot be overlapped. But the center card is now *in the flow*, so we don't
+  // absolute-center it vertically (that was causing the drop).
   const centerWrapperRef = useRef<HTMLDivElement | null>(null);
   const centerContentRef = useRef<HTMLDivElement | null>(null);
 
@@ -306,7 +306,8 @@ function VideoCarousel({
     recomputeCenterHeight();
     window.addEventListener("resize", recomputeCenterHeight);
     return () => window.removeEventListener("resize", recomputeCenterHeight);
-  }, [index, centerContentRef.current]);
+    // index and the refs changing will trigger updates via effects/hooks above
+  }, [index]);
 
   const dragThreshold = 80;
 
@@ -335,6 +336,7 @@ function VideoCarousel({
 
   return (
     <div className="w-full flex flex-col items-center">
+      {/* the carousel container is a flex center; prev/next are absolute, center is in-flow */}
       <div ref={carouselRef} className="relative w-full flex items-center justify-center" style={{ minHeight: 260 }}>
         {/* Left peek (behind center) */}
         <motion.div
@@ -364,17 +366,8 @@ function VideoCarousel({
           </Card>
         </motion.div>
 
-        {/* Center - absolutely positioned and measured so wrapper can reserve space */}
-        <div
-          ref={centerWrapperRef}
-          className="absolute left-1/2 top-1/2 z-50"
-          style={{
-            transform: "translate(-50%, -50%)",
-            width: centerStyle.width,
-            willChange: "transform",
-            transformStyle: "preserve-3d",
-          }}
-        >
+        {/* Center - REMOVED absolute vertical centering; kept in flow (centered by parent flex) */}
+        <div ref={centerWrapperRef} className="relative z-50 flex-shrink-0" style={{ width: centerStyle.width }}>
           <AnimatePresence custom={direction} initial={false}>
             <motion.div
               ref={centerContentRef}
@@ -497,6 +490,13 @@ export default function TestimonialsSection() {
 
   const candidateRows = chunkRows(candidateVideoTestimonials, 3);
 
+  // Inline filled star used to ensure solid stars (fill=currentColor)
+  const FilledStar = ({ className = "w-4 h-4 text-emerald-500" }: { className?: string }) => (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+      <path d="M12 .587l3.668 7.431L23.5 9.75l-5.75 5.6L19.335 24 12 19.897 4.665 24l1.585-8.65L.5 9.75l7.832-1.732L12 .587z" />
+    </svg>
+  );
+
   return (
     <section className="py-24 bg-gradient-to-br from-primary/18 via-primary/10 to-background" data-testid="section-testimonials">
       <div className="container max-w-7xl mx-auto px-4">
@@ -516,9 +516,10 @@ export default function TestimonialsSection() {
             {writtenTestimonials.clients.map((testimonial, index) => (
               <Card key={index} className="p-6 bg-gradient-to-br from-card to-primary/12 border-primary/20">
                 <div className="flex items-start gap-4">
-                  <div className="flex items-center gap-1 text-emerald-500">
+                  <div className="flex items-center gap-1">
+                    {/* five filled stars */}
                     {Array.from({ length: 5 }).map((_, i) => (
-                      <Star key={i} className="w-4 h-4" />
+                      <FilledStar key={i} />
                     ))}
                   </div>
                 </div>
@@ -539,7 +540,6 @@ export default function TestimonialsSection() {
             <h3 className="text-2xl font-bold text-foreground mb-6 text-center">Candidate Testimonials</h3>
 
             <div className="mb-8">
-              {/* For candidates we can reuse the same carousel or render differently — keep simple */}
               <VideoCarousel videos={candidateVideoTestimonials.slice(0, 3)} onOpen={(src) => setActiveVideo(src)} />
             </div>
 
@@ -547,9 +547,9 @@ export default function TestimonialsSection() {
               {writtenTestimonials.candidates.map((testimonial, idx) => (
                 <Card key={idx} className="p-6 bg-gradient-to-br from-card to-primary/12 border-primary/20">
                   <div className="flex items-start gap-4">
-                    <div className="flex items-center gap-1 text-emerald-500">
+                    <div className="flex items-center gap-1">
                       {Array.from({ length: 5 }).map((_, i) => (
-                        <Star key={i} className="w-4 h-4" />
+                        <FilledStar key={i} />
                       ))}
                     </div>
                   </div>
