@@ -7,7 +7,8 @@ import { motion, AnimatePresence } from "framer-motion";
 /* =========================
    VIDEO ASSETS
    - Client video imports (existing)
-   - Candidate video imports (restored exactly from your original file)
+   - Candidate video imports (added)
+   Update the candidate import paths to match your actual files if needed.
    ========================= */
 import videoKevin from "@assets/Kevin's Testimonial.mp4";
 import videoSam from "@assets/Sam's Testimonial .mov";
@@ -16,8 +17,8 @@ import videoDaniel from "@assets/Daniel Slobodyan - Land Creative Solutions.mp4"
 import videoZach from "@assets/Zach Nahas - CEO of Clear Path Land.mp4";
 import videoJoshPierce from "@assets/Josh Pierce - CEO of Higher Ground Land.mp4";
 
-/* ---- Candidate video imports (restored from your earlier file) ----
-   These are the exact ones you provided previously.
+/* ---- Candidate video imports (explicit) ----
+   Replace these paths with your real candidate video file paths if they differ.
 */
 import videoXimena from "@assets/WhatsApp Video 2025-11-25 at 10.45.54.mp4";
 import videoHesham from "@assets/WhatsApp Video 2025-11-25 at 10.46.13.mp4";
@@ -126,96 +127,144 @@ const marqueeCss = `
 
 /* =========================
    VideoThumbnail
-   - attempts canvas capture, fallback to visible <video>
+   - attempts off-screen canvas capture, falls back to visible <video>
+   - robust and cleans up listeners
    ========================= */
 
 function VideoThumbnail({ src, alt }: { src: string; alt?: string }) {
-  const hiddenVideoRef = useRef<HTMLVideoElement | null>(null);
+  const visibleVideoRef = useRef<HTMLVideoElement | null>(null);
   const [thumbUrl, setThumbUrl] = useState<string | null>(null);
-  const [captureFailed, setCaptureFailed] = useState(false);
+  const [captureTried, setCaptureTried] = useState(false);
 
   useEffect(() => {
     let mounted = true;
     let fallbackTimer: number | undefined;
 
-    async function captureFrame(v: HTMLVideoElement) {
+    // reset per-src
+    setThumbUrl(null);
+    setCaptureTried(false);
+
+    // create off-screen video for capture
+    const video = document.createElement("video");
+    video.muted = true;
+    video.playsInline = true;
+    video.preload = "metadata";
+    // crossOrigin helps when the server allows CORS; harmless if same-origin
+    video.crossOrigin = "anonymous";
+    video.src = src;
+
+    const drawFrame = () => {
       try {
-        const t = Math.min(0.05, (v.duration && v.duration / 10) || 0.05);
-        await new Promise<void>((resolve) => {
-          const onSeeked = () => {
-            v.removeEventListener("seeked", onSeeked);
-            resolve();
-          };
-          v.addEventListener("seeked", onSeeked);
-          try {
-            v.currentTime = t;
-          } catch {
-            v.removeEventListener("seeked", onSeeked);
-            resolve();
-          }
-        });
-
-        try { v.pause(); } catch {}
-
-        const width = v.videoWidth || 640;
-        const height = v.videoHeight || Math.round((width * 9) / 16);
+        const vw = video.videoWidth || 640;
+        const vh = video.videoHeight || 360;
+        const maxW = 1200;
+        let w = vw;
+        let h = vh;
+        if (w > maxW) {
+          h = Math.round((maxW / w) * h);
+          w = maxW;
+        }
         const canvas = document.createElement("canvas");
-        canvas.width = width;
-        canvas.height = height;
+        canvas.width = w;
+        canvas.height = h;
         const ctx = canvas.getContext("2d");
         if (!ctx) throw new Error("No canvas context");
-        ctx.drawImage(v, 0, 0, width, height);
-        const dataUrl = canvas.toDataURL("image/png");
-        if (mounted) setThumbUrl(dataUrl);
-      } catch (err) {
-        if (mounted) setCaptureFailed(true);
+        ctx.drawImage(video as HTMLVideoElement, 0, 0, w, h);
+        const dataUrl = canvas.toDataURL("image/jpeg", 0.8);
+        if (mounted) {
+          setThumbUrl(dataUrl);
+          setCaptureTried(true);
+        }
+      } catch {
+        if (mounted) setCaptureTried(true);
       }
-    }
-
-    const v = hiddenVideoRef.current;
-    if (!v) return;
-
-    const onLoadedData = () => {
-      captureFrame(v);
-      fallbackTimer = window.setTimeout(() => {
-        if (mounted && !thumbUrl) setCaptureFailed(true);
-      }, 1500);
     };
 
-    v.addEventListener("loadeddata", onLoadedData, { once: true });
-    try { v.load(); } catch {}
+    const onLoadedData = () => {
+      try {
+        const seekTime = Math.min(0.05, Math.max(0.0, (video.duration || 0.1) / 10));
+        const onSeeked = () => {
+          video.removeEventListener("seeked", onSeeked);
+          drawFrame();
+        };
+        video.addEventListener("seeked", onSeeked);
+        try {
+          video.currentTime = seekTime;
+        } catch {
+          video.removeEventListener("seeked", onSeeked);
+          drawFrame();
+        }
+      } catch {
+        drawFrame();
+      }
+    };
+
+    const onError = () => {
+      if (mounted) setCaptureTried(true);
+    };
+
+    video.addEventListener("loadeddata", onLoadedData, { once: true });
+    video.addEventListener("error", onError, { once: true });
+
+    try {
+      video.load();
+    } catch {
+      // ignore
+    }
+
+    // safety fallback
+    fallbackTimer = window.setTimeout(() => {
+      if (mounted && !thumbUrl) setCaptureTried(true);
+    }, 1600);
 
     return () => {
       mounted = false;
-      v.removeEventListener("loadeddata", onLoadedData);
+      video.removeEventListener("loadeddata", onLoadedData);
+      video.removeEventListener("error", onError);
       if (fallbackTimer) window.clearTimeout(fallbackTimer);
+      try {
+        video.src = "";
+      } catch {
+        /* ignore */
+      }
     };
   }, [src]);
 
+  if (thumbUrl) {
+    return <img src={thumbUrl} alt={alt ?? "video thumbnail"} className="w-full h-full object-cover" />;
+  }
+
+  // visible fallback video (paused on loadeddata so first frame is visible)
   return (
     <div className="w-full h-56 md:h-64 lg:h-72 bg-gray-100 relative overflow-hidden rounded-t-md">
-      {thumbUrl ? (
-        <img src={thumbUrl} alt={alt ?? "video thumbnail"} className="w-full h-full object-cover" />
-      ) : (
-        <>
-          <video
-            ref={hiddenVideoRef}
-            src={src}
-            muted
-            playsInline
-            preload="metadata"
-            className={`w-full h-full object-cover ${captureFailed ? "block" : "hidden"}`}
-            aria-hidden={!captureFailed}
-          />
+      <video
+        ref={visibleVideoRef}
+        src={src}
+        muted
+        playsInline
+        preload="metadata"
+        className="w-full h-full object-cover"
+        onLoadedData={() => {
+          try {
+            const v = visibleVideoRef.current;
+            if (!v) return;
+            v.pause();
+            if (v.currentTime > 0) v.currentTime = 0;
+          } catch {
+            /* ignore */
+          }
+        }}
+        onError={() => {
+          /* leave fallback UI */
+        }}
+      />
 
-          {!captureFailed && (
-            <div className="w-full h-full bg-gray-100 flex items-center justify-center">
-              <div className="rounded-full bg-green-700/90 text-white p-3 shadow-lg">
-                <Play className="w-5 h-5" />
-              </div>
-            </div>
-          )}
-        </>
+      {!captureTried && (
+        <div className="absolute inset-0 w-full h-full flex items-center justify-center bg-gray-100">
+          <div className="rounded-full bg-green-700/90 text-white p-3 shadow-lg">
+            <Play className="w-5 h-5" />
+          </div>
+        </div>
       )}
     </div>
   );
