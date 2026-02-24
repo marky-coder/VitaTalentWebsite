@@ -41,6 +41,14 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+
+  /* allow the item to overlap neighbors when scaled */
+  position: relative;
+  z-index: 1;
+
+  /* keyboard users: show it is focusable */
+  outline: none;
+  cursor: pointer;
 }
 
 /* The images — tune height to match your design */
@@ -50,18 +58,45 @@
   display: block;
   filter: drop-shadow(0 2px 6px rgba(0,0,0,0.06));
   margin: 0;
+
+  /* smooth transform + shadow transition for hover/focus */
+  transition: transform 180ms cubic-bezier(.2,.9,.2,1), box-shadow 220ms ease, filter 220ms ease;
+  transform-origin: center center;
+  will-change: transform;
 }
 
-/* Pause on hover/focus for discoverability */
+/* Enlarge + lift + raise z-index on hover/focus (also works while track is paused) */
+.client-marquee__item:hover,
+.client-marquee__item:focus {
+  z-index: 20; /* bring above neighbors */
+}
+
+/* scale the image itself (so we keep layout slightly compact) */
+.client-marquee__item:hover img,
+.client-marquee__item:focus img {
+  transform: translateY(-4px) scale(1.12);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+  filter: drop-shadow(0 6px 14px rgba(0,0,0,0.10));
+}
+
+/* Pause on hover/focus for discoverability (existing behavior) */
 .client-marquee__track:hover,
 .client-marquee__track:focus-within {
   animation-play-state: paused;
 }
 
-/* Accessible: respect reduced-motion */
+/* Accessible: respect reduced-motion — remove the transform transitions */
 @media (prefers-reduced-motion: reduce) {
   .client-marquee__track {
     animation: none;
+  }
+  .client-marquee__item img {
+    transition: none;
+  }
+  .client-marquee__item:hover img,
+  .client-marquee__item:focus img {
+    transform: none;
+    box-shadow: none;
   }
 }
 
