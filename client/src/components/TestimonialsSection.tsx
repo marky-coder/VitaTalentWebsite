@@ -73,20 +73,20 @@ const candidateTestimonials = [
 
 /* =========================
    Marquee CSS (inline)
-   - includes pause-on-hover and tile hover scale
+   - includes pause-on-hover (JS + CSS) and tile hover scale 1.25x
    ========================= */
 const marqueeCss = `
 .testimonials-marquee { overflow: hidden; width: 100%; position: relative; padding: 8px 0; }
-.testimonials-marquee__track { display:flex; gap:1rem; align-items:center; width:max-content; animation:marquee linear 96s infinite; }
-.testimonials-marquee__item { flex: 0 0 340px; box-sizing: border-box; transition: transform 220ms ease, box-shadow 220ms ease; }
-.testimonials-marquee__item .testimonial-tile { transition: transform 220ms ease, box-shadow 220ms ease; }
-.testimonials-marquee__item:hover .testimonial-tile { transform: scale(1.05); z-index: 30; box-shadow: 0 12px 28px rgba(0,0,0,0.12); }
-.testimonials-marquee:hover .testimonials-marquee__track { animation-play-state: paused; }
+.testimonials-marquee__track { display:flex; gap:1rem; align-items:center; width:max-content; animation:marquee linear 96s infinite; will-change: transform; }
+.testimonials-marquee__item { flex: 0 0 340px; box-sizing: border-box; }
+.testimonial-tile { transition: transform 220ms ease, box-shadow 220ms ease; transform-origin: center; }
+.testimonial-tile:hover { transform: scale(1.25); z-index: 30; box-shadow: 0 20px 40px rgba(0,0,0,0.18); }
 @keyframes marquee { from { transform: translateX(0);} to { transform: translateX(-50%);} }
 `;
 
 /* =========================
    VideoThumbnail - capture a frame, fallback gracefully
+   - media box has fixed pixel height and object-fit:cover
    ========================= */
 function VideoThumbnail({ src, alt }: { src: string; alt?: string }) {
   const hiddenVideoRef = useRef<HTMLVideoElement | null>(null);
@@ -137,9 +137,9 @@ function VideoThumbnail({ src, alt }: { src: string; alt?: string }) {
 
   const mediaBoxStyle: React.CSSProperties = {
     width: "100%",
-    height: 360,
-    minHeight: 360,
-    maxHeight: 360,
+    height: 320, // reduced so body area is smaller and no big white gap
+    minHeight: 320,
+    maxHeight: 320,
     overflow: "hidden",
     background: "#f6f6f6",
     position: "relative",
@@ -181,7 +181,8 @@ function VideoThumbnail({ src, alt }: { src: string; alt?: string }) {
 
 /* =========================
    WrittenTestimonialCard (bigger + restored pale-green styling)
-   and has class 'testimonial-tile' for hover animation
+   - divider is now green
+   - has class 'testimonial-tile' for hover animation
    ========================= */
 function WrittenTestimonialCard({ testimonial }: { testimonial: { name: string; role: string; quote: string } }) {
   const cardStyle: React.CSSProperties = {
@@ -189,16 +190,16 @@ function WrittenTestimonialCard({ testimonial }: { testimonial: { name: string; 
     borderRadius: 8,
     boxSizing: "border-box",
     background: "linear-gradient(90deg, rgba(236,252,245,0.95), rgba(255,255,255,0.98))", // pale-green
-    border: "1px solid rgba(6,95,70,0.10)", // slightly stronger subtle green border
+    border: "1px solid rgba(6,95,70,0.10)",
     color: "rgba(0,0,0,0.85)",
-    minHeight: 160,
+    minHeight: 170,
     display: "flex",
     flexDirection: "column",
     justifyContent: "space-between",
   };
 
   const quoteStyle: React.CSSProperties = { fontSize: 14, lineHeight: 1.4, margin: 0, color: "rgba(0,0,0,0.85)" };
-  const metaStyle: React.CSSProperties = { marginTop: 12, paddingTop: 10, borderTop: "1px solid rgba(6,95,70,0.08)", fontSize: 13, color: "#374151" };
+  const metaStyle: React.CSSProperties = { marginTop: 12, paddingTop: 10, borderTop: "2px solid rgba(6,95,70,0.22)", fontSize: 13, color: "#374151" };
 
   return (
     <div className="testimonial-tile" style={cardStyle}>
@@ -214,11 +215,14 @@ function WrittenTestimonialCard({ testimonial }: { testimonial: { name: string; 
 /* =========================
    TestimonialsMarquee
    - wrapped in centered container (maxWidth:1200) and clips overflow
-   - pause-on-hover handled in CSS
+   - pause is controlled via state for robust pause-on-hover
    ========================= */
 function TestimonialsMarquee({ items }: { items: { name: string; role: string; quote: string }[] }) {
   const duplicated = [...items, ...items];
+  const [paused, setPaused] = useState(false);
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
 
+  // Track style will be adjusted with paused state
   const marqueeWrapperStyle: React.CSSProperties = {
     maxWidth: 1200,
     margin: "0 auto",
@@ -228,12 +232,32 @@ function TestimonialsMarquee({ items }: { items: { name: string; role: string; q
     padding: "8px 0",
   };
 
+  const trackStyle: React.CSSProperties = {
+    display: "flex",
+    gap: "1rem",
+    alignItems: "center",
+    width: "max-content",
+    animation: "marquee linear 96s infinite",
+    animationPlayState: paused ? "paused" : "running",
+  };
+
   return (
-    <div style={marqueeWrapperStyle}>
+    <div
+      ref={wrapperRef}
+      style={marqueeWrapperStyle}
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+    >
       <style>{marqueeCss}</style>
-      <div className="testimonials-marquee__track" aria-hidden="false" style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
+      <div className="testimonials-marquee__track" aria-hidden="false" style={trackStyle}>
         {duplicated.map((item, idx) => (
-          <div key={idx} className="testimonials-marquee__item" style={{ flex: "0 0 340px" }}>
+          <div
+            key={idx}
+            className="testimonials-marquee__item"
+            style={{ flex: "0 0 340px" }}
+            onMouseEnter={() => setPaused(true)}
+            onMouseLeave={() => setPaused(false)}
+          >
             <WrittenTestimonialCard testimonial={item} />
           </div>
         ))}
@@ -247,6 +271,7 @@ function TestimonialsMarquee({ items }: { items: { name: string; role: string; q
    - track alignItems: 'flex-start'
    - removed bottom Play button
    - center play icon is a real button that calls onPlay()
+   - reduced card & media height (to remove large empty white area)
    ========================= */
 function VideoCarousel({ videos, onPlay }: { videos: { id: number; name: string; role: string; src: string }[]; onPlay: (src: string) => void; }) {
   const [startIndex, setStartIndex] = useState(0);
@@ -290,8 +315,8 @@ function VideoCarousel({ videos, onPlay }: { videos: { id: number; name: string;
   const goNext = () => setStartIndex(s => (s >= maxStart ? 0 : s + 1));
 
   const cardStyle: React.CSSProperties = {
-    height: 540,
-    maxHeight: 540,
+    height: 480, // reduced from 540 to remove large empty bottom area (media 320 + body ~160)
+    maxHeight: 480,
     display: "flex",
     flexDirection: "column",
     border: "1px solid rgba(6,95,70,0.10)",
@@ -316,11 +341,12 @@ function VideoCarousel({ videos, onPlay }: { videos: { id: number; name: string;
         </button>
 
         <div ref={viewportRef} style={{ overflow: "hidden", width: "100%" }}>
+          {/* IMPORTANT: prevent children from stretching to the tallest item */}
           <div style={{ display: "flex", alignItems: "flex-start", width: `${itemWidth * videos.length}px`, transform: `translateX(-${startIndex * itemWidth}px)`, transition: "transform 300ms ease" }}>
             {videos.map(v => (
               <div key={v.id} style={{ flex: `0 0 ${itemWidth}px`, maxWidth: `${itemWidth}px`, boxSizing: "border-box", padding: 12 }}>
                 <article style={cardStyle}>
-                  <div style={{ width: "100%", height: 360, minHeight: 360, maxHeight: 360, overflow: "hidden", position: "relative", background: "#f6f6f6" }}>
+                  <div style={{ width: "100%", height: 320, minHeight: 320, maxHeight: 320, overflow: "hidden", position: "relative", background: "#f6f6f6" }}>
                     <VideoThumbnail src={v.src} alt={v.name} />
 
                     {/* Center play button: real button that opens modal */}
@@ -332,8 +358,8 @@ function VideoCarousel({ videos, onPlay }: { videos: { id: number; name: string;
                         left: "50%",
                         top: "50%",
                         transform: "translate(-50%, -50%)",
-                        width: 44,
-                        height: 44,
+                        width: 48,
+                        height: 48,
                         borderRadius: 999,
                         background: "rgba(6,95,70,0.95)",
                         display: "flex",
@@ -344,14 +370,14 @@ function VideoCarousel({ videos, onPlay }: { videos: { id: number; name: string;
                         cursor: "pointer",
                       }}
                     >
-                      <Play style={{ width: 18, height: 18, color: "white" }} />
+                      <Play style={{ width: 20, height: 20, color: "white" }} />
                     </button>
                   </div>
 
-                  <div style={{ padding: 16, flex: 1, overflow: "auto" }}>
-                    <div style={{ fontWeight: 700, fontSize: 14 }}>{v.name}</div>
-                    <div style={{ color: "#6b7280", fontSize: 12, marginTop: 6 }}>{v.role}</div>
-                    {/* Removed the duplicate Play button below the name/company per request */}
+                  <div style={{ padding: 12 }}>
+                    <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 6 }}>{v.name}</div>
+                    <div style={{ color: "#6b7280", fontSize: 12 }}>{v.role}</div>
+                    {/* "Play" button removed from here by design */}
                   </div>
                 </article>
               </div>
@@ -380,27 +406,34 @@ export default function TestimonialsSection() {
     boxSizing: "border-box",
   };
 
+  const headingStyle: React.CSSProperties = {
+    textAlign: "center",
+    fontSize: 24,
+    fontWeight: 800,
+    marginBottom: 18,
+  };
+
   return (
     <section style={{ padding: "40px 0" }}>
       <div style={pageContainerStyle}>
         <div style={{ marginBottom: 56 }}>
-          <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 18 }}>Client Video Testimonials</h2>
+          <h2 style={headingStyle}>Client Video Testimonials</h2>
           <VideoCarousel videos={clientVideoTestimonials} onPlay={src => setPlayingSrc(src)} />
         </div>
 
         <div style={{ marginBottom: 56 }}>
-          <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 18 }}>Candidate Video Testimonials</h2>
+          <h2 style={headingStyle}>Candidate Video Testimonials</h2>
           <VideoCarousel videos={candidateVideoTestimonials} onPlay={src => setPlayingSrc(src)} />
         </div>
 
         {/* WRITTEN TESTIMONIALS */}
         <div style={{ marginBottom: 40 }}>
-          <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 12 }}>Client Testimonials</h2>
+          <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 12, textAlign: "center" }}>Client Testimonials</h2>
           <TestimonialsMarquee items={clientWrittenTestimonials} />
         </div>
 
         <div style={{ marginBottom: 40 }}>
-          <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 12 }}>Candidate Testimonials</h2>
+          <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 12, textAlign: "center" }}>Candidate Testimonials</h2>
           <TestimonialsMarquee items={candidateTestimonials} />
         </div>
       </div>
@@ -422,7 +455,7 @@ export default function TestimonialsSection() {
               onClick={e => e.stopPropagation()}
             >
               <div style={{ position: "relative", display: "flex", justifyContent: "center", alignItems: "center", padding: 20 }}>
-                {/* Use max dimensions and preserve aspect ratio (contain) so original size is respected */}
+                {/* Keep original aspect and resolution — contain inside max dims */}
                 <video
                   src={playingSrc || undefined}
                   controls
