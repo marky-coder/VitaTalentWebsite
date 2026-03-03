@@ -463,10 +463,9 @@ export default function TestimonialsSection() {
           </div>
         </div>
 
-        {/* === NEW: Primary green review buttons BELOW the candidate testimonial cards === */}
+        {/* NEW: Primary green review buttons BELOW the candidate testimonial cards */}
         <div className="mt-12 text-center">
           <p className="text-base font-medium text-muted-foreground mb-4">Read more reviews on</p>
-
           <div className="flex items-center justify-center gap-6">
             {/* Trustpilot - primary green button (same style as Hire Talent) */}
             <Button size="lg" asChild data-testid="link-trustpilot">
