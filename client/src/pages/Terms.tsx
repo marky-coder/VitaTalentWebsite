@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import DecorativeSidebars from "@/components/DecorativeSidebars";
 import Footer from "@/components/Footer";
 import InquiryDialog from "@/components/InquiryDialog";
+import logoImage from "@assets/WhatsApp_Image_2025-10-24_at_11.32.23_PM-removebg-preview_1761482028519.png";
 
 export default function Terms() {
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -33,6 +34,13 @@ export default function Terms() {
       <main className="py-24">
         <div className="container max-w-7xl mx-auto px-4">
           <header className="text-center mb-12">
+            {/* Logo centered at the top */}
+            <img
+              src={logoImage}
+              alt="Vita Talent Logo"
+              className="mx-auto w-28 h-28 object-contain mb-4"
+            />
+
             <h1 className="text-4xl font-bold text-foreground mb-4">VITA TALENT – TERMS &amp; CONDITIONS</h1>
             <p className="text-lg font-medium text-muted-foreground">Where Integrity Meets Opportunity</p>
           </header>
