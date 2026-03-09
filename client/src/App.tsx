@@ -8,6 +8,7 @@ import Home from "@/pages/Home";
 import NotFound from "@/pages/not-found";
 import Schedule from "@/pages/Schedule";
 import Nathaniel from "@/pages/Nathaniel";
+import Terms from "@/pages/Terms"; // <-- NEW
 import { useEffect } from "react";
 
 function Router() {
@@ -16,6 +17,7 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/schedule" component={Schedule} />
       <Route path="/nathaniel" component={Nathaniel} />
+      <Route path="/terms" component={Terms} /> {/* <-- NEW */}
       <Route component={NotFound} />
     </Switch>
   );
