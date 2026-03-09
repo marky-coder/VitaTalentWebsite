@@ -39,7 +39,7 @@ export default function Footer() {
               <span className="text-xl font-semibold text-foreground">Vita Talent</span>
             </div>
 
-            {/* --- NEW: footer socials (static, bigger) --- */}
+            {/* --- footer socials --- */}
             <div className="mt-4 flex justify-center items-center gap-6" aria-label="VitaTalent social links footer">
               <a
                 href="https://www.facebook.com/profile.php?id=61582724201072"
@@ -129,6 +129,15 @@ export default function Footer() {
               data-testid="link-contact"
             >
               Contact
+            </button>
+
+            {/* NEW: Terms & Conditions */}
+            <button
+              onClick={() => setLocation("/terms")}
+              className="text-muted-foreground hover:text-foreground transition-colors"
+              data-testid="link-terms"
+            >
+              Terms &amp; Conditions
             </button>
           </nav>
 
