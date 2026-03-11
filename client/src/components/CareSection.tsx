@@ -36,16 +36,13 @@ const balanceSvg = `
       .person-stroke { stroke:#063f2b; stroke-width:1.6; }
 
       /*
-        Approach:
-        - rotate the whole "scaleGroup" to get the justice-scale sway
-        - animate the pan groups (left/right) for a small bob that is composed
-          with the beam rotation. Because the shadow, pan and person are
-          inside the same pan group they move together (no trailing shadows).
-        - persons have an inner counter-rotation (.anti-rotate) so they stay visually upright.
+        Composition rules:
+        - #scaleGroup rotates around the pillar pivot (makes the beam look like a justice scale)
+        - left & right pan groups contain pan shape, shadow and person so they all move together
+        - each person has an inner .anti-rotate to remain visually upright
       */
 
-      /* SWING: rotate the whole scaleGroup around the pivot (x=700,y=178).
-         Using the pivot to match the pillar's decorative circle. */
+      /* SWING: rotate the whole scaleGroup around the pivot (x=700,y=178) */
       #scaleGroup {
         transform-origin: 700px 178px;
         transform-box: fill-box;
@@ -53,21 +50,22 @@ const balanceSvg = `
         will-change: transform;
       }
 
-      /* Pans bob slightly for a natural feel (includes shadow & person since they're children) */
+      /* Pans bob slightly for a natural feel (shadow + pan + person are children) */
       #left-pan, #right-pan {
         transform-box: fill-box;
         animation: panBob 4.6s cubic-bezier(.22,.9,.3,.95) infinite;
         will-change: transform;
       }
 
-      /* Persons counter-rotate so they stay upright; they share pan bob delay */
+      /* Persons counter-rotate so they stay upright; center the transform origin */
       .anti-rotate {
         transform-box: fill-box;
+        transform-origin: center center;
         animation: antiSwing 4.6s cubic-bezier(.22,.9,.3,.95) infinite;
         will-change: transform;
       }
 
-      /* Slight offsets for natural motion */
+      /* Small offsets for natural motion */
       #left-pan { animation-delay: -0.06s; }
       #right-pan { animation-delay: 0.06s; }
       .anti-rotate { animation-delay: inherit; }
@@ -95,6 +93,11 @@ const balanceSvg = `
         50%  { transform: translateY(6px); }
         80%  { transform: translateY(2px); }
         100% { transform: translateY(0px); }
+      }
+
+      /* Respect user preference to reduce motion */
+      @media (prefers-reduced-motion: reduce) {
+        #scaleGroup, #left-pan, #right-pan, .anti-rotate { animation: none !important; transform: none !important; }
       }
 
       /* Gentle slowdown on small screens to save CPU and avoid motion sickness */
@@ -138,51 +141,48 @@ const balanceSvg = `
     <!-- LEFT PAN GROUP: pan + shadow + person (person inside so it moves with pan) -->
     <g id="left-pan" transform="translate(0,0)">
       <!-- pan shadow (moves with pan so it doesn't trail) -->
-      <ellipse class="pan-shadow" cx="480" cy="345" rx="36" ry="6" fill="#0b5e38" opacity="0.06"/>
+      <ellipse cx="480" cy="345" rx="36" ry="6" fill="#0b5e38" opacity="0.06"/>
       <!-- pan shape -->
       <path d="M420 320 q60 32 120 0 l0 10 q-60 24 -120 0 z"
             fill="url(#panGrad)" stroke="#023522" stroke-width="2" />
       <rect x="450" y="333" width="90" height="18" rx="9" fill="#0b5e38" opacity="0.95"/>
       <text x="495" y="346" text-anchor="middle" class="label">CLIENT</text>
 
-      <!-- person group sits inside pan so it inherits pan translation/rotation.
-           inner .anti-rotate keeps the person visually upright while the pan rotates.
-
-           IMPORTANT: the translate is computed so that after scale(2) the person is centered
-           over the pan center (~480). The person's head is at cx=22, so we want:
-             tx *after scaling* + head_x*scale = desiredCenterX
-           => translateX = desiredCenterX - (22*2) = 480 - 44 = 436
-           Vertical translate chosen so the person sits on the pan edge.
+      <!--
+        The person group is placed inside the pan so it moves with the pan/beam.
+        Strategy: translate to the pan center, then draw a small person centered on that point.
+        This is less fragile than scaling/offsetting existing art.
       -->
-      <g transform="translate(436,293) scale(2)">
+      <g transform="translate(480,318)">
         <g class="anti-rotate">
-          <rect x="18" y="14" width="8" height="22" rx="3" class="person-body" />
-          <circle cx="22" cy="8" r="6" class="person-fill person-stroke" />
-          <path d="M18 18 L22 26 L26 18" fill="#ffffff" />
-          <path d="M14 22 Q18 20 18 26" stroke="#063f2b" stroke-width="1.2" fill="#ffffff"/>
-          <path d="M30 22 Q26 20 26 26" stroke="#063f2b" stroke-width="1.2" fill="#ffffff"/>
+          <!-- head -->
+          <circle cx="0" cy="-12" r="6" class="person-fill person-stroke" />
+          <!-- body -->
+          <rect x="-4" y="-4" width="8" height="22" rx="3" class="person-body" />
+          <!-- tie / chest -->
+          <path d="M-4 4 L0 14 L4 4" fill="#ffffff" />
+          <!-- arms -->
+          <path d="M-12 2 Q-6 0 -4 6" stroke="#063f2b" stroke-width="1.2" fill="#ffffff"/>
+          <path d="M12 2 Q6 0 4 6" stroke="#063f2b" stroke-width="1.2" fill="#ffffff"/>
         </g>
       </g>
     </g>
 
     <!-- RIGHT PAN GROUP -->
     <g id="right-pan" transform="translate(0,0)">
-      <ellipse class="pan-shadow" cx="940" cy="345" rx="36" ry="6" fill="#0b5e38" opacity="0.06"/>
+      <ellipse cx="940" cy="345" rx="36" ry="6" fill="#0b5e38" opacity="0.06"/>
       <path d="M880 320 q60 32 120 0 l0 10 q-60 24 -120 0 z"
             fill="url(#panGrad)" stroke="#023522" stroke-width="2" />
       <rect x="910" y="333" width="90" height="18" rx="9" fill="#0b5e38" opacity="0.95"/>
       <text x="955" y="346" text-anchor="middle" class="label">CANDIDATE</text>
 
-      <!-- compute translate so person is centered at ~940:
-           translateX = 940 - (22*2) = 940 - 44 = 896
-      -->
-      <g transform="translate(896,293) scale(2)">
+      <g transform="translate(940,318)">
         <g class="anti-rotate">
-          <rect x="18" y="14" width="8" height="22" rx="3" class="person-body" />
-          <circle cx="22" cy="8" r="6" class="person-fill person-stroke" />
-          <path d="M18 18 L22 26 L26 18" fill="#ffffff" />
-          <path d="M14 22 Q18 20 18 26" stroke="#063f2b" stroke-width="1.2" fill="#ffffff"/>
-          <path d="M30 22 Q26 20 26 26" stroke="#063f2b" stroke-width="1.2" fill="#ffffff"/>
+          <circle cx="0" cy="-12" r="6" class="person-fill person-stroke" />
+          <rect x="-4" y="-4" width="8" height="22" rx="3" class="person-body" />
+          <path d="M-4 4 L0 14 L4 4" fill="#ffffff" />
+          <path d="M-12 2 Q-6 0 -4 6" stroke="#063f2b" stroke-width="1.2" fill="#ffffff"/>
+          <path d="M12 2 Q6 0 4 6" stroke="#063f2b" stroke-width="1.2" fill="#ffffff"/>
         </g>
       </g>
     </g>
