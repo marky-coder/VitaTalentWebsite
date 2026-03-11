@@ -25,145 +25,119 @@ const balanceSvg = `
     </linearGradient>
 
     <filter id="softShadow" x="-60%" y="-60%" width="220%" height="220%">
-      <feDropShadow dx="0" dy="12" stdDeviation="22" flood-color="#063f2b" flood-opacity="0.08"/>
+      <feDropShadow dx="0" dy="10" stdDeviation="18" flood-color="#063f2b" flood-opacity="0.08"/>
     </filter>
 
     <style><![CDATA[
-      .stroke   { stroke: #063f2b; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
       .label    { font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; font-weight:700; fill:#ffffff; font-size:14px; letter-spacing:0.04em; pointer-events:none; }
       .person-fill { fill:#ffffff; }
       .person-body { fill:#0b5e38; }
-      .person-stroke { stroke:#063f2b; stroke-width:1.6; }
+      .person-stroke { stroke:#063f2b; stroke-width:1.4; }
 
-      /* SWING: rotate the whole scaleGroup around the pivot (x=700,y=160) */
-      #scaleGroup {
-        transform-origin: 700px 160px;
-        transform-box: fill-box;
-        animation: swing 4.6s cubic-bezier(.22,.9,.3,.95) infinite;
-        will-change: transform;
+      /* Pan swing: left pan goes down while right pan goes up, then reverses */
+      #left-pan    { transform-box: fill-box; transform-origin: 480px 332px; animation: leftSwing 3.8s ease-in-out infinite; will-change: transform; }
+      #right-pan   { transform-box: fill-box; transform-origin: 940px 332px; animation: rightSwing 3.8s ease-in-out infinite; will-change: transform; }
+
+      /* persons get a counter-rotation so heads stay upright */
+      .person-anti { transform-box: fill-box; transform-origin: center; animation: antiRotate 3.8s ease-in-out infinite; will-change: transform; }
+
+      /* small phase offset so motion feels natural */
+      #left-pan  { animation-delay: -0.1s; }
+      #right-pan { animation-delay:  0.1s; }
+      .person-anti { animation-delay: inherit; }
+
+      /* keyframes: left goes down (translateY positive + small rotate), right inverse */
+      @keyframes leftSwing {
+        0%   { transform: translateY(0px) rotate(0deg); }
+        25%  { transform: translateY(4px) rotate(3deg); }
+        50%  { transform: translateY(10px) rotate(6deg); }
+        75%  { transform: translateY(4px) rotate(3deg); }
+        100% { transform: translateY(0px) rotate(0deg); }
       }
 
-      /* Pans bob slightly for a natural feel */
-      #left-pan, #right-pan {
-        transform-box: fill-box;
-        animation: panBob 4.6s cubic-bezier(.22,.9,.3,.95) infinite;
-        will-change: transform;
+      @keyframes rightSwing {
+        0%   { transform: translateY(0px) rotate(0deg); }
+        25%  { transform: translateY(-4px) rotate(-3deg); }
+        50%  { transform: translateY(-10px) rotate(-6deg); }
+        75%  { transform: translateY(-4px) rotate(-3deg); }
+        100% { transform: translateY(0px) rotate(0deg); }
       }
 
-      /* Persons counter-rotate so they stay upright; they also share the pan bob delay */
-      .anti-rotate {
-        transform-box: fill-box;
-        animation: antiSwing 4.6s cubic-bezier(.22,.9,.3,.95) infinite;
-        will-change: transform;
-      }
-
-      /* Small offsets for natural motion */
-      #left-pan { animation-delay: -0.06s; }
-      #right-pan { animation-delay: 0.06s; }
-      .anti-rotate { animation-delay: inherit; }
-
-      @keyframes swing {
-        0%   { transform: rotate(-6deg); }
-        30%  { transform: rotate(-2deg); }
-        50%  { transform: rotate(6deg); }
-        80%  { transform: rotate(2deg); }
-        100% { transform: rotate(-6deg); }
-      }
-
-      /* exact inverse so person remains visually level */
-      @keyframes antiSwing {
-        0%   { transform: rotate(6deg); }
-        30%  { transform: rotate(2deg); }
+      /* counter-rotate so people appear level while pan rotates */
+      @keyframes antiRotate {
+        0%   { transform: rotate(0deg); }
+        25%  { transform: rotate(-3deg); }
         50%  { transform: rotate(-6deg); }
-        80%  { transform: rotate(-2deg); }
-        100% { transform: rotate(6deg); }
+        75%  { transform: rotate(-3deg); }
+        100% { transform: rotate(0deg); }
       }
 
-      @keyframes panBob {
-        0%   { transform: translateY(0px); }
-        30%  { transform: translateY(2px); }
-        50%  { transform: translateY(6px); }
-        80%  { transform: translateY(2px); }
-        100% { transform: translateY(0px); }
-      }
-
-      /* Gentle slowdown on small screens to save CPU and avoid motion sickness */
+      /* gentle slowdown on small screens */
       @media (max-width: 640px) {
-        #scaleGroup, #left-pan, #right-pan, .anti-rotate { animation-duration: 6.4s; }
+        #left-pan, #right-pan, .person-anti { animation-duration: 5.6s; }
         .label { font-size: 12px; }
       }
     ]]></style>
   </defs>
 
-  <!-- Transparent background on purpose -->
-
-  <!-- Ground ellipse -->
+  <!-- ground -->
   <ellipse cx="700" cy="618" rx="360" ry="30" fill="#e9f3ec" opacity="0.55"/>
 
-  <!-- Pillar & pivot (static relative to page) -->
+  <!-- pillar static -->
   <g filter="url(#softShadow)">
-    <path d="M580 542 C590 510, 810 510, 820 542 L820 548 C760 568, 640 568, 580 548 Z"
-          fill="url(#pillarGrad)" stroke="#023522" stroke-width="1.2"/>
-    <rect x="676" y="198" width="48" height="340" rx="14"
-          fill="url(#pillarGrad)" stroke="#023522" stroke-width="1.2"/>
+    <path d="M580 542 C590 510, 810 510, 820 542 L820 548 C760 568, 640 568, 580 548 Z" fill="url(#pillarGrad)" stroke="#023522" stroke-width="1.2"/>
+    <rect x="676" y="198" width="48" height="340" rx="14" fill="url(#pillarGrad)" stroke="#023522" stroke-width="1.2"/>
     <circle cx="700" cy="178" r="26" fill="#0b5e38" stroke="#023522" stroke-width="1.2"/>
     <circle cx="700" cy="152" r="12" fill="#072f1e" />
     <path d="M700 140 L700 48" stroke="#0b5e38" stroke-width="8" stroke-linecap="round"/>
   </g>
 
-  <!-- MOVING GROUP: rotate this to get the justice-scale effect -->
-  <g id="scaleGroup">
-    <!-- Beam -->
-    <path id="beam" d="M300 170 C420 150, 580 150, 700 160 C820 150, 980 150, 1100 170"
-          fill="none" stroke="url(#beamGrad)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
-
-    <!-- Suspensions (two lines per side) -->
+  <!-- beam & suspensions (static) -->
+  <g>
+    <path d="M300 170 C420 150, 580 150, 700 160 C820 150, 980 150, 1100 170" fill="none" stroke="url(#beamGrad)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- suspension positions anchored above pans -->
     <g stroke="#063f2b" stroke-width="3" stroke-linecap="round">
       <line x1="460" y1="170" x2="460" y2="312" />
       <line x1="495" y1="170" x2="495" y2="312" opacity="0.95"/>
       <line x1="940" y1="170" x2="940" y2="312" />
       <line x1="975" y1="170" x2="975" y2="312" opacity="0.95"/>
     </g>
+  </g>
 
-    <!-- LEFT PAN GROUP: pan + shadow + person (person inside so it moves with pan) -->
-    <g id="left-pan" transform="translate(0,0)">
-      <!-- pan shadow (moves with pan so it doesn't trail) -->
-      <ellipse cx="480" cy="345" rx="36" ry="6" fill="#0b5e38" opacity="0.06"/>
-      <!-- pan shape -->
-      <path d="M420 320 q60 32 120 0 l0 10 q-60 24 -120 0 z"
-            fill="url(#panGrad)" stroke="#023522" stroke-width="2" />
-      <rect x="450" y="333" width="90" height="18" rx="9" fill="#0b5e38" opacity="0.95"/>
-      <text x="495" y="346" text-anchor="middle" class="label">CLIENT</text>
+  <!-- LEFT PAN (animated group) -->
+  <g id="left-pan" transform="translate(0,0)">
+    <!-- shadow included inside group so it moves with pan -->
+    <ellipse cx="480" cy="345" rx="36" ry="6" fill="#0b5e38" opacity="0.06"/>
+    <path d="M420 320 q60 32 120 0 l0 10 q-60 24 -120 0 z" fill="url(#panGrad)" stroke="#023522" stroke-width="2" />
+    <rect x="450" y="333" width="90" height="18" rx="9" fill="#0b5e38" opacity="0.95"/>
+    <text x="495" y="346" text-anchor="middle" class="label">CLIENT</text>
 
-      <!-- person group sits inside pan so it inherits pan translation/rotation.
-           inner .anti-rotate keeps the person visually upright while the pan rotates. -->
-      <g transform="translate(452,250) scale(2)">
-        <g class="anti-rotate">
-          <rect x="18" y="14" width="8" height="22" rx="3" class="person-body" />
-          <circle cx="22" cy="8" r="6" class="person-fill person-stroke" />
-          <path d="M18 18 L22 26 L26 18" fill="#ffffff" />
-          <path d="M14 22 Q18 20 18 26" stroke="#063f2b" stroke-width="1.2" fill="#ffffff"/>
-          <path d="M30 22 Q26 20 26 26" stroke="#063f2b" stroke-width="1.2" fill="#ffffff"/>
-        </g>
+    <!-- person inside pan; inner group counter-rotates so person stays upright -->
+    <g transform="translate(452,250) scale(2)">
+      <g class="person-anti">
+        <rect x="18" y="14" width="8" height="22" rx="3" class="person-body"/>
+        <circle cx="22" cy="8" r="6" class="person-fill person-stroke"/>
+        <path d="M18 18 L22 26 L26 18" fill="#ffffff"/>
+        <path d="M14 22 Q18 20 18 26" stroke="#063f2b" stroke-width="1.2" fill="#ffffff"/>
+        <path d="M30 22 Q26 20 26 26" stroke="#063f2b" stroke-width="1.2" fill="#ffffff"/>
       </g>
     </g>
+  </g>
 
-    <!-- RIGHT PAN GROUP -->
-    <g id="right-pan" transform="translate(0,0)">
-      <ellipse cx="940" cy="345" rx="36" ry="6" fill="#0b5e38" opacity="0.06"/>
-      <path d="M880 320 q60 32 120 0 l0 10 q-60 24 -120 0 z"
-            fill="url(#panGrad)" stroke="#023522" stroke-width="2" />
-      <rect x="910" y="333" width="90" height="18" rx="9" fill="#0b5e38" opacity="0.95"/>
-      <text x="955" y="346" text-anchor="middle" class="label">CANDIDATE</text>
+  <!-- RIGHT PAN (animated) -->
+  <g id="right-pan" transform="translate(0,0)">
+    <ellipse cx="940" cy="345" rx="36" ry="6" fill="#0b5e38" opacity="0.06"/>
+    <path d="M880 320 q60 32 120 0 l0 10 q-60 24 -120 0 z" fill="url(#panGrad)" stroke="#023522" stroke-width="2" />
+    <rect x="910" y="333" width="90" height="18" rx="9" fill="#0b5e38" opacity="0.95"/>
+    <text x="955" y="346" text-anchor="middle" class="label">CANDIDATE</text>
 
-      <g transform="translate(952,250) scale(2)">
-        <g class="anti-rotate">
-          <rect x="18" y="14" width="8" height="22" rx="3" class="person-body" />
-          <circle cx="22" cy="8" r="6" class="person-fill person-stroke" />
-          <path d="M18 18 L22 26 L26 18" fill="#ffffff" />
-          <path d="M14 22 Q18 20 18 26" stroke="#063f2b" stroke-width="1.2" fill="#ffffff"/>
-          <path d="M30 22 Q26 20 26 26" stroke="#063f2b" stroke-width="1.2" fill="#ffffff"/>
-        </g>
+    <g transform="translate(952,250) scale(2)">
+      <g class="person-anti">
+        <rect x="18" y="14" width="8" height="22" rx="3" class="person-body"/>
+        <circle cx="22" cy="8" r="6" class="person-fill person-stroke"/>
+        <path d="M18 18 L22 26 L26 18" fill="#ffffff"/>
+        <path d="M14 22 Q18 20 18 26" stroke="#063f2b" stroke-width="1.2" fill="#ffffff"/>
+        <path d="M30 22 Q26 20 26 26" stroke="#063f2b" stroke-width="1.2" fill="#ffffff"/>
       </g>
     </g>
   </g>
@@ -174,7 +148,7 @@ const balanceSvg = `
     <path d="M880 312 q60 32 120 0" stroke="#ffffff" stroke-width="16" stroke-linecap="round" />
   </g>
 
-  <!-- finishing base -->
+  <!-- base -->
   <g>
     <rect x="660" y="520" width="80" height="18" rx="8" fill="#0b5e38" stroke="#023522" stroke-width="1"/>
     <ellipse cx="700" cy="548" rx="110" ry="16" fill="#073f2a" opacity="0.10"/>
