@@ -1,4 +1,5 @@
-import careIllustration from "@assets/generated_images/Balance_and_partnership_illustration_c94418e5.png";
+// client/src/components/CareSection.tsx
+import careIllustration from "@assets/generated_images/Balance_and_partnership_illustration_improved.svg";
 
 export default function CareSection() {
   return (
