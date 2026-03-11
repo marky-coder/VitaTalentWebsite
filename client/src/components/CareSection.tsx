@@ -1,208 +1,211 @@
 // client/src/components/CareSection.tsx
 import React from "react";
 
-export default function CareSection(): JSX.Element {
-  // Inline style objects so external CSS can't override critical transform settings.
-  const scaleGroupStyle: React.CSSProperties = {
-    transformOrigin: "700px 178px",
-    transformBox: "fill-box",
-    animation: "vt-swing 4.4s cubic-bezier(.22,.9,.3,.95) infinite",
-    willChange: "transform",
-  };
+const balanceSvg = `
+<svg xmlns="http://www.w3.org/2000/svg"
+     viewBox="0 0 1400 700"
+     preserveAspectRatio="xMidYMid meet"
+     role="img"
+     aria-label="Vita Talent balance and partnership illustration"
+     style="width:100%;height:auto;display:block;margin:0 auto;">
+  <defs>
+    <linearGradient id="pillarGrad" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#0f5f3a"/>
+      <stop offset="1" stop-color="#073f2a"/>
+    </linearGradient>
 
-  const panStyle: React.CSSProperties = {
-    transformBox: "fill-box",
-    animation: "vt-panBob 4.4s cubic-bezier(.22,.9,.3,.95) infinite",
-    willChange: "transform",
-  };
+    <linearGradient id="beamGrad" x1="0" x2="1" y1="0" y2="0">
+      <stop offset="0" stop-color="#0f5f3a"/>
+      <stop offset="1" stop-color="#0b5e38"/>
+    </linearGradient>
 
-  const personAntiStyle: React.CSSProperties = {
-    transformBox: "fill-box",
-    transformOrigin: "center center",
-    animation: "vt-antiSwing 4.4s cubic-bezier(.22,.9,.3,.95) infinite",
-    willChange: "transform",
-  };
+    <linearGradient id="panGrad" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#1e7c47"/>
+      <stop offset="1" stop-color="#0b5e38"/>
+    </linearGradient>
 
+    <filter id="softShadow" x="-60%" y="-60%" width="220%" height="220%">
+      <feDropShadow dx="0" dy="12" stdDeviation="22" flood-color="#063f2b" flood-opacity="0.08"/>
+    </filter>
+
+    <style><![CDATA[
+      .stroke   { stroke: #063f2b; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+      .label    { font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; font-weight:700; fill:#ffffff; font-size:14px; letter-spacing:0.04em; pointer-events:none; }
+      .person-fill { fill:#ffffff; }
+      .person-body { fill:#0b5e38; }
+      .person-stroke { stroke:#063f2b; stroke-width:1.6; }
+
+      /* SWING: rotate the whole scaleGroup around the pivot (x=700,y=160) */
+      #scaleGroup {
+        transform-origin: 700px 160px;
+        transform-box: fill-box;
+        animation: swing 4.6s cubic-bezier(.22,.9,.3,.95) infinite;
+        will-change: transform;
+      }
+
+      /* Pans bob slightly for a natural feel */
+      #left-pan, #right-pan {
+        transform-box: fill-box;
+        animation: panBob 4.6s cubic-bezier(.22,.9,.3,.95) infinite;
+        will-change: transform;
+      }
+
+      /* Persons counter-rotate so they stay upright; they also share the pan bob delay */
+      .anti-rotate {
+        transform-box: fill-box;
+        animation: antiSwing 4.6s cubic-bezier(.22,.9,.3,.95) infinite;
+        will-change: transform;
+      }
+
+      /* Small offsets for natural motion */
+      #left-pan { animation-delay: -0.06s; }
+      #right-pan { animation-delay: 0.06s; }
+      .anti-rotate { animation-delay: inherit; }
+
+      @keyframes swing {
+        0%   { transform: rotate(-6deg); }
+        30%  { transform: rotate(-2deg); }
+        50%  { transform: rotate(6deg); }
+        80%  { transform: rotate(2deg); }
+        100% { transform: rotate(-6deg); }
+      }
+
+      /* exact inverse so person remains visually level */
+      @keyframes antiSwing {
+        0%   { transform: rotate(6deg); }
+        30%  { transform: rotate(2deg); }
+        50%  { transform: rotate(-6deg); }
+        80%  { transform: rotate(-2deg); }
+        100% { transform: rotate(6deg); }
+      }
+
+      @keyframes panBob {
+        0%   { transform: translateY(0px); }
+        30%  { transform: translateY(2px); }
+        50%  { transform: translateY(6px); }
+        80%  { transform: translateY(2px); }
+        100% { transform: translateY(0px); }
+      }
+
+      /* Gentle slowdown on small screens to save CPU and avoid motion sickness */
+      @media (max-width: 640px) {
+        #scaleGroup, #left-pan, #right-pan, .anti-rotate { animation-duration: 6.4s; }
+        .label { font-size: 12px; }
+      }
+    ]]></style>
+  </defs>
+
+  <!-- Transparent background on purpose -->
+
+  <!-- Ground ellipse -->
+  <ellipse cx="700" cy="618" rx="360" ry="30" fill="#e9f3ec" opacity="0.55"/>
+
+  <!-- Pillar & pivot (static relative to page) -->
+  <g filter="url(#softShadow)">
+    <path d="M580 542 C590 510, 810 510, 820 542 L820 548 C760 568, 640 568, 580 548 Z"
+          fill="url(#pillarGrad)" stroke="#023522" stroke-width="1.2"/>
+    <rect x="676" y="198" width="48" height="340" rx="14"
+          fill="url(#pillarGrad)" stroke="#023522" stroke-width="1.2"/>
+    <circle cx="700" cy="178" r="26" fill="#0b5e38" stroke="#023522" stroke-width="1.2"/>
+    <circle cx="700" cy="152" r="12" fill="#072f1e" />
+    <path d="M700 140 L700 48" stroke="#0b5e38" stroke-width="8" stroke-linecap="round"/>
+  </g>
+
+  <!-- MOVING GROUP: rotate this to get the justice-scale effect -->
+  <g id="scaleGroup">
+    <!-- Beam -->
+    <path id="beam" d="M300 170 C420 150, 580 150, 700 160 C820 150, 980 150, 1100 170"
+          fill="none" stroke="url(#beamGrad)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <!-- Suspensions (two lines per side) -->
+    <g stroke="#063f2b" stroke-width="3" stroke-linecap="round">
+      <line x1="460" y1="170" x2="460" y2="312" />
+      <line x1="495" y1="170" x2="495" y2="312" opacity="0.95"/>
+      <line x1="940" y1="170" x2="940" y2="312" />
+      <line x1="975" y1="170" x2="975" y2="312" opacity="0.95"/>
+    </g>
+
+    <!-- LEFT PAN GROUP: pan + shadow + person (person inside so it moves with pan) -->
+    <g id="left-pan" transform="translate(0,0)">
+      <!-- pan shadow (moves with pan so it doesn't trail) -->
+      <ellipse cx="480" cy="345" rx="36" ry="6" fill="#0b5e38" opacity="0.06"/>
+      <!-- pan shape -->
+      <path d="M420 320 q60 32 120 0 l0 10 q-60 24 -120 0 z"
+            fill="url(#panGrad)" stroke="#023522" stroke-width="2" />
+      <rect x="450" y="333" width="90" height="18" rx="9" fill="#0b5e38" opacity="0.95"/>
+      <text x="495" y="346" text-anchor="middle" class="label">CLIENT</text>
+
+      <!-- person group sits inside pan so it inherits pan translation/rotation.
+           inner .anti-rotate keeps the person visually upright while the pan rotates. -->
+      <g transform="translate(452,250) scale(2)">
+        <g class="anti-rotate">
+          <rect x="18" y="14" width="8" height="22" rx="3" class="person-body" />
+          <circle cx="22" cy="8" r="6" class="person-fill person-stroke" />
+          <path d="M18 18 L22 26 L26 18" fill="#ffffff" />
+          <path d="M14 22 Q18 20 18 26" stroke="#063f2b" stroke-width="1.2" fill="#ffffff"/>
+          <path d="M30 22 Q26 20 26 26" stroke="#063f2b" stroke-width="1.2" fill="#ffffff"/>
+        </g>
+      </g>
+    </g>
+
+    <!-- RIGHT PAN GROUP -->
+    <g id="right-pan" transform="translate(0,0)">
+      <ellipse cx="940" cy="345" rx="36" ry="6" fill="#0b5e38" opacity="0.06"/>
+      <path d="M880 320 q60 32 120 0 l0 10 q-60 24 -120 0 z"
+            fill="url(#panGrad)" stroke="#023522" stroke-width="2" />
+      <rect x="910" y="333" width="90" height="18" rx="9" fill="#0b5e38" opacity="0.95"/>
+      <text x="955" y="346" text-anchor="middle" class="label">CANDIDATE</text>
+
+      <g transform="translate(952,250) scale(2)">
+        <g class="anti-rotate">
+          <rect x="18" y="14" width="8" height="22" rx="3" class="person-body" />
+          <circle cx="22" cy="8" r="6" class="person-fill person-stroke" />
+          <path d="M18 18 L22 26 L26 18" fill="#ffffff" />
+          <path d="M14 22 Q18 20 18 26" stroke="#063f2b" stroke-width="1.2" fill="#ffffff"/>
+          <path d="M30 22 Q26 20 26 26" stroke="#063f2b" stroke-width="1.2" fill="#ffffff"/>
+        </g>
+      </g>
+    </g>
+  </g>
+
+  <!-- subtle highlights -->
+  <g opacity="0.12">
+    <path d="M420 312 q60 32 120 0" stroke="#ffffff" stroke-width="16" stroke-linecap="round" />
+    <path d="M880 312 q60 32 120 0" stroke="#ffffff" stroke-width="16" stroke-linecap="round" />
+  </g>
+
+  <!-- finishing base -->
+  <g>
+    <rect x="660" y="520" width="80" height="18" rx="8" fill="#0b5e38" stroke="#023522" stroke-width="1"/>
+    <ellipse cx="700" cy="548" rx="110" ry="16" fill="#073f2a" opacity="0.10"/>
+  </g>
+</svg>
+`;
+
+export default function CareSection() {
   return (
     <section className="py-24 bg-gradient-to-r from-primary/12 via-primary/15 to-primary/10" data-testid="section-care">
       <div className="container max-w-5xl mx-auto px-4">
         <div className="text-center space-y-6">
-          {/* EXACT heading text preserved */}
-          <h2 className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-foreground leading-tight tracking-tight">
+          <h2 className="text-4xl font-bold text-foreground">
             We care about people and partnerships.
           </h2>
 
           <div className="max-w-3xl mx-auto space-y-4">
-            <p className="text-lg md:text-xl font-medium text-foreground leading-relaxed">
+            <p className="text-lg font-medium text-foreground leading-relaxed">
               At Vita Talent, we believe great hiring is about balance.
             </p>
-            <p className="text-lg md:text-xl font-medium text-muted-foreground leading-relaxed">
+            <p className="text-lg font-medium text-muted-foreground leading-relaxed">
               We care equally for our clients' business success and our candidates' wellbeing. Even if a match doesn't work out, we continue to support both sides.
             </p>
           </div>
 
-          {/* SVG */}
+          {/* Centered responsive wrapper */}
           <div className="mt-12 flex justify-center">
-            <div className="w-full max-w-xl md:max-w-3xl mx-auto">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 1400 700"
-                role="img"
-                aria-label="Vita Talent balance and partnership illustration"
-                style={{ width: "100%", height: "auto", display: "block", margin: "0 auto", pointerEvents: "none" }}
-              >
-                <defs>
-                  <linearGradient id="vt-pillarGrad" x1="0" x2="0" y1="0" y2="1">
-                    <stop offset="0" stopColor="#0f5f3a" />
-                    <stop offset="1" stopColor="#073f2a" />
-                  </linearGradient>
-
-                  <linearGradient id="vt-beamGrad" x1="0" x2="1" y1="0" y2="0">
-                    <stop offset="0" stopColor="#0f5f3a" />
-                    <stop offset="1" stopColor="#0b5e38" />
-                  </linearGradient>
-
-                  <linearGradient id="vt-panGrad" x1="0" x2="0" y1="0" y2="1">
-                    <stop offset="0" stopColor="#1e7c47" />
-                    <stop offset="1" stopColor="#0b5e38" />
-                  </linearGradient>
-
-                  <filter id="vt-softShadow" x="-60%" y="-60%" width="220%" height="220%">
-                    <feDropShadow dx="0" dy="12" stdDeviation="22" floodColor="#063f2b" floodOpacity="0.08" />
-                  </filter>
-
-                  <style>{`
-                    .vt-label { font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; font-weight:700; fill:#ffffff; font-size:14px; letter-spacing:0.04em; pointer-events:none; }
-                    .vt-person-fill { fill:#ffffff; }
-                    .vt-person-body { fill:#0b5e38; }
-                    .vt-person-stroke { stroke:#063f2b; stroke-width:1.6; }
-
-                    /* classic swing / anti-swing / pan bob */
-                    @keyframes vt-swing {
-                      0%   { transform: rotate(-5.5deg); }
-                      30%  { transform: rotate(-2deg); }
-                      50%  { transform: rotate(5.5deg); }
-                      80%  { transform: rotate(2deg); }
-                      100% { transform: rotate(-5.5deg); }
-                    }
-                    @keyframes vt-antiSwing {
-                      0%   { transform: rotate(5.5deg); }
-                      30%  { transform: rotate(2deg); }
-                      50%  { transform: rotate(-5.5deg); }
-                      80%  { transform: rotate(-2deg); }
-                      100% { transform: rotate(5.5deg); }
-                    }
-                    @keyframes vt-panBob {
-                      0%   { transform: translateY(0); }
-                      25%  { transform: translateY(2px); }
-                      50%  { transform: translateY(6px); }
-                      75%  { transform: translateY(2px); }
-                      100% { transform: translateY(0); }
-                    }
-
-                    @media (prefers-reduced-motion: reduce) {
-                      #vt-scaleGroup, #vt-left-pan, #vt-right-pan, .vt-anti-rotate {
-                        animation: none !important; transform: none !important;
-                      }
-                    }
-
-                    /* very small screens: soften sizes */
-                    @media (max-width:420px) {
-                      .vt-label { font-size:12px; }
-                    }
-                  `}</style>
-                </defs>
-
-                {/* ground shadow */}
-                <ellipse cx="700" cy="618" rx="360" ry="30" fill="#e9f3ec" opacity="0.55" />
-
-                {/* pillar & pivot */}
-                <g filter="url(#vt-softShadow)">
-                  <path d="M580 542 C590 510, 810 510, 820 542 L820 548 C760 568, 640 568, 580 548 Z"
-                        fill="url(#vt-pillarGrad)" stroke="#023522" strokeWidth="1.2" />
-                  <rect x="676" y="198" width="48" height="340" rx="14"
-                        fill="url(#vt-pillarGrad)" stroke="#023522" strokeWidth="1.2" />
-                  <circle cx="700" cy="178" r="26" fill="#0b5e38" stroke="#023522" strokeWidth="1.2" />
-                  <circle cx="700" cy="152" r="12" fill="#072f1e" />
-                  <rect x="696" y="48" width="8" height="92" rx="4" fill="#0b5e38" />
-                </g>
-
-                {/* whole scale - rotate around pivot at 700,178 */}
-                <g id="vt-scaleGroup" style={scaleGroupStyle}>
-                  {/* straight beam: long rounded rectangle gives a neat justice-scale look */}
-                  <rect
-                    x={300}
-                    y={166}
-                    width={800}
-                    height={16}
-                    rx={8}
-                    fill="url(#vt-beamGrad)"
-                    stroke="#023522"
-                    strokeWidth={1.2}
-                    style={{ transformBox: "fill-box" }}
-                  />
-
-                  {/* two suspension lines: attach under the beam - top y near beam */}
-                  <g stroke="#063f2b" strokeWidth={3} strokeLinecap="round">
-                    <line x1={460} y1={166} x2={460} y2={312} />
-                    <line x1={495} y1={166} x2={495} y2={312} opacity={0.95} />
-                    <line x1={940} y1={166} x2={940} y2={312} />
-                    <line x1={975} y1={166} x2={975} y2={312} opacity={0.95} />
-                  </g>
-
-                  {/* LEFT PAN (grouped so shadow + pan + person move together) */}
-                  <g id="vt-left-pan" style={panStyle}>
-                    <ellipse cx="480" cy="345" rx="36" ry="6" fill="#0b5e38" opacity="0.06" />
-                    <path d="M420 320 q60 28 120 0 l0 12 q-60 24 -120 0 z"
-                          fill="url(#vt-panGrad)" stroke="#023522" strokeWidth="2" />
-                    <rect x="450" y="333" width="90" height="18" rx="9" fill="#0b5e38" opacity="0.95" />
-                    <text x="495" y="346" textAnchor="middle" className="vt-label">CLIENT</text>
-
-                    {/* person centered on the pan */}
-                    <g transform="translate(480,318)">
-                      <g className="vt-anti-rotate" style={personAntiStyle}>
-                        <circle cx="0" cy="-12" r="6" className="vt-person-fill vt-person-stroke" />
-                        <rect x="-4" y="-4" width="8" height="22" rx="3" className="vt-person-body" />
-                        <path d="M-4 4 L0 14 L4 4" fill="#ffffff" />
-                        <path d="M-12 2 Q-6 0 -4 6" stroke="#063f2b" strokeWidth="1.2" fill="#ffffff" />
-                        <path d="M12 2 Q6 0 4 6" stroke="#063f2b" strokeWidth="1.2" fill="#ffffff" />
-                      </g>
-                    </g>
-                  </g>
-
-                  {/* RIGHT PAN */}
-                  <g id="vt-right-pan" style={panStyle}>
-                    <ellipse cx="940" cy="345" rx="36" ry="6" fill="#0b5e38" opacity="0.06" />
-                    <path d="M880 320 q60 28 120 0 l0 12 q-60 24 -120 0 z"
-                          fill="url(#vt-panGrad)" stroke="#023522" strokeWidth="2" />
-                    <rect x="910" y="333" width="90" height="18" rx="9" fill="#0b5e38" opacity="0.95" />
-                    <text x="955" y="346" textAnchor="middle" className="vt-label">CANDIDATE</text>
-
-                    <g transform="translate(940,318)">
-                      <g className="vt-anti-rotate" style={personAntiStyle}>
-                        <circle cx="0" cy="-12" r="6" className="vt-person-fill vt-person-stroke" />
-                        <rect x="-4" y="-4" width="8" height="22" rx="3" className="vt-person-body" />
-                        <path d="M-4 4 L0 14 L4 4" fill="#ffffff" />
-                        <path d="M-12 2 Q-6 0 -4 6" stroke="#063f2b" strokeWidth="1.2" fill="#ffffff" />
-                        <path d="M12 2 Q6 0 4 6" stroke="#063f2b" strokeWidth="1.2" fill="#ffffff" />
-                      </g>
-                    </g>
-                  </g>
-                </g>
-
-                {/* subtle highlights */}
-                <g opacity="0.12">
-                  <path d="M420 312 q60 32 120 0" stroke="#ffffff" strokeWidth="16" strokeLinecap="round" />
-                  <path d="M880 312 q60 32 120 0" stroke="#ffffff" strokeWidth="16" strokeLinecap="round" />
-                </g>
-
-                {/* base */}
-                <g>
-                  <rect x="660" y="520" width="80" height="18" rx="8" fill="#0b5e38" stroke="#023522" strokeWidth="1" />
-                  <ellipse cx="700" cy="548" rx="110" ry="16" fill="#073f2a" opacity="0.10" />
-                </g>
-              </svg>
-            </div>
+            <div
+              className="w-full max-w-xl md:max-w-3xl mx-auto"
+              dangerouslySetInnerHTML={{ __html: balanceSvg }}
+            />
           </div>
         </div>
       </div>
