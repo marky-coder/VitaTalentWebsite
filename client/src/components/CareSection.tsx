@@ -2,31 +2,24 @@
 import React from "react";
 
 export default function CareSection(): JSX.Element {
-  /*
-    Typography-focused CareSection. The exact heading text is preserved:
-      "We care about people and partnerships."
-    Adjusted sizing and spacing to match the screenshot (large, bold headline).
-    The SVG below is the justice-scale illustration; it's the same robust SVG
-    with inline transform styles so global CSS won't break the animation.
-  */
-
+  // Inline style objects so external CSS can't override critical transform settings.
   const scaleGroupStyle: React.CSSProperties = {
     transformOrigin: "700px 178px",
     transformBox: "fill-box",
-    animation: "vt-swing 4.6s cubic-bezier(.22,.9,.3,.95) infinite",
+    animation: "vt-swing 4.4s cubic-bezier(.22,.9,.3,.95) infinite",
     willChange: "transform",
   };
 
   const panStyle: React.CSSProperties = {
     transformBox: "fill-box",
-    animation: "vt-panBob 4.6s cubic-bezier(.22,.9,.3,.95) infinite",
+    animation: "vt-panBob 4.4s cubic-bezier(.22,.9,.3,.95) infinite",
     willChange: "transform",
   };
 
   const personAntiStyle: React.CSSProperties = {
     transformBox: "fill-box",
     transformOrigin: "center center",
-    animation: "vt-antiSwing 4.6s cubic-bezier(.22,.9,.3,.95) infinite",
+    animation: "vt-antiSwing 4.4s cubic-bezier(.22,.9,.3,.95) infinite",
     willChange: "transform",
   };
 
@@ -34,7 +27,7 @@ export default function CareSection(): JSX.Element {
     <section className="py-24 bg-gradient-to-r from-primary/12 via-primary/15 to-primary/10" data-testid="section-care">
       <div className="container max-w-5xl mx-auto px-4">
         <div className="text-center space-y-6">
-          {/* IMPORTANT: heading text left exactly as requested */}
+          {/* EXACT heading text preserved */}
           <h2 className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-foreground leading-tight tracking-tight">
             We care about people and partnerships.
           </h2>
@@ -48,7 +41,7 @@ export default function CareSection(): JSX.Element {
             </p>
           </div>
 
-          {/* Centered responsive wrapper for the SVG */}
+          {/* SVG */}
           <div className="mt-12 flex justify-center">
             <div className="w-full max-w-xl md:max-w-3xl mx-auto">
               <svg
@@ -84,19 +77,20 @@ export default function CareSection(): JSX.Element {
                     .vt-person-body { fill:#0b5e38; }
                     .vt-person-stroke { stroke:#063f2b; stroke-width:1.6; }
 
+                    /* classic swing / anti-swing / pan bob */
                     @keyframes vt-swing {
-                      0%   { transform: rotate(-6deg); }
+                      0%   { transform: rotate(-5.5deg); }
                       30%  { transform: rotate(-2deg); }
-                      50%  { transform: rotate(6deg); }
+                      50%  { transform: rotate(5.5deg); }
                       80%  { transform: rotate(2deg); }
-                      100% { transform: rotate(-6deg); }
+                      100% { transform: rotate(-5.5deg); }
                     }
                     @keyframes vt-antiSwing {
-                      0%   { transform: rotate(6deg); }
+                      0%   { transform: rotate(5.5deg); }
                       30%  { transform: rotate(2deg); }
-                      50%  { transform: rotate(-6deg); }
+                      50%  { transform: rotate(-5.5deg); }
                       80%  { transform: rotate(-2deg); }
-                      100% { transform: rotate(6deg); }
+                      100% { transform: rotate(5.5deg); }
                     }
                     @keyframes vt-panBob {
                       0%   { transform: translateY(0); }
@@ -106,21 +100,23 @@ export default function CareSection(): JSX.Element {
                       100% { transform: translateY(0); }
                     }
 
-                    @media (max-width: 640px) {
-                      .vt-label { font-size: 12px; }
-                    }
-
                     @media (prefers-reduced-motion: reduce) {
                       #vt-scaleGroup, #vt-left-pan, #vt-right-pan, .vt-anti-rotate {
-                        animation: none !important;
-                        transform: none !important;
+                        animation: none !important; transform: none !important;
                       }
+                    }
+
+                    /* very small screens: soften sizes */
+                    @media (max-width:420px) {
+                      .vt-label { font-size:12px; }
                     }
                   `}</style>
                 </defs>
 
+                {/* ground shadow */}
                 <ellipse cx="700" cy="618" rx="360" ry="30" fill="#e9f3ec" opacity="0.55" />
 
+                {/* pillar & pivot */}
                 <g filter="url(#vt-softShadow)">
                   <path d="M580 542 C590 510, 810 510, 820 542 L820 548 C760 568, 640 568, 580 548 Z"
                         fill="url(#vt-pillarGrad)" stroke="#023522" strokeWidth="1.2" />
@@ -128,32 +124,41 @@ export default function CareSection(): JSX.Element {
                         fill="url(#vt-pillarGrad)" stroke="#023522" strokeWidth="1.2" />
                   <circle cx="700" cy="178" r="26" fill="#0b5e38" stroke="#023522" strokeWidth="1.2" />
                   <circle cx="700" cy="152" r="12" fill="#072f1e" />
-                  <path d="M700 140 L700 48" stroke="#0b5e38" strokeWidth="8" strokeLinecap="round" />
+                  <rect x="696" y="48" width="8" height="92" rx="4" fill="#0b5e38" />
                 </g>
 
-                <g id="vt-scaleGroup" style={scaleGroupStyle as React.CSSProperties}>
-                  <path id="vt-beam"
-                        d="M300 178 C420 158, 580 158, 700 178 C820 158, 980 158, 1100 178"
-                        fill="none"
-                        stroke="url(#vt-beamGrad)"
-                        strokeWidth="16"
-                        strokeLinecap="round"
-                        strokeLinejoin="round" />
+                {/* whole scale - rotate around pivot at 700,178 */}
+                <g id="vt-scaleGroup" style={scaleGroupStyle}>
+                  {/* straight beam: long rounded rectangle gives a neat justice-scale look */}
+                  <rect
+                    x={300}
+                    y={166}
+                    width={800}
+                    height={16}
+                    rx={8}
+                    fill="url(#vt-beamGrad)"
+                    stroke="#023522"
+                    strokeWidth={1.2}
+                    style={{ transformBox: "fill-box" }}
+                  />
 
-                  <g stroke="#063f2b" strokeWidth="3" strokeLinecap="round">
-                    <line x1="460" y1="178" x2="460" y2="312" />
-                    <line x1="495" y1="178" x2="495" y2="312" opacity="0.95" />
-                    <line x1="940" y1="178" x2="940" y2="312" />
-                    <line x1="975" y1="178" x2="975" y2="312" opacity="0.95" />
+                  {/* two suspension lines: attach under the beam - top y near beam */}
+                  <g stroke="#063f2b" strokeWidth={3} strokeLinecap="round">
+                    <line x1={460} y1={166} x2={460} y2={312} />
+                    <line x1={495} y1={166} x2={495} y2={312} opacity={0.95} />
+                    <line x1={940} y1={166} x2={940} y2={312} />
+                    <line x1={975} y1={166} x2={975} y2={312} opacity={0.95} />
                   </g>
 
-                  <g id="vt-left-pan" style={panStyle as React.CSSProperties}>
+                  {/* LEFT PAN (grouped so shadow + pan + person move together) */}
+                  <g id="vt-left-pan" style={panStyle}>
                     <ellipse cx="480" cy="345" rx="36" ry="6" fill="#0b5e38" opacity="0.06" />
-                    <path d="M420 320 q60 32 120 0 l0 10 q-60 24 -120 0 z"
+                    <path d="M420 320 q60 28 120 0 l0 12 q-60 24 -120 0 z"
                           fill="url(#vt-panGrad)" stroke="#023522" strokeWidth="2" />
                     <rect x="450" y="333" width="90" height="18" rx="9" fill="#0b5e38" opacity="0.95" />
                     <text x="495" y="346" textAnchor="middle" className="vt-label">CLIENT</text>
 
+                    {/* person centered on the pan */}
                     <g transform="translate(480,318)">
                       <g className="vt-anti-rotate" style={personAntiStyle}>
                         <circle cx="0" cy="-12" r="6" className="vt-person-fill vt-person-stroke" />
@@ -165,9 +170,10 @@ export default function CareSection(): JSX.Element {
                     </g>
                   </g>
 
-                  <g id="vt-right-pan" style={panStyle as React.CSSProperties}>
+                  {/* RIGHT PAN */}
+                  <g id="vt-right-pan" style={panStyle}>
                     <ellipse cx="940" cy="345" rx="36" ry="6" fill="#0b5e38" opacity="0.06" />
-                    <path d="M880 320 q60 32 120 0 l0 10 q-60 24 -120 0 z"
+                    <path d="M880 320 q60 28 120 0 l0 12 q-60 24 -120 0 z"
                           fill="url(#vt-panGrad)" stroke="#023522" strokeWidth="2" />
                     <rect x="910" y="333" width="90" height="18" rx="9" fill="#0b5e38" opacity="0.95" />
                     <text x="955" y="346" textAnchor="middle" className="vt-label">CANDIDATE</text>
@@ -184,11 +190,13 @@ export default function CareSection(): JSX.Element {
                   </g>
                 </g>
 
+                {/* subtle highlights */}
                 <g opacity="0.12">
                   <path d="M420 312 q60 32 120 0" stroke="#ffffff" strokeWidth="16" strokeLinecap="round" />
                   <path d="M880 312 q60 32 120 0" stroke="#ffffff" strokeWidth="16" strokeLinecap="round" />
                 </g>
 
+                {/* base */}
                 <g>
                   <rect x="660" y="520" width="80" height="18" rx="8" fill="#0b5e38" stroke="#023522" strokeWidth="1" />
                   <ellipse cx="700" cy="548" rx="110" ry="16" fill="#073f2a" opacity="0.10" />
