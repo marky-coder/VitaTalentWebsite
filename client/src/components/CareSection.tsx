@@ -4,9 +4,10 @@ import React from "react";
 const balanceSvg = `
 <svg xmlns="http://www.w3.org/2000/svg"
      viewBox="0 0 1400 700"
+     preserveAspectRatio="xMidYMid meet"
      role="img"
      aria-label="Vita Talent balance and partnership illustration"
-     style="width:100%;height:auto;display:block;">
+     style="width:100%;height:auto;display:block;margin:0 auto;">
   <defs>
     <linearGradient id="pillarGrad" x1="0" x2="0" y1="0" y2="1">
       <stop offset="0" stop-color="#0f5f3a"/>
@@ -175,8 +176,8 @@ export default function CareSection() {
             </p>
           </div>
 
-          {/* Responsive wrapper: smaller on phones, larger on desktop */}
-          <div className="mt-12">
+          {/* Responsive wrapper: smaller on phones, larger on desktop; uses flex centering */}
+          <div className="mt-12 flex justify-center">
             <div
               className="w-full max-w-xl md:max-w-3xl mx-auto"
               dangerouslySetInnerHTML={{ __html: balanceSvg }}
