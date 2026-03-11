@@ -34,7 +34,7 @@ const balanceSvg = `
       .person-body { fill:#0b5e38; }
       .person-stroke { stroke:#063f2b; stroke-width:1.6; }
 
-      /* Animations definitions (kept here, referenced by inline style) */
+      /* Keyframes for motion. Keep these in <style> while animations are attached inline. */
       @keyframes swing {
         0%   { transform: rotate(-6deg); }
         30%  { transform: rotate(-2deg); }
@@ -59,9 +59,17 @@ const balanceSvg = `
         100% { transform: translateY(0px); }
       }
 
+      /* Reduced motion preference */
       @media (prefers-reduced-motion: reduce) {
-        /* If the user prefers reduced motion, disable animations */
-        #scaleGroup, #left-pan, #right-pan, .anti-rotate { animation: none !important; transform: none !important; }
+        #scaleGroup, #left-pan, #right-pan, .anti-rotate {
+          animation: none !important;
+          transform: none !important;
+        }
+      }
+
+      /* Soften motion on small screens */
+      @media (max-width: 640px) {
+        .label { font-size: 12px; }
       }
     ]]></style>
   </defs>
@@ -69,7 +77,7 @@ const balanceSvg = `
   <!-- Ground ellipse -->
   <ellipse cx="700" cy="618" rx="360" ry="30" fill="#e9f3ec" opacity="0.55"/>
 
-  <!-- Pillar & pivot -->
+  <!-- Pillar & pivot (static) -->
   <g filter="url(#softShadow)">
     <path d="M580 542 C590 510, 810 510, 820 542 L820 548 C760 568, 640 568, 580 548 Z"
           fill="url(#pillarGrad)" stroke="#023522" stroke-width="1.2"/>
@@ -80,33 +88,30 @@ const balanceSvg = `
     <path d="M700 140 L700 48" stroke="#0b5e38" stroke-width="8" stroke-linecap="round"/>
   </g>
 
-  <!-- MOVING GROUP: rotate the whole group around the pillar pivot.
-       NOTE: inline style is intentionally used so nothing overrides the transform-origin / transform-box. -->
+  <!-- MOVING GROUP: rotate the whole assembly around the pillar pivot (inline style to avoid overrides) -->
   <g id="scaleGroup" style="transform-origin:700px 178px; transform-box:fill-box; animation: swing 4.6s cubic-bezier(.22,.9,.3,.95) infinite; will-change: transform;">
-    <!-- Beam -->
-    <path id="beam" d="M300 170 C420 150, 580 150, 700 160 C820 150, 980 150, 1100 170"
+    <!-- Beam: y aligned to pivot y=178 -->
+    <path id="beam" d="M300 178 C420 158, 580 158, 700 178 C820 158, 980 158, 1100 178"
           fill="none" stroke="url(#beamGrad)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
 
-    <!-- Suspensions (two lines per side) -->
+    <!-- Suspensions: top y aligned to pivot y=178 -->
     <g stroke="#063f2b" stroke-width="3" stroke-linecap="round">
-      <line x1="460" y1="170" x2="460" y2="312" />
-      <line x1="495" y1="170" x2="495" y2="312" opacity="0.95"/>
-      <line x1="940" y1="170" x2="940" y2="312" />
-      <line x1="975" y1="170" x2="975" y2="312" opacity="0.95"/>
+      <line x1="460" y1="178" x2="460" y2="312" />
+      <line x1="495" y1="178" x2="495" y2="312" opacity="0.95"/>
+      <line x1="940" y1="178" x2="940" y2="312" />
+      <line x1="975" y1="178" x2="975" y2="312" opacity="0.95"/>
     </g>
 
-    <!-- LEFT PAN GROUP: shadow + pan + person (all children move together) -->
+    <!-- LEFT PAN GROUP: contains shadow + pan + person -->
     <g id="left-pan" style="transform-box:fill-box; animation: panBob 4.6s cubic-bezier(.22,.9,.3,.95) infinite; will-change: transform;">
-      <!-- pan shadow moves with pan -->
+      <!-- pan shadow (moves with pan) -->
       <ellipse cx="480" cy="345" rx="36" ry="6" fill="#0b5e38" opacity="0.06"/>
-      <!-- pan shape -->
       <path d="M420 320 q60 32 120 0 l0 10 q-60 24 -120 0 z"
             fill="url(#panGrad)" stroke="#023522" stroke-width="2" />
       <rect x="450" y="333" width="90" height="18" rx="9" fill="#0b5e38" opacity="0.95"/>
       <text x="495" y="346" text-anchor="middle" class="label">CLIENT</text>
 
-      <!-- Person placed directly at pan center so it's centered at all times.
-           Inner .anti-rotate keeps the person visually upright. -->
+      <!-- Person centered at pan center; anti-rotate keeps them upright -->
       <g transform="translate(480,318)">
         <g class="anti-rotate" style="transform-box:fill-box; transform-origin:center center; animation: antiSwing 4.6s cubic-bezier(.22,.9,.3,.95) infinite; will-change: transform;">
           <circle cx="0" cy="-12" r="6" class="person-fill person-stroke" />
