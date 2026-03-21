@@ -1,7 +1,6 @@
 // client/src/components/CareSection.tsx
 import React from "react";
-// Put your image file at: attached_assets/scales-of-justice.png
-// (vite.config.ts maps @assets -> attached_assets)
+// put attached_assets/scales-of-justice.png in the repo
 import scalesImg from "@assets/scales-of-justice.png";
 
 export default function CareSection(): JSX.Element {
@@ -12,7 +11,6 @@ export default function CareSection(): JSX.Element {
     >
       <div className="container max-w-5xl mx-auto px-4">
         <div className="text-center space-y-6">
-          {/* EXACT heading text preserved */}
           <h2 className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-foreground leading-tight tracking-tight">
             We care about people and partnerships.
           </h2>
@@ -27,7 +25,6 @@ export default function CareSection(): JSX.Element {
             </p>
           </div>
 
-          {/* Image wrapper: centered and responsive */}
           <div className="mt-12 flex justify-center">
             <div className="w-full max-w-xl md:max-w-3xl mx-auto">
               <img
