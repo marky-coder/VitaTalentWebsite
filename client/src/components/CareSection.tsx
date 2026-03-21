@@ -1,11 +1,10 @@
 // client/src/components/CareSection.tsx
 import React from "react";
+// Put your image file at: attached_assets/scales-of-justice.png
+// (vite.config.ts maps @assets -> attached_assets)
+import scalesImg from "@assets/scales-of-justice.png";
 
 export default function CareSection(): JSX.Element {
-  // image filename (exactly as you named it)
-  const imageFilename = "Scales of Justice.png";
-  const imageSrc = "/images/" + encodeURIComponent(imageFilename);
-
   return (
     <section
       className="py-24 bg-gradient-to-r from-primary/12 via-primary/15 to-primary/10"
@@ -32,7 +31,7 @@ export default function CareSection(): JSX.Element {
           <div className="mt-12 flex justify-center">
             <div className="w-full max-w-xl md:max-w-3xl mx-auto">
               <img
-                src={imageSrc}
+                src={scalesImg}
                 alt="Justice scale showing client and candidate on balanced pans"
                 role="img"
                 loading="lazy"
