@@ -18,14 +18,19 @@ export default function CEOMessageSection(): JSX.Element {
           A word from our CEO
         </h2>
 
-        <div className="mx-auto max-w-3xl">
-          {/* Responsive video — uses the uploaded .mov file directly */}
+        {/* Limit width so the video doesn't fill the whole page */}
+        <div className="mx-auto w-full max-w-md md:max-w-2xl">
+          {/* Responsive video:
+              - w-full keeps video width within the container
+              - max-h ensures it never becomes taller than the viewport/desired px
+              - rounded + shadow for visual polish
+          */}
           <video
             src={ceoVideo}
             controls
             playsInline
             preload="metadata"
-            className="w-full h-auto rounded-lg shadow-lg"
+            className="w-full h-auto rounded-lg shadow-lg max-h-[60vh] md:max-h-[480px]"
             aria-label="A message from the CEO"
           />
         </div>
