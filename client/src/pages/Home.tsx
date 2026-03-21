@@ -1,6 +1,7 @@
 // client/src/pages/Home.tsx
 import { useState, useEffect } from "react";
 import HeroSection from "@/components/HeroSection";
+import CEOMessageSection from "@/components/CEOMessageSection";
 import WhyGlobalSection from "@/components/WhyGlobalSection";
 import WorkflowSection from "@/components/WorkflowSection";
 import TestimonialsSection from "@/components/TestimonialsSection";
@@ -27,8 +28,6 @@ export default function Home() {
     setDialogOpen(true);
   };
 
-  // Open dialog if user navigated here with ?openHire=true and optional &pack=
-  // Also support ?scrollTo=<id> which will scroll to a section after navigation.
   useEffect(() => {
     try {
       const params = new URLSearchParams(window.location.search);
@@ -43,7 +42,6 @@ export default function Home() {
       }
 
       if (scrollTo) {
-        // try to scroll to the element; if not present yet, retry a few times
         let attempts = 0;
         const tryScroll = () => {
           const el = document.getElementById(scrollTo);
@@ -58,7 +56,6 @@ export default function Home() {
       }
 
       if (openHire || scrollTo || pack) {
-        // remove the query params from the URL so refresh doesn't reopen or re-scroll
         const cleanUrl = window.location.pathname + (window.location.hash || "");
         window.history.replaceState(null, "", cleanUrl);
       }
@@ -72,6 +69,11 @@ export default function Home() {
       <DecorativeSidebars onHireTalent={() => handleHireTalent()} onJoinAsCandidate={handleJoinAsCandidate} />
       <div id="hero">
         <HeroSection onHireTalent={() => handleHireTalent()} onJoinAsCandidate={handleJoinAsCandidate} />
+      </div>
+
+      {/* NEW: CEO message inserted between the hero (logos/socials) and Why Global */}
+      <div id="ceo-message">
+        <CEOMessageSection />
       </div>
 
       <div id="why-global">
