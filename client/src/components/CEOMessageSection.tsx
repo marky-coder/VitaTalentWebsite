@@ -19,19 +19,23 @@ export default function CEOMessageSection(): JSX.Element {
         </h2>
 
         {/* Limit width so the video doesn't fill the whole page */}
-        <div className="mx-auto w-full max-w-md md:max-w-2xl">
+        <div
+          className="mx-auto w-full max-w-md md:max-w-2xl bg-transparent shadow-none rounded-none border-0"
+          style={{ backgroundColor: "transparent", boxShadow: "none" }}
+        >
           {/* Responsive video:
               - w-full keeps video width within the container
               - max-h ensures it never becomes taller than the viewport/desired px
-              - rounded + shadow for visual polish
+              - no rounded corners, no shadow, no border
           */}
           <video
             src={ceoVideo}
             controls
             playsInline
             preload="metadata"
-            className="w-full h-auto rounded-lg shadow-lg max-h-[60vh] md:max-h-[480px]"
+            className="w-full h-auto bg-transparent shadow-none rounded-none border-0 max-h-[60vh] md:max-h-[480px]"
             aria-label="A message from the CEO"
+            style={{ backgroundColor: "transparent", boxShadow: "none", border: "none", borderRadius: 0 }}
           />
         </div>
       </div>
