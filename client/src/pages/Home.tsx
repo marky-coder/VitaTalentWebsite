@@ -17,15 +17,25 @@ export default function Home() {
   const [dialogType, setDialogType] = useState<"hire" | "candidate">("hire");
   const [selectedPack, setSelectedPack] = useState<string | undefined>(undefined);
 
+  /**
+   * NOTE: previously this opened the in-page dialog.
+   * Now it redirects to /hire. If a packId is provided we include it
+   * in the query so you can optionally use it on the /hire page.
+   */
   const handleHireTalent = (packId?: string) => {
-    setDialogType("hire");
-    if (packId) setSelectedPack(packId);
-    setDialogOpen(true);
+    if (packId) {
+      const params = new URLSearchParams({ pack: packId });
+      window.location.href = `/hire?${params.toString()}`;
+    } else {
+      window.location.href = "/hire";
+    }
   };
 
+  /**
+   * Redirect to the join page (instead of opening the dialog)
+   */
   const handleJoinAsCandidate = () => {
-    setDialogType("candidate");
-    setDialogOpen(true);
+    window.location.href = "/join";
   };
 
   useEffect(() => {
@@ -98,6 +108,8 @@ export default function Home() {
 
       <Footer />
 
+      {/* keep the dialog component so older deep-links or other parts of the app
+          that rely on it continue to function (the dialog isn't used by the buttons anymore) */}
       <InquiryDialog open={dialogOpen} onOpenChange={setDialogOpen} type={dialogType} selectedPack={selectedPack} />
     </div>
   );
