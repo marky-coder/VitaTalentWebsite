@@ -2,274 +2,732 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1"
-    />
-    <title>
-      Vita Talent - Where Integrity Meets Opportunity | Global Recruitment
-      Agency
-    </title>
-    <meta
-      name="description"
-      content="Vita Talent connects businesses worldwide with exceptional talent from Africa, Latin America, Asia, and beyond."
-    />
-    <meta property="og:title" content="Vita Talent - Where Integrity Meets Opportunity" />
-    <meta property="og:description" content="Empowering businesses worldwide with exceptional global talent." />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://vitatalent.co/" />
-    <meta property="og:image" content="https://vitatalent.co/og-image.png" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <link rel="icon" type="image/png" href="/favicon.png" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <script
-      type="text/javascript"
-      src="//widget.trustpilot.com/bootstrap/v5/tp.widget.bootstrap.min.js"
-      async
-    ></script>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-
-    <!-- Popup styles -->
+    <title>VitaTalent – Global Talent Without the Hiring Chaos</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
-      #ghl-backdrop {
-        position: fixed;
-        inset: 0;
-        background: rgba(15, 23, 42, 0.65);
-        display: none;
-        align-items: center;
-        justify-content: center;
-        padding: 20px;
-        z-index: 9999;
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
       }
-      #ghl-backdrop.show { display:flex; }
 
-      #ghl-modal {
-        width: 100%;
-        max-width: 960px;
-        border-radius: 12px;
-        overflow: hidden;
-        position: relative;
-        background: #fff;
-        box-shadow: 0 30px 80px rgba(2, 6, 23, 0.6);
+      html,
+      body {
+        height: 100%;
+      }
+
+      body {
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          sans-serif;
+        line-height: 1.6;
         color: #0f172a;
-        max-height: 92vh;
+        background: radial-gradient(circle at top, #e0f2fe 0, #f8fafc 40%);
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .page {
+        max-width: 1120px;
+        margin: 0 auto;
+        padding: 20px 16px 60px;
+      }
+
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 24px;
+      }
+
+      .logo {
+        font-weight: 800;
+        font-size: 1.4rem;
+        letter-spacing: 0.06em;
+      }
+
+      .logo span {
+        color: #4f46e5;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 18px;
+        font-size: 0.9rem;
+      }
+
+      .nav-links a {
+        opacity: 0.8;
+      }
+
+      .nav-links a:hover {
+        opacity: 1;
+      }
+
+      .nav-cta {
+        padding: 7px 14px;
+        border-radius: 999px;
+        border: 1px solid rgba(148, 163, 184, 0.5);
+        font-size: 0.85rem;
+      }
+
+      @media (max-width: 760px) {
+        header {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .nav-links {
+          flex-wrap: wrap;
+        }
+      }
+
+      .hero {
+        position: relative;
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 22px;
+        padding: 26px 22px;
+        margin-bottom: 32px;
+        box-shadow: 0 18px 45px rgba(15, 23, 42, 0.15);
+        display: grid;
+        grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+        gap: 26px;
+      }
+
+      @media (max-width: 880px) {
+        .hero {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .hero-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.11em;
+        padding: 4px 10px;
+        border-radius: 999px;
+        background: #eef2ff;
+        color: #4f46e5;
+        margin-bottom: 12px;
+      }
+
+      .hero-tag span {
+        width: 7px;
+        height: 7px;
+        border-radius: 999px;
+        background: #22c55e;
+      }
+
+      .hero h1 {
+        font-size: 2.25rem;
+        margin-bottom: 12px;
+      }
+
+      .hero p {
+        font-size: 0.98rem;
+        color: #475569;
+        margin-bottom: 18px;
+      }
+
+      .hero-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 10px;
+      }
+
+      .btn {
+        border-radius: 999px;
+        padding: 10px 18px;
+        font-size: 0.92rem;
+        cursor: pointer;
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #4f46e5, #6366f1);
+        color: white;
+        box-shadow: 0 12px 30px rgba(79, 70, 229, 0.4);
+        font-weight: 600;
+      }
+
+      .btn-secondary {
+        background: white;
+        border: 1px solid #e2e8f0;
+        color: #0f172a;
+        font-weight: 500;
+      }
+
+      .hero-footnote {
+        font-size: 0.78rem;
+        color: #64748b;
+      }
+
+      .hero-sidecard {
+        background: #020617;
+        border-radius: 18px;
+        padding: 18px 16px;
+        color: white;
         display: flex;
         flex-direction: column;
+        gap: 14px;
+        overflow: hidden;
       }
 
-      #ghl-close {
-        position: absolute;
-        top: 10px;
-        right: 12px;
-        z-index: 5;
-        background: transparent;
-        border: none;
-        font-size: 1.6rem;
+      .hero-sidecard-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.8rem;
+        opacity: 0.9;
+      }
+
+      .hero-metric-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+      }
+
+      .hero-metric-main {
+        font-size: 1.7rem;
+        font-weight: 700;
+      }
+
+      .hero-metric-label {
+        font-size: 0.78rem;
+        color: #cbd5f5;
+        max-width: 140px;
+        text-align: right;
+      }
+
+      .hero-divider {
+        height: 1px;
+        background: radial-gradient(circle, rgba(148, 163, 184, 0.9), transparent);
+        margin: 6px 0;
+      }
+
+      .hero-note {
+        font-size: 0.78rem;
+        color: #e2e8f0;
+      }
+
+      .sidebar {
+        position: fixed;
+        top: 30%;
+        left: 0;
+        transform: translateY(-50%);
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding-left: 4px;
+        pointer-events: none;
+      }
+
+      .sidebar-right {
+        left: auto;
+        right: 0;
+        padding-left: 0;
+        padding-right: 4px;
+        align-items: flex-end;
+      }
+
+      .sidebar-pill {
+        pointer-events: auto;
+        background: rgba(15, 23, 42, 0.92);
+        color: white;
+        border-radius: 999px;
+        padding: 7px 12px;
+        font-size: 0.78rem;
+        display: flex;
+        align-items: center;
+        gap: 6px;
         cursor: pointer;
-        color: #374151;
+        box-shadow: 0 10px 25px rgba(15, 23, 42, 0.65);
       }
 
-      .ghl-modal-header {
-        display:flex;
-        flex-direction:column;
-        align-items:center;
-        text-align:center;
-        gap:10px;
-        padding:22px 28px;
-        border-bottom: 1px solid rgba(15,23,42,0.06);
-        background: #fff;
+      .sidebar-pill span.dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 999px;
+        background: #22c55e;
       }
 
-      /* popup logo (keep at fixed display size; runtime copy will fill src/srcset) */
-      .ghl-modal-header .ghl-logo {
-        width:84px;
-        height:auto;
-        object-fit:contain;
-        display:block;
+      @media (max-width: 900px) {
+        .sidebar,
+        .sidebar-right {
+          display: none;
+        }
       }
 
-      .ghl-pretitle {
-        margin:0;
-        font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto;
-        font-size:14px;
-        color:#0f766e; /* a subtle green to emphasize "Looking to Hire?" */
-        font-weight:600;
-        letter-spacing:0.01em;
-        text-transform:none;
+      .section {
+        margin-bottom: 32px;
       }
 
-      .ghl-modal-header h2 {
-        margin:0;
-        font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto;
-        font-size:22px;
-        font-weight:700;
-        color:#0f172a;
+      .section-heading {
+        font-size: 1.4rem;
+        margin-bottom: 8px;
       }
 
-      .ghl-subtitle {
-        margin:0;
-        font-size:13px;
-        color:#475569;
-        max-width:820px;
+      .section-subtitle {
+        font-size: 0.9rem;
+        color: #64748b;
+        max-width: 640px;
       }
 
-      #ghl-iframe-wrap { width:100%; height:760px; background:#fff; padding:24px; box-sizing:border-box; }
-      #ghl-iframe-wrap .ghl-iframe-inner { width:100%; height:100%; border-radius:6px; overflow:hidden; box-shadow: 0 2px 10px rgba(2,6,23,0.05); }
-
-      @media (max-width:1100px) {
-        #ghl-modal { max-width: 88%; }
-        #ghl-iframe-wrap { height:72vh; }
+      .grid {
+        display: grid;
+        gap: 14px;
+        margin-top: 16px;
       }
-      @media (max-width:760px) {
-        #ghl-modal { width:96%; border-radius:10px; }
-        #ghl-iframe-wrap { height:88vh; padding:12px; }
-        .ghl-modal-header { padding:14px; gap:8px; }
-        .ghl-modal-header h2 { font-size:18px; }
+
+      .grid-3 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .grid-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      @media (max-width: 840px) {
+        .grid-3,
+        .grid-2 {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .card {
+        background: rgba(255, 255, 255, 0.96);
+        border-radius: 14px;
+        padding: 14px 13px;
+        box-shadow: 0 14px 35px rgba(15, 23, 42, 0.08);
+      }
+
+      .card h3 {
+        font-size: 1rem;
+        margin-bottom: 6px;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.75rem;
+        padding: 3px 9px;
+        border-radius: 999px;
+        background: #ecfeff;
+        color: #0e7490;
+        margin-bottom: 6px;
+      }
+
+      .pill span.dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 999px;
+        background: #22c55e;
+      }
+
+      .testimonial-quote {
+        font-size: 0.9rem;
+        color: #0f172a;
+        margin-bottom: 10px;
+      }
+
+      .testimonial-meta {
+        font-size: 0.78rem;
+        color: #64748b;
+      }
+
+      .care-list {
+        list-style: none;
+        margin-top: 10px;
+        font-size: 0.9rem;
+        color: #0f172a;
+      }
+
+      .care-list li {
+        margin-bottom: 6px;
+        display: flex;
+        gap: 8px;
+      }
+
+      .care-list span.icon {
+        margin-top: 3px;
+      }
+
+      .team-grid {
+        margin-top: 16px;
+      }
+
+      .team-card {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+      }
+
+      .team-name {
+        font-weight: 600;
+        font-size: 0.96rem;
+      }
+
+      .team-role {
+        font-size: 0.82rem;
+        color: #64748b;
+      }
+
+      .team-note {
+        font-size: 0.8rem;
+        color: #94a3b8;
+      }
+
+      .cta {
+        background: linear-gradient(135deg, #0f172a, #111827);
+        border-radius: 18px;
+        padding: 22px 18px;
+        color: white;
+        display: grid;
+        grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+        gap: 20px;
+        align-items: center;
+      }
+
+      @media (max-width: 840px) {
+        .cta {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .cta h2 {
+        font-size: 1.4rem;
+        margin-bottom: 6px;
+      }
+
+      .cta p {
+        font-size: 0.9rem;
+        color: #e5e7eb;
+      }
+
+      .cta-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .cta-small {
+        font-size: 0.78rem;
+        color: #9ca3af;
+        margin-top: 6px;
+      }
+
+      footer {
+        margin-top: 34px;
+        font-size: 0.78rem;
+        color: #94a3b8;
+        text-align: center;
+      }
+
+      footer a {
+        text-decoration: underline;
       }
     </style>
+  </head>
+  <body>
+    <!-- Decorative sidebar actions (similar idea to DecorativeSidebars.tsx) -->
+    <div class="sidebar">
+      <button
+        class="sidebar-pill"
+        onclick="window.location.href='/hire'"
+        type="button"
+      >
+        <span class="dot"></span>
+        Hire global talent
+      </button>
+      <button
+        class="sidebar-pill"
+        onclick="window.location.href='/join'"
+        type="button"
+      >
+        Join as candidate
+      </button>
+    </div>
 
-    <div id="ghl-backdrop" role="dialog" aria-modal="true" aria-hidden="true">
-      <div id="ghl-modal" role="document">
-        <button id="ghl-close" aria-label="Close GHL form">×</button>
-
-        <div class="ghl-modal-header" role="banner" aria-hidden="false">
-          <!-- Popup logo: placeholder initially; we'll copy the real header/footer logo at runtime -->
-          <img id="ghl-logo" src="/favicon.png" alt="Vita Talent Logo" class="ghl-logo" width="84" height="84" />
-
-          <!-- New content order as requested -->
-          <div class="ghl-pretitle">Looking to Hire?</div>
-
-          <h2>Book A Free Discovery Call With Us!</h2>
-
-          <p class="ghl-subtitle">One of our Agents will answer all of your questions.</p>
-        </div>
-
-        <div id="ghl-iframe-wrap">
-          <div class="ghl-iframe-inner">
-            <!-- Your GHL iframe (keep your existing widget URL if needed) -->
-            <iframe
-              src="https://api.leadconnectorhq.com/widget/form/v7gZVJiU6138zC3pSSe8"
-              style="width:100%;height:100%;border:none;border-radius:3px"
-              id="inline-v7gZVJiU6138zC3pSSe8"
-              title="Pop Up Form"
-            ></iframe>
-          </div>
-        </div>
+    <div class="sidebar-right">
+      <div class="sidebar-pill" onclick="document.getElementById('hero').scrollIntoView({behavior:'smooth'});">
+        Back to top ↑
       </div>
     </div>
 
+    <div class="page">
+      <header>
+        <div class="logo">VITA<span>TALENT</span></div>
+        <nav class="nav-links">
+          <a href="#why-global">Why global</a>
+          <a href="#process">Process</a>
+          <a href="#testimonials">Results</a>
+          <a href="#team">Team</a>
+          <a href="#contact" class="nav-cta">Talk to us</a>
+        </nav>
+      </header>
+
+      <!-- HERO ~ HeroSection -->
+      <main>
+        <section id="hero" class="hero">
+          <div>
+            <div class="hero-tag">
+              <span></span>
+              Global talent, curated for you
+            </div>
+            <h1>Hire world-class remote talent without drowning in applications.</h1>
+            <p>
+              VitaTalent plugs into your hiring flow, screens candidates for you,
+              and sends only a short list of people who are truly worth your time.
+            </p>
+            <div class="hero-buttons">
+              <button class="btn btn-primary" type="button" onclick="window.location.href='/hire'">
+                I want to hire talent →
+              </button>
+              <button class="btn btn-secondary" type="button" onclick="window.location.href='/join'">
+                I’m a candidate →
+              </button>
+            </div>
+            <div class="hero-footnote">
+              Prefer your funnels?
+              <a href="https://hire.vitatalent.co" target="_blank" rel="noreferrer"
+                >Hire: hire.vitatalent.co</a
+              >
+              ·
+              <a href="https://apply.vitatalent.co" target="_blank" rel="noreferrer"
+                >Apply: apply.vitatalent.co</a
+              >
+            </div>
+          </div>
+
+          <aside class="hero-sidecard">
+            <div class="hero-sidecard-header">
+              <span>Active roles this month</span>
+              <span>Updated <span id="hero-updated">today</span></span>
+            </div>
+            <div class="hero-metric-row">
+              <div class="hero-metric-main">3–5</div>
+              <div class="hero-metric-label">Shortlisted candidates per role, on average.</div>
+            </div>
+            <div class="hero-divider"></div>
+            <p class="hero-note">
+              Instead of 200 unqualified CVs in your inbox, you get a tight list of people who match
+              your must-haves and are ready to interview.
+            </p>
+
+            <div class="hero-metric-row">
+              <div class="hero-metric-main">70%</div>
+              <div class="hero-metric-label">Time saved on screening & coordination.</div>
+            </div>
+            <p class="hero-note">
+              We handle sourcing, async screening, and communication so your team can focus on closing
+              the right hire.
+            </p>
+          </aside>
+        </section>
+
+        <!-- WHY GLOBAL ~ WhyGlobalSection -->
+        <section id="why-global" class="section">
+          <h2 class="section-heading">Why global talent?</h2>
+          <p class="section-subtitle">
+            The best people aren’t always sitting in your city. We help you tap into global talent
+            while keeping quality, culture, and communication non-negotiable.
+          </p>
+
+          <div class="grid grid-3">
+            <article class="card">
+              <div class="pill"><span class="dot"></span> Higher bar, not higher volume</div>
+              <h3>Only serious, pre-screened candidates</h3>
+              <p>
+                We filter for skills, mindset, and communication — not just keyword-matching resumes.
+                You see the top slice of the market, not the whole haystack.
+              </p>
+            </article>
+            <article class="card">
+              <div class="pill"><span class="dot"></span> Time zone aware</div>
+              <h3>Built for async & remote teams</h3>
+              <p>
+                We prioritize candidates who can thrive in remote, async environments, and who fit the
+                collaboration style your team actually uses.
+              </p>
+            </article>
+            <article class="card">
+              <div class="pill"><span class="dot"></span> Fair & transparent</div>
+              <h3>Win–win for company and candidate</h3>
+              <p>
+                We care about fit on both sides. That leads to better retention, stronger relationships,
+                and fewer painful re-hires.
+              </p>
+            </article>
+          </div>
+        </section>
+
+        <!-- PROCESS ~ WorkflowSection -->
+        <section id="process" class="section">
+          <h2 class="section-heading">How the VitaTalent workflow works</h2>
+          <p class="section-subtitle">
+            We plug into your current stack (or your funnels at hire/apply) and take over the messy
+            part of hiring: sourcing, screening, and shortlisting.
+          </p>
+
+          <div class="grid grid-3">
+            <article class="card">
+              <h3>1. Role intake & calibration</h3>
+              <p>
+                We align on the role, your non-negotiables, examples of great versus bad hires, and
+                what “success in 90 days” looks like.
+              </p>
+            </article>
+            <article class="card">
+              <h3>2. Sourcing & async screening</h3>
+              <p>
+                Candidates flow in through your funnels or our network. We run structured screening so
+                you don’t have to sit through dozens of calls.
+              </p>
+            </article>
+            <article class="card">
+              <h3>3. Shortlist & decision support</h3>
+              <p>
+                You receive a concise shortlist with notes, recordings (if applicable), and clear next
+                steps. You pick who to interview and move to offer.
+              </p>
+            </article>
+          </div>
+        </section>
+
+        <!-- TESTIMONIALS ~ TestimonialsSection -->
+        <section id="testimonials" class="section">
+          <h2 class="section-heading">Teams that care about hiring care about process.</h2>
+          <p class="section-subtitle">
+            A small sample of the outcomes that happen when hiring stops being an emergency and starts
+            being a system.
+          </p>
+
+          <div class="grid grid-2">
+            <article class="card">
+              <p class="testimonial-quote">
+                “Instead of 180 random applicants, we got 4 people we would’ve happily hired. The whole
+                process felt calm, structured, and fast.”
+              </p>
+              <p class="testimonial-meta">
+                Founder, early-stage SaaS company · Hired remote Product Marketing Manager
+              </p>
+            </article>
+            <article class="card">
+              <p class="testimonial-quote">
+                “We’ve tried agencies and job boards. This is the first time someone actually filtered
+                for culture and communication, not just skills.”
+              </p>
+              <p class="testimonial-meta">
+                COO, distributed agency · Hired multiple account and operations roles
+              </p>
+            </article>
+          </div>
+        </section>
+
+        <!-- CARE ~ CareSection -->
+        <section class="section">
+          <h2 class="section-heading">We care about humans, not just headcount.</h2>
+          <p class="section-subtitle">
+            Candidates remember how your hiring process feels. We help you run a process that is
+            respectful, clear, and honest — without adding work to your plate.
+          </p>
+
+          <ul class="care-list">
+            <li>
+              <span class="icon">✓</span>
+              <span>Clear expectations for candidates at every step.</span>
+            </li>
+            <li>
+              <span class="icon">✓</span>
+              <span>Honest feedback loops so people aren’t left hanging.</span>
+            </li>
+            <li>
+              <span class="icon">✓</span>
+              <span>
+                Emphasis on long-term fit instead of quick “bums on seats” placements.
+              </span>
+            </li>
+          </ul>
+        </section>
+
+        <!-- TEAM ~ TeamSection -->
+        <section id="team" class="section">
+          <h2 class="section-heading">Who’s behind VitaTalent?</h2>
+          <p class="section-subtitle">
+            A small, focused team obsessed with doing hiring properly — combining recruiting chops with
+            operational thinking and empathy for both sides of the table.
+          </p>
+
+          <div class="grid grid-2 team-grid">
+            <article class="card team-card">
+              <div class="team-name">Your team</div>
+              <div class="team-role">Operators, recruiters, and builders</div>
+              <div class="team-note">
+                You bring the vision, context, and standards. We bring structure, systems, and the
+                extra hands you wish you had.
+              </div>
+            </article>
+            <article class="card team-card">
+              <div class="team-name">Our network</div>
+              <div class="team-role">Global talent pool</div>
+              <div class="team-note">
+                Candidates across time zones and disciplines who value thoughtful companies and are
+                ready to do deep work — not just chase their next gig.
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <!-- CTA / CONTACT ~ CTASection -->
+        <section id="contact" class="section">
+          <div class="cta">
+            <div>
+              <h2>Ready to make your next hire feel calm instead of chaotic?</h2>
+              <p>
+                Share what you’re hiring for and we’ll tell you if we can help. No spam, no pressure,
+                just a clear next step.
+              </p>
+            </div>
+            <div>
+              <div class="cta-buttons">
+                <button class="btn btn-primary" type="button" onclick="window.location.href='/hire'">
+                  Talk about a role →
+                </button>
+                <button class="btn btn-secondary" type="button" onclick="window.location.href='/join'">
+                  Join talent pool →
+                </button>
+              </div>
+              <div class="cta-small">
+                Prefer email? Reach us at
+                <a href="mailto:hello@vitatalent.co">hello@vitatalent.co</a>.
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer>
+        © <span id="year"></span> VitaTalent. All rights reserved. · Funnels:
+        <a href="https://hire.vitatalent.co" target="_blank" rel="noreferrer">Hire</a> ·
+        <a href="https://apply.vitatalent.co" target="_blank" rel="noreferrer">Apply</a>
+      </footer>
+    </div>
+
     <script>
-      (function () {
-        const DELAY_MS = 5000;
-        const DELAY_MS = 2000;
-
-        function showPopup () {
-          const b = document.getElementById("ghl-backdrop");
-          if (!b) return;
-          b.classList.add("show");
-          b.setAttribute("aria-hidden","false");
-          const cb = document.getElementById("ghl-close");
-          if (cb && typeof cb.focus === "function") cb.focus();
-        }
-        function hidePopup () {
-          const b = document.getElementById("ghl-backdrop");
-          if (!b) return;
-          b.classList.remove("show");
-          b.setAttribute("aria-hidden","true");
-          const root = document.getElementById("root");
-          if (root && typeof root.focus === "function") root.focus();
-        }
-
-        if (!document.querySelector('script[data-ghl-loaded]')) {
-          const s = document.createElement("script");
-          s.src = "https://link.msgsndr.com/js/form_embed.js";
-          s.defer = true;
-          s.setAttribute("data-ghl-loaded","1");
-          document.body.appendChild(s);
-        }
-
-        // Copy the site's header/footer logo into the popup logo so we don't use favicon.
-        // It finds any <img alt="Vita Talent Logo"> the site renders and copies src and srcset.
-        function copySiteLogoToPopup() {
-          try {
-            const siteLogo = document.querySelector('img[alt="Vita Talent Logo"]');
-            const popupLogo = document.getElementById('ghl-logo');
-            if (!popupLogo) return;
-            if (siteLogo && siteLogo.src) {
-              popupLogo.src = siteLogo.src;
-              if (siteLogo.srcset) popupLogo.srcset = siteLogo.srcset;
-            }
-          } catch (err) {
-            // silent failure
-          }
-        }
-
-        document.addEventListener("DOMContentLoaded", function () {
-          const backdrop = document.getElementById("ghl-backdrop");
-          const closeBtn = document.getElementById("ghl-close");
-          if (closeBtn) closeBtn.addEventListener("click", hidePopup);
-          if (backdrop) {
-            backdrop.addEventListener("click", function (e) {
-              if (e.target === backdrop) hidePopup();
-            });
-          }
-          document.addEventListener("keydown", function (e) {
-            if (e.key === "Escape") {
-              const b = document.getElementById("ghl-backdrop");
-              if (b && b.classList.contains("show")) hidePopup();
-            }
-          });
-
-          // copy logo now; also try a couple of times later because React app may hydrate after index.html runs
-          copySiteLogoToPopup();
-          setTimeout(copySiteLogoToPopup, 400);
-          setTimeout(copySiteLogoToPopup, 1200);
-          setTimeout(copySiteLogoToPopup, 3000);
-
-          // show popup after delay
-          window.setTimeout(showPopup, DELAY_MS);
-
-          window.openGhlPopup = function () { showPopup(); };
-
-          // best-effort attempt to style iframe's submit if same-origin (will silently fail if cross-origin)
-          const iframe = document.getElementById("inline-v7gZVJiU6138zC3pSSe8");
-          function tryStyleIframeSubmit() {
-            if (!iframe) return;
-            try {
-              const doc = iframe.contentDocument || iframe.contentWindow.document;
-              if (!doc) return;
-              const btn = doc.querySelector('button[type="submit"], .submit, input[type="submit"]');
-              if (btn) {
-                btn.style.backgroundColor = "#0ea37a";
-                btn.style.color = "#fff";
-                btn.style.border = "none";
-                btn.style.display = "block";
-                btn.style.margin = "20px auto 0";
-                btn.style.padding = "10px 22px";
-                btn.style.borderRadius = "6px";
-                btn.style.fontWeight = "700";
-              }
-            } catch (e) {
-              // cross-origin or other error — ignore
-            }
-          }
-          if (iframe) {
-            iframe.addEventListener("load", function () {
-              tryStyleIframeSubmit();
-              setTimeout(tryStyleIframeSubmit, 400);
-              setTimeout(tryStyleIframeSubmit, 800);
-            });
-          }
-        });
-      })();
+      // Keep small helpers in index (year + hero updated stamp)
+      document.getElementById("year").textContent = new Date().getFullYear();
+      document.getElementById("hero-updated").textContent = "today";
     </script>
   </body>
 </html>
