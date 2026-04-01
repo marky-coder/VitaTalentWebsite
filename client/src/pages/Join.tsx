@@ -67,8 +67,6 @@ export default function Join() {
         </div>
 
         <div style={{ fontSize: 12, color: "#6b7280", marginTop: 10 }}>
-          This page embeds the same GHL form used by the popup. If you'd like a different header layout
-          (smaller logo, centered title, etc.), I can make that match Home exactly.
         </div>
       </div>
     </div>
