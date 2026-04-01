@@ -3,11 +3,11 @@ import { useEffect } from "react";
 
 /**
  * Join page — embeds the same candidate GHL survey used by the modal (pzE6wXP4PmwKwZqN6iRw).
- * Matches the Home page visual language (logo, Poppins headings, Inter body, brand purple).
+ * Layout identical to Hire page: centered modal-like panel with the embedded survey.
  */
 export default function Join() {
   const CANDIDATE_SURVEY_ID = "pzE6wXP4PmwKwZqN6iRw";
-  const BRAND_PURPLE = "#4f46e5";
+  const BRAND_GREEN = "#22c55e";
 
   useEffect(() => {
     // Ensure the GHL embed helper script is loaded
@@ -23,17 +23,29 @@ export default function Join() {
   const iframeSrc = `https://api.leadconnectorhq.com/widget/survey/${CANDIDATE_SURVEY_ID}`;
 
   return (
-    <div style={{ fontFamily: "Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif" }} className="min-h-screen bg-gray-50 py-12 px-6">
+    <div
+      style={{
+        fontFamily: "Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif",
+      }}
+      className="min-h-screen bg-gray-50 py-12 px-6"
+    >
       <div className="max-w-5xl mx-auto bg-white p-8 rounded-lg shadow">
-        <header style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
+        <header
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: 24,
+          }}
+        >
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             <img src="/favicon.png" alt="Vita Talent Logo" width={40} height={40} style={{ display: "block" }} />
             <div style={{ fontWeight: 800, fontSize: 20 }}>
-              VITA<span style={{ color: BRAND_PURPLE }}>TALENT</span>
+              VITA<span style={{ color: BRAND_GREEN }}>TALENT</span>
             </div>
           </div>
 
-          <a href="/" style={{ color: BRAND_PURPLE, textDecoration: "none", fontSize: 14 }}>
+          <a href="/" style={{ color: BRAND_GREEN, textDecoration: "none", fontSize: 14 }}>
             ← Back home
           </a>
         </header>
@@ -47,26 +59,25 @@ export default function Join() {
           </p>
         </div>
 
-        {/* Candidate survey: full width in the card but visually consistent */}
-        <div
-          style={{
-            width: "100%",
-            height: 760,
-            borderRadius: 6,
-            overflow: "hidden",
-            boxShadow: "0 2px 10px rgba(2,6,23,0.05)",
-          }}
-        >
-          <iframe
-            id={CANDIDATE_SURVEY_ID}
-            title="Join form"
-            src={iframeSrc}
-            style={{ width: "100%", height: "100%", border: "none", display: "block" }}
-            scrolling="yes"
-          />
-        </div>
-
-        <div style={{ fontSize: 12, color: "#6b7280", marginTop: 10 }}>
+        {/* Center candidate survey in same modal-like panel for visual parity */}
+        <div style={{ display: "flex", justifyContent: "center", padding: "28px 0" }}>
+          <div
+            style={{
+              width: 560,
+              borderRadius: 12,
+              background: "#fff",
+              boxShadow: "0 30px 80px rgba(2,6,23,0.6)",
+              overflow: "hidden",
+            }}
+          >
+            <iframe
+              id={CANDIDATE_SURVEY_ID}
+              title="Join form"
+              src={iframeSrc}
+              style={{ width: "100%", height: "760px", border: "none", display: "block" }}
+              scrolling="yes"
+            />
+          </div>
         </div>
       </div>
     </div>
