@@ -541,21 +541,21 @@
   <body>
     <!-- Decorative sidebar actions (similar idea to DecorativeSidebars.tsx) -->
     <div class="sidebar">
-      <a
+      <button
         class="sidebar-pill"
-        href="hire.html"
-        role="button"
+        onclick="openDialog('hire')"
+        type="button"
       >
         <span class="dot"></span>
         Hire global talent
-      </a>
-      <a
+      </button>
+      <button
         class="sidebar-pill"
-        href="candidate.html"
-        role="button"
+        onclick="openDialog('candidate')"
+        type="button"
       >
         Join as candidate
-      </a>
+      </button>
     </div>
 
     <div class="sidebar-right">
@@ -590,12 +590,12 @@
               and sends only a short list of people who are truly worth your time.
             </p>
             <div class="hero-buttons">
-              <a class="btn btn-primary" href="hire.html">
+              <button class="btn btn-primary" type="button" onclick="openDialog('hire')">
                 I want to hire talent →
-              </a>
-              <a class="btn btn-secondary" href="candidate.html">
+              </button>
+              <button class="btn btn-secondary" type="button" onclick="openDialog('candidate')">
                 I’m a candidate →
-              </a>
+              </button>
             </div>
             <div class="hero-footnote">
               Prefer your funnels?
@@ -773,7 +773,7 @@
               <div class="team-name">Your team</div>
               <div class="team-role">Operators, recruiters, and builders</div>
               <div class="team-note">
-                You bring the vision, context, and standards. We bring structure, systems, and the
+                You bring the vision, context, and the standards. We bring structure, systems, and the
                 extra hands you wish you had.
               </div>
             </article>
@@ -800,12 +800,12 @@
             </div>
             <div>
               <div class="cta-buttons">
-                <a class="btn btn-primary" href="hire.html">
+                <button class="btn btn-primary" type="button" onclick="openDialog('hire')">
                   Talk about a role →
-                </a>
-                <a class="btn btn-secondary" href="candidate.html">
+                </button>
+                <button class="btn btn-secondary" type="button" onclick="openDialog('candidate')">
                   Join talent pool →
-                </a>
+                </button>
               </div>
               <div class="cta-small">
                 Prefer email? Reach us at
@@ -823,7 +823,7 @@
       </footer>
     </div>
 
-    <!-- InquiryDialog equivalent (left in place but no triggers point to it anymore) -->
+    <!-- InquiryDialog equivalent -->
     <div id="inquiry-backdrop" class="dialog-backdrop" role="dialog" aria-modal="true">
       <div class="dialog">
         <button
