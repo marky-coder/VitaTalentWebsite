@@ -8,7 +8,9 @@ import Home from "@/pages/Home";
 import NotFound from "@/pages/not-found";
 import Schedule from "@/pages/Schedule";
 import Nathaniel from "@/pages/Nathaniel";
-import Terms from "@/pages/Terms"; // <-- NEW
+import Terms from "@/pages/Terms"; // <-- existing
+import Hire from "@/pages/Hire"; // <-- NEW
+import Join from "@/pages/Join"; // <-- NEW
 import { useEffect } from "react";
 
 function Router() {
@@ -17,7 +19,9 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/schedule" component={Schedule} />
       <Route path="/nathaniel" component={Nathaniel} />
-      <Route path="/terms" component={Terms} /> {/* <-- NEW */}
+      <Route path="/terms" component={Terms} />
+      <Route path="/hire" component={Hire} />   {/* NEW */}
+      <Route path="/join" component={Join} />   {/* NEW */}
       <Route component={NotFound} />
     </Switch>
   );
