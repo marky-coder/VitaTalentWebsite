@@ -1,9 +1,11 @@
 // client/src/pages/Join.tsx
 import { useEffect } from "react";
+import CTASection from "@/components/CTASection";
+import Footer from "@/components/Footer";
 
 /**
  * Join page — embeds the same candidate GHL survey used by the modal (pzE6wXP4PmwKwZqN6iRw).
- * Layout identical to Hire page: centered modal-like panel with the embedded survey.
+ * Layout identical to Hire page: centered modal-like panel with the embedded survey, plus CTA + footer.
  */
 export default function Join() {
   const CANDIDATE_SURVEY_ID = "pzE6wXP4PmwKwZqN6iRw";
@@ -22,22 +24,23 @@ export default function Join() {
 
   const iframeSrc = `https://api.leadconnectorhq.com/widget/survey/${CANDIDATE_SURVEY_ID}`;
 
+  const goToHire = () => {
+    window.location.href = "/hire";
+  };
+
+  const goToJoin = () => {
+    window.location.href = "/join";
+  };
+
   return (
     <div
       style={{
         fontFamily: "Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif",
       }}
-      className="min-h-screen bg-gray-50 py-12 px-6"
+      className="min-h-screen bg-gray-50"
     >
-      <div className="max-w-5xl mx-auto bg-white p-8 rounded-lg shadow">
-        <header
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginBottom: 24,
-          }}
-        >
+      <div className="max-w-5xl mx-auto bg-white p-8 rounded-lg shadow mt-12 mb-8">
+        <header style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             <img src="/favicon.png" alt="Vita Talent Logo" width={40} height={40} style={{ display: "block" }} />
             <div style={{ fontWeight: 800, fontSize: 20 }}>
@@ -80,6 +83,10 @@ export default function Join() {
           </div>
         </div>
       </div>
+
+      {/* CTA & Footer (same as Home) */}
+      <CTASection onHireTalent={goToHire} onJoinAsCandidate={goToJoin} />
+      <Footer />
     </div>
   );
 }
