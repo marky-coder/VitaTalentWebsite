@@ -15,7 +15,7 @@ export default function CEOMessageSection(): JSX.Element {
           id="ceo-heading"
           className="text-3xl md:text-4xl font-bold text-foreground mb-6"
         >
-          A word from our CEO
+          From a client to becoming our CEO
         </h2>
 
         {/* Limit width so the video doesn't fill the whole page */}
