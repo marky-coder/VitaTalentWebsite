@@ -3,12 +3,12 @@ import { useEffect, useState } from "react";
 
 /**
  * Hire page — embeds the same GHL survey your modal used (WQGFK4J2ChAmAACrEQPC).
- * Matches Home page spacing, fonts and brand color (#4f46e5).
+ * Uses the brand green for the "TALENT" wordmark so the color is consistent.
  */
 export default function Hire() {
   const [pack, setPack] = useState<string | undefined>(undefined);
   const HIRE_SURVEY_ID = "WQGFK4J2ChAmAACrEQPC";
-  const BRAND_PURPLE = "#4f46e5";
+  const BRAND_GREEN = "#22c55e"; // changed to green
 
   useEffect(() => {
     try {
@@ -29,34 +29,58 @@ export default function Hire() {
     }
   }, []);
 
-  // Append pack to iframe src if present (useful if you want the pack passed to the widget)
   const iframeSrc = pack
     ? `https://api.leadconnectorhq.com/widget/survey/${HIRE_SURVEY_ID}?pack=${encodeURIComponent(pack)}`
     : `https://api.leadconnectorhq.com/widget/survey/${HIRE_SURVEY_ID}`;
 
   return (
-    <div style={{ fontFamily: "Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif" }} className="min-h-screen bg-gray-50 py-12 px-6">
+    <div
+      style={{
+        fontFamily: "Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif",
+      }}
+      className="min-h-screen bg-gray-50 py-12 px-6"
+    >
       <div className="max-w-5xl mx-auto bg-white p-8 rounded-lg shadow">
-        <header style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
+        <header
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: 24,
+          }}
+        >
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            {/* Small logo image so pages have a real logo like the rest of the site */}
-            <img src="/favicon.png" alt="Vita Talent Logo" width={40} height={40} style={{ display: "block" }} />
+            <img
+              src="/favicon.png"
+              alt="Vita Talent Logo"
+              width={40}
+              height={40}
+              style={{ display: "block" }}
+            />
             <div style={{ fontWeight: 800, fontSize: 20 }}>
-              VITA<span style={{ color: BRAND_PURPLE }}>TALENT</span>
+              VITA<span style={{ color: BRAND_GREEN }}>TALENT</span>
             </div>
           </div>
 
-          <a href="/" style={{ color: BRAND_PURPLE, textDecoration: "none", fontSize: 14 }}>
+          <a href="/" style={{ color: BRAND_GREEN, textDecoration: "none", fontSize: 14 }}>
             ← Back home
           </a>
         </header>
 
         <div style={{ marginBottom: 20 }}>
-          <h1 style={{ fontFamily: "Poppins, sans-serif", fontSize: 28, margin: 0, fontWeight: 700 }}>
+          <h1
+            style={{
+              fontFamily: "Poppins, sans-serif",
+              fontSize: 28,
+              margin: 0,
+              fontWeight: 700,
+            }}
+          >
             Hire global talent with VitaTalent
           </h1>
           <p style={{ color: "#475569", marginTop: 8 }}>
-            Tell us about the role and team. We’ll follow up with a short Loom or email outlining how we’d approach it.
+            Tell us about the role and team. We’ll follow up with a short Loom or email outlining
+            how we’d approach it.
           </p>
         </div>
 
@@ -85,9 +109,6 @@ export default function Hire() {
               scrolling="yes"
             />
           </div>
-        </div>
-
-        <div style={{ fontSize: 12, color: "#6b7280", marginTop: 6 }}>
         </div>
       </div>
     </div>
