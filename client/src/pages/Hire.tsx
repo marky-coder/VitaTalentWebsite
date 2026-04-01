@@ -88,8 +88,6 @@ export default function Hire() {
         </div>
 
         <div style={{ fontSize: 12, color: "#6b7280", marginTop: 6 }}>
-          This page embeds the same GHL form used by the popup. If you want a smaller width or a different
-          header treatment, tell me and I’ll tweak it.
         </div>
       </div>
     </div>
