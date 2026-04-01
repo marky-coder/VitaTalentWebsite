@@ -1,12 +1,16 @@
 // client/src/pages/Join.tsx
 import { useEffect } from "react";
 
+/**
+ * Join page — embeds the same candidate GHL survey used by the modal (pzE6wXP4PmwKwZqN6iRw).
+ * Matches the Home page visual language (logo, Poppins headings, Inter body, brand purple).
+ */
 export default function Join() {
-  // candidate survey id from the modal
   const CANDIDATE_SURVEY_ID = "pzE6wXP4PmwKwZqN6iRw";
+  const BRAND_PURPLE = "#4f46e5";
 
   useEffect(() => {
-    // ensure the embed script is present so the widget behaves like the modal
+    // Ensure the GHL embed helper script is loaded
     if (!document.querySelector('script[src="https://link.msgsndr.com/js/form_embed.js"]')) {
       const s = document.createElement("script");
       s.src = "https://link.msgsndr.com/js/form_embed.js";
@@ -19,49 +23,52 @@ export default function Join() {
   const iframeSrc = `https://api.leadconnectorhq.com/widget/survey/${CANDIDATE_SURVEY_ID}`;
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-6">
+    <div style={{ fontFamily: "Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif" }} className="min-h-screen bg-gray-50 py-12 px-6">
       <div className="max-w-5xl mx-auto bg-white p-8 rounded-lg shadow">
-        <header className="flex items-center justify-between mb-6">
-          <div className="text-2xl font-extrabold tracking-tight">
-            VITA<span className="text-indigo-600">TALENT</span>
+        <header style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <img src="/favicon.png" alt="Vita Talent Logo" width={40} height={40} style={{ display: "block" }} />
+            <div style={{ fontWeight: 800, fontSize: 20 }}>
+              VITA<span style={{ color: BRAND_PURPLE }}>TALENT</span>
+            </div>
           </div>
-          <a className="text-sm text-indigo-600" href="/">
+
+          <a href="/" style={{ color: BRAND_PURPLE, textDecoration: "none", fontSize: 14 }}>
             ← Back home
           </a>
         </header>
 
-        <div className="mb-6">
-          <h1 className="text-2xl font-semibold mb-2">Join VitaTalent as a candidate</h1>
-          <p className="text-gray-600">
-            Share a few details and we’ll keep you in mind when there’s a strong match with roles we’re
-            working on.
+        <div style={{ marginBottom: 20 }}>
+          <h1 style={{ fontFamily: "Poppins, sans-serif", fontSize: 28, margin: 0, fontWeight: 700 }}>
+            Join VitaTalent as a candidate
+          </h1>
+          <p style={{ color: "#475569", marginTop: 8 }}>
+            Share a few details and we’ll keep you in mind when there’s a strong match with roles we’re working on.
           </p>
         </div>
 
+        {/* Candidate survey: full width in the card but visually consistent */}
         <div
           style={{
             width: "100%",
-            height: "760px",
-            padding: 0,
-            margin: 0,
-            boxSizing: "border-box",
+            height: 760,
             borderRadius: 6,
             overflow: "hidden",
             boxShadow: "0 2px 10px rgba(2,6,23,0.05)",
           }}
-          className="mb-4"
         >
           <iframe
-            src={iframeSrc}
-            title="Join form"
-            style={{ width: "100%", height: "100%", border: "none" }}
             id={CANDIDATE_SURVEY_ID}
+            title="Join form"
+            src={iframeSrc}
+            style={{ width: "100%", height: "100%", border: "none", display: "block" }}
             scrolling="yes"
           />
         </div>
 
-        <div className="text-xs text-gray-500 mt-2">
-          This page embeds the same GHL form used by the popup. Wire to your ATS/CRM as needed.
+        <div style={{ fontSize: 12, color: "#6b7280", marginTop: 10 }}>
+          This page embeds the same GHL form used by the popup. If you'd like a different header layout
+          (smaller logo, centered title, etc.), I can make that match Home exactly.
         </div>
       </div>
     </div>
