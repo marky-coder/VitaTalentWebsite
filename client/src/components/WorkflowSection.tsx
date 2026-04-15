@@ -8,70 +8,88 @@ import {
   HeadphonesIcon,
   RefreshCw,
   Shield,
+  ArrowRight,
 } from "lucide-react";
-import { Card } from "@/components/ui/card";
 
-const steps = [
+type Step = {
+  number: number;
+  icon: React.ComponentType<{ className?: string; strokeWidth?: number }>;
+  title: string;
+  description: string;
+};
+
+const steps: Step[] = [
   {
     number: 1,
     icon: Users,
     title: "Understanding Client Needs",
-    description: "We dive deep to understand your unique requirements and company culture.",
+    description:
+      "We dive deep to understand your unique requirements, company culture, hiring goals, and the kind of person who will thrive in your team. This gives us the clarity to build a search around fit, not just a job title.",
   },
   {
     number: 2,
     icon: Search,
     title: "Sourcing Top Candidates Globally",
-    description: "We tap into our worldwide network to find the best talent across continents.",
+    description:
+      "We tap into our worldwide network to find the best talent across continents. Instead of limiting the search to one market, we identify strong candidates globally so you can access deeper talent pools and better hiring options.",
   },
   {
     number: 3,
     icon: CheckCircle,
     title: "Screening and Vetting",
     description:
-      "Rigorous evaluation with AI interviews for tailored questions related to the role ensures only the most qualified candidates move forward.",
+      "Rigorous evaluation with AI interviews and tailored role-specific questions ensures only the most qualified candidates move forward. We filter for capability, communication, reliability, and alignment before anyone reaches your inbox.",
   },
   {
     number: 4,
     icon: HandshakeIcon,
     title: "Matching and Onboarding",
-    description: "Seamless integration of the right talent into your organization.",
+    description:
+      "Seamless integration of the right talent into your organization starts with strong matching. We help connect you with candidates who fit the role and support a smooth onboarding process so new hires can contribute quickly.",
   },
   {
     number: 5,
     icon: HeadphonesIcon,
     title: "Ongoing Support",
-    description: "Continuous support for both clients and candidates ensures long-term success.",
+    description:
+      "Continuous support for both clients and candidates ensures long-term success. As your team grows, we stay involved to help maintain momentum, solve issues early, and support a productive working relationship on both sides.",
   },
   {
     number: 6,
     icon: RefreshCw,
     title: "Replacement Process",
-    description: "We cover you for 30 days with our replacement guarantee.",
+    description:
+      "We cover you for 30 days with our replacement guarantee. If a hire does not work out within that window, we move quickly to help you replace the role so your hiring process stays protected and your team keeps moving forward.",
   },
   {
     number: 7,
     icon: Shield,
     title: "Insurance Coverage",
-    description: "Subscribe to our insurance and gain unlimited replacement policy.",
+    description:
+      "For added peace of mind, you can subscribe to our insurance coverage and gain an unlimited replacement policy. It is an extra layer of protection designed for companies that want more hiring security as they scale.",
   },
 ];
 
 export default function WorkflowSection() {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const [visibleStates, setVisibleStates] = useState<boolean[]>(
-    () => Array(steps.length).fill(false)
+    () => Array(steps.length + 1).fill(false)
   );
 
   useEffect(() => {
     if (!rootRef.current) return;
 
-    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setVisibleStates(Array(steps.length).fill(true));
+    if (
+      window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      setVisibleStates(Array(steps.length + 1).fill(true));
       return;
     }
 
-    const nodes = Array.from(rootRef.current.querySelectorAll<HTMLElement>(".workflow-step"));
+    const nodes = Array.from(
+      rootRef.current.querySelectorAll<HTMLElement>(".workflow-tile")
+    );
 
     const markVisible = (idx: number) => {
       setVisibleStates((prev) => {
@@ -85,205 +103,121 @@ export default function WorkflowSection() {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const idxAttr = entry.target.getAttribute("data-step-index");
-            const idx = idxAttr ? Number(idxAttr) : -1;
-            if (idx >= 0) {
-              markVisible(idx);
-              observer.unobserve(entry.target);
-            }
+          if (!entry.isIntersecting) return;
+
+          const idxAttr = entry.target.getAttribute("data-step-index");
+          const idx = idxAttr ? Number(idxAttr) : -1;
+
+          if (idx >= 0) {
+            markVisible(idx);
+            observer.unobserve(entry.target);
           }
         });
       },
       {
         root: null,
-        rootMargin: "0px 0px -12% 0px",
+        rootMargin: "0px 0px -10% 0px",
         threshold: 0.12,
       }
     );
 
-    nodes.forEach((n) => observer.observe(n));
+    nodes.forEach((node) => observer.observe(node));
+
     return () => observer.disconnect();
   }, []);
 
   return (
-    <section className="py-24 bg-gradient-to-bl from-primary/12 via-background to-primary/8" data-testid="section-workflow">
-      <div className="container max-w-7xl mx-auto px-4" ref={rootRef}>
-        <div className="text-center mb-20">
-          <h2 className="text-4xl font-bold text-foreground mb-4">Our Process</h2>
-          <p className="text-lg font-medium text-muted-foreground max-w-2xl mx-auto">
-            A proven approach to connecting exceptional talent with outstanding opportunities
+    <section
+      className="bg-[#005f5b] py-20 md:py-24"
+      data-testid="section-workflow"
+    >
+      <div className="container mx-auto max-w-7xl px-4" ref={rootRef}>
+        <div className="mx-auto mb-14 max-w-3xl text-center md:mb-16">
+          <h2 className="mb-4 text-4xl font-bold tracking-tight text-white md:text-5xl">
+            Our Process
+          </h2>
+          <p className="text-base font-medium leading-7 text-white/80 md:text-lg">
+            A proven approach to connecting exceptional talent with outstanding
+            opportunities.
           </p>
         </div>
 
-        {/* Desktop: Alternating Timeline Layout */}
-        <div className="hidden md:block relative">
-          {/* Central vertical line */}
-          <div className="absolute left-1/2 top-0 bottom-0 w-1 bg-gradient-to-b from-primary/20 via-primary/40 to-primary/20 -translate-x-1/2" />
+        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+          {steps.map((step, index) => {
+            const Icon = step.icon;
+            const visible = visibleStates[index];
+            const baseDelay = index * 90;
 
-          <div className="space-y-16">
-            {steps.map((step, index) => {
-              const isEven = index % 2 === 0;
-              const visible = visibleStates[index];
-              const baseDelay = index * 110; // ms
-
-              return (
-                // Add `group` here so hovering any child (dot or card) triggers group-hover styles
-                <div
-                  key={step.number}
-                  data-step-index={index}
-                  className={`relative workflow-step group transform transition-all duration-700 ease-out ${
-                    visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-                  }`}
-                  style={{ transitionDelay: visible ? `${baseDelay}ms` : "0ms" }}
-                >
-                  {/* Timeline dot */}
-                  <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
-                    <div
-                      role="img"
-                      aria-label={`Step ${step.number}`}
-                      tabIndex={0}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                          e.preventDefault();
-                          const el = e.currentTarget as HTMLDivElement;
-                          // quick local feedback for keyboard users
-                          el.style.transform = "translateY(-4px) scale(1.18)";
-                          setTimeout(() => {
-                            if (el) el.style.transform = "";
-                          }, 150);
-                        }
-                      }}
-                      className={`w-14 h-14 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-xl shadow-lg border-4 border-background transform transition-transform duration-300 ease-out motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 cursor-pointer
-                        ${visible ? "scale-100 opacity-100" : "scale-75 opacity-0"}
-                        hover:-translate-y-[6px] hover:scale-125 hover:z-40 hover:shadow-2xl
-                        focus:-translate-y-[6px] focus:scale-125 focus:z-40 focus:shadow-2xl`}
-                      style={{ transitionDelay: visible ? `${Math.max(0, baseDelay - 80)}ms` : "0ms" }}
-                    >
-                      <span className="pointer-events-none">{step.number}</span>
-                    </div>
+            return (
+              <article
+                key={step.number}
+                data-step-index={index}
+                className={`workflow-tile group flex min-h-[320px] flex-col rounded-[28px] border border-white/8 bg-[#006d68] p-7 shadow-[0_20px_60px_rgba(0,0,0,0.12)] transition-all duration-700 ease-out md:min-h-[340px] md:p-8 ${
+                  visible
+                    ? "translate-y-0 opacity-100"
+                    : "translate-y-8 opacity-0"
+                } hover:-translate-y-2 hover:shadow-[0_24px_70px_rgba(0,0,0,0.18)]`}
+                style={{ transitionDelay: visible ? `${baseDelay}ms` : "0ms" }}
+              >
+                <div className="mb-8 flex items-start justify-between">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-[#006d68] shadow-lg">
+                    <span className="text-xl font-bold">{step.number}</span>
                   </div>
 
-                  {/* Connecting line to card */}
-                  <div
-                    className={`absolute top-1/2 w-12 h-0.5 bg-primary/30 ${
-                      isEven ? "left-1/2 ml-7" : "right-1/2 mr-7"
-                    }`}
-                  />
-
-                  {/* Card */}
-                  <div className={`flex ${isEven ? "justify-start" : "justify-end"}`}>
-                    <Card
-                      // Add `group-hover` to card so it lifts/zooms slightly with the heading
-                      className={`w-[45%] p-6 bg-gradient-to-br from-card to-primary/10 border-primary/20 transform transition-all duration-700 hover-elevate
-                        ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}
-                        group-hover:-translate-y-2 group-hover:scale-[1.02] motion-reduce:group-hover:scale-100`}
-                      data-testid={`card-step-${step.number}`}
-                      style={{ transitionDelay: visible ? `${baseDelay + 80}ms` : "0ms" }}
-                    >
-                      <div className={`flex gap-4 ${isEven ? "flex-row" : "flex-row-reverse"}`}>
-                        <div className="flex-shrink-0">
-                          <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center">
-                            <step.icon className="w-8 h-8 text-primary" strokeWidth={1.5} />
-                          </div>
-                        </div>
-                        <div className={`flex-1 ${isEven ? "text-left" : "text-right"}`}>
-                          {/* Title: scales and lifts with group hover */}
-                          <h3
-                            className={`font-bold text-foreground text-lg mb-2 transform transition-transform duration-200 ease-out
-                              group-hover:scale-105 group-hover:-translate-y-1 motion-reduce:group-hover:scale-100`}
-                          >
-                            {step.title}
-                          </h3>
-                          <p className="text-sm font-medium text-muted-foreground leading-relaxed">
-                            {step.description}
-                          </p>
-                        </div>
-                      </div>
-                    </Card>
+                  <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white/10">
+                    <Icon className="h-7 w-7 text-white/85" strokeWidth={1.8} />
                   </div>
                 </div>
-              );
-            })}
-          </div>
-        </div>
 
-        {/* Mobile: Vertical Timeline */}
-        <div className="md:hidden relative pl-8">
-          {/* Left vertical line */}
-          <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-gradient-to-b from-primary/20 via-primary/40 to-primary/20" />
+                <div className="flex flex-1 flex-col">
+                  <h3 className="mb-4 max-w-[16rem] text-2xl font-bold leading-tight text-white">
+                    {step.title}
+                  </h3>
 
-          <div className="space-y-8">
-            {steps.map((step, index) => {
-              const visible = visibleStates[index];
-              const baseDelay = index * 110;
-
-              return (
-                <div
-                  key={step.number}
-                  data-step-index={index}
-                  // add group for mobile too
-                  className={`relative workflow-step group transform transition-all duration-700 ease-out ${
-                    visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
-                  }`}
-                  style={{ transitionDelay: visible ? `${baseDelay}ms` : "0ms" }}
-                >
-                  {/* Timeline dot */}
-                  <div className="absolute -left-[1.65rem] top-4">
-                    <div
-                      role="img"
-                      aria-label={`Step ${step.number}`}
-                      tabIndex={0}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" || e.key === " ") {
-                          e.preventDefault();
-                          const el = e.currentTarget as HTMLDivElement;
-                          el.style.transform = "translateY(-3px) scale(1.12)";
-                          setTimeout(() => {
-                            if (el) el.style.transform = "";
-                          }, 150);
-                        }
-                      }}
-                      className={`w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-sm shadow-lg border-2 border-background transform transition-transform duration-300 ease-out motion-reduce:transition-none focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 cursor-pointer
-                        ${visible ? "scale-100 opacity-100" : "scale-75 opacity-0"}
-                        hover:-translate-y-[5px] hover:scale-[1.18] hover:z-30 hover:shadow-xl
-                        focus:-translate-y-[5px] focus:scale-[1.18] focus:z-30 focus:shadow-xl`}
-                      style={{ transitionDelay: visible ? `${Math.max(0, baseDelay - 80)}ms` : "0ms" }}
-                    >
-                      {step.number}
-                    </div>
-                  </div>
-
-                  <Card
-                    className={`p-5 bg-gradient-to-br from-card to-primary/10 border-primary/20 transform transition-all duration-700
-                      ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}
-                      group-hover:-translate-y-2 group-hover:scale-[1.01] motion-reduce:group-hover:scale-100`}
-                    data-testid={`card-step-mobile-${step.number}`}
-                    style={{ transitionDelay: visible ? `${baseDelay + 80}ms` : "0ms" }}
-                  >
-                    <div className="flex gap-3">
-                      <div className="flex-shrink-0">
-                        <div className="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center">
-                          <step.icon className="w-6 h-6 text-primary" strokeWidth={1.5} />
-                        </div>
-                      </div>
-                      <div className="flex-1">
-                        <h3
-                          className={`font-bold text-foreground mb-1 transform transition-transform duration-200 ease-out
-                            group-hover:scale-105 group-hover:-translate-y-1 motion-reduce:group-hover:scale-100`}
-                        >
-                          {step.title}
-                        </h3>
-                        <p className="text-sm font-medium text-muted-foreground leading-relaxed">
-                          {step.description}
-                        </p>
-                      </div>
-                    </div>
-                  </Card>
+                  <p className="text-base leading-8 text-white/88">
+                    {step.description}
+                  </p>
                 </div>
-              );
-            })}
-          </div>
+              </article>
+            );
+          })}
+
+          <aside
+            data-step-index={steps.length}
+            className={`workflow-tile flex min-h-[320px] flex-col justify-between rounded-[28px] bg-[#dfe8e2] p-7 text-[#13201e] shadow-[0_20px_60px_rgba(0,0,0,0.12)] transition-all duration-700 ease-out md:min-h-[340px] md:p-8 ${
+              visibleStates[steps.length]
+                ? "translate-y-0 opacity-100"
+                : "translate-y-8 opacity-0"
+            }`}
+            style={{
+              transitionDelay: visibleStates[steps.length]
+                ? `${steps.length * 90}ms`
+                : "0ms",
+            }}
+          >
+            <div>
+              <h3 className="mb-4 text-3xl font-bold leading-tight md:text-4xl">
+                Start Hiring With Confidence
+              </h3>
+
+              <p className="mb-5 text-lg leading-8 text-[#13201e]/80">
+                From understanding your needs to sourcing, screening,
+                onboarding, and long-term support, we guide every step of the
+                process.
+              </p>
+
+              <p className="text-base leading-8 text-[#13201e]/75">
+                With replacement protection and optional insurance coverage, you
+                get a hiring partner focused on fit, speed, and long-term
+                success.
+              </p>
+            </div>
+
+            <div className="mt-10 inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.18em] text-[#006d68]">
+              Explore the process
+              <ArrowRight className="h-4 w-4" strokeWidth={2.25} />
+            </div>
+          </aside>
         </div>
       </div>
     </section>
