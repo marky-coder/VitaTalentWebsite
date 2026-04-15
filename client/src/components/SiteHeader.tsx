@@ -168,7 +168,7 @@ export default function SiteHeader() {
             href="https://vitatalent.co/hire"
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center justify-center rounded-xl bg-[#C6D8CE] px-5 py-3 text-sm font-semibold text-[#13201e] transition-all hover:opacity-85"
+            className="inline-flex items-center justify-center rounded-xl bg-[#197647] px-5 py-3 text-sm font-semibold text-white transition-all hover:opacity-90"
           >
             Hire a Talent
           </a>
@@ -235,7 +235,7 @@ export default function SiteHeader() {
                 href="https://vitatalent.co/hire"
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center justify-center rounded-xl bg-[#C6D8CE] px-4 py-3 text-sm font-semibold text-[#13201e]"
+                className="inline-flex items-center justify-center rounded-xl bg-[#197647] px-4 py-3 text-sm font-semibold text-white"
               >
                 Hire
               </a>
