@@ -118,7 +118,8 @@ export default function Roles() {
               </div>
 
               <h1 className="max-w-3xl text-4xl font-bold leading-tight tracking-tight md:text-5xl lg:text-6xl">
-                Pre-vetted talent for the roles that actually move your business forward
+                Pre-vetted talent for the roles that actually move your business
+                forward
               </h1>
 
               <p className="mt-6 max-w-2xl text-lg leading-8 text-[#13201e]/75">
@@ -139,7 +140,7 @@ export default function Roles() {
                 </a>
 
                 <a
-                  href="/#process"
+                  href="/?scrollTo=process"
                   className="inline-flex items-center justify-center rounded-xl border border-[#315545]/15 bg-[#F3F7F4] px-6 py-3 text-sm font-semibold text-[#315545] transition-colors hover:bg-[#C6D8CE]"
                 >
                   See Our Process
@@ -150,7 +151,10 @@ export default function Roles() {
             <div className="rounded-[32px] border border-black/5 bg-[#F3F7F4] p-6 shadow-[0_18px_50px_rgba(0,0,0,0.06)] md:p-8">
               <div className="flex items-center gap-3">
                 <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#C6D8CE]">
-                  <BadgeDollarSign className="h-6 w-6 text-[#315545]" strokeWidth={2} />
+                  <BadgeDollarSign
+                    className="h-6 w-6 text-[#315545]"
+                    strokeWidth={2}
+                  />
                 </div>
                 <div>
                   <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[#315545]/70">
@@ -168,7 +172,9 @@ export default function Roles() {
                     Entry support roles
                   </p>
                   <p className="mt-1 text-base text-[#13201e]/80">
-                    Typically start around <span className="font-semibold">$800</span> to <span className="font-semibold">$1500</span>
+                    Typically start around{" "}
+                    <span className="font-semibold">$800</span> to{" "}
+                    <span className="font-semibold">$1500</span>
                   </p>
                 </div>
 
@@ -177,7 +183,9 @@ export default function Roles() {
                     Sales and operations specialists
                   </p>
                   <p className="mt-1 text-base text-[#13201e]/80">
-                    Often fall between <span className="font-semibold">$1200</span> and <span className="font-semibold">$2000</span>
+                    Often fall between{" "}
+                    <span className="font-semibold">$1200</span> and{" "}
+                    <span className="font-semibold">$2000</span>
                   </p>
                 </div>
 
@@ -186,7 +194,8 @@ export default function Roles() {
                     Advanced performance and technical roles
                   </p>
                   <p className="mt-1 text-base text-[#13201e]/80">
-                    Can range up to <span className="font-semibold">$3000</span> depending on skill depth and scope
+                    Can range up to <span className="font-semibold">$3000</span>{" "}
+                    depending on skill depth and scope
                   </p>
                 </div>
               </div>
@@ -218,7 +227,10 @@ export default function Roles() {
                       </div>
 
                       <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white/35">
-                        <Icon className="h-7 w-7 text-[#13201e]/85" strokeWidth={1.8} />
+                        <Icon
+                          className="h-7 w-7 text-[#13201e]/85"
+                          strokeWidth={1.8}
+                        />
                       </div>
                     </div>
 
