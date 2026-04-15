@@ -18,16 +18,10 @@ export default function DecorativeSidebars({
   onJoinAsCandidate,
 }: DecorativeSidebarsProps) {
   const { toast } = useToast();
-  const scrollToContact = () => {
-    const element = document.getElementById("contact");
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-    }
-  };
 
-  // updated email copy behavior
   const copyEmailToClipboard = async () => {
     const email = "info@vitatalent.co";
+
     try {
       await navigator.clipboard.writeText(email);
       toast({
@@ -43,39 +37,37 @@ export default function DecorativeSidebars({
     }
   };
 
-  // WhatsApp number (international format, no '+' or dashes)
-  const whatsappNumberRaw = "13604018427"; // +1 360-401-8427
+  const whatsappNumberRaw = "13604018427";
   const whatsappDisplay = "360-401-8427";
   const whatsappLink = `https://wa.me/${whatsappNumberRaw}`;
 
   return (
     <>
-      {/* Left Sidebar - Quick Actions (Contact button removed) */}
       <motion.div
-        className="hidden xl:flex fixed left-0 top-1/2 -translate-y-1/2 z-50 flex-col gap-3 pl-4"
-        initial={{ x: -100, opacity: 0 }}
+        className="hidden xl:flex fixed left-0 top-1/2 -translate-y-1/2 z-50 flex-col gap-4 pl-4"
+        initial={{ x: -120, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
         transition={{ duration: 0.5, delay: 0.5 }}
       >
-        <div className="flex flex-col gap-2 bg-card/80 backdrop-blur-sm rounded-r-lg border border-border/50 p-2 shadow-lg">
+        <div className="flex flex-col gap-3 rounded-r-[20px] border border-border/50 bg-card/90 p-3 shadow-[0_18px_45px_rgba(0,0,0,0.12)] backdrop-blur-sm">
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
                 size="icon"
                 variant="ghost"
-                className="hover-elevate"
+                className="h-16 w-16 rounded-2xl hover-elevate"
                 onClick={onHireTalent}
                 data-testid="sidebar-hire-talent"
               >
-                <Briefcase className="w-5 h-5 text-primary" />
+                <Briefcase className="h-8 w-8 text-primary" />
               </Button>
             </TooltipTrigger>
             <TooltipContent
               side="right"
-              className="bg-primary/95 backdrop-blur-sm text-primary-foreground border-primary/50 shadow-lg"
+              className="border-primary/50 bg-primary/95 text-primary-foreground shadow-lg backdrop-blur-sm"
             >
               <p className="font-medium">Hire Talent</p>
-              <p className="text-xs opacity-90 mt-0.5">
+              <p className="mt-0.5 text-xs opacity-90">
                 Find the perfect candidate
               </p>
             </TooltipContent>
@@ -86,19 +78,19 @@ export default function DecorativeSidebars({
               <Button
                 size="icon"
                 variant="ghost"
-                className="hover-elevate"
+                className="h-16 w-16 rounded-2xl hover-elevate"
                 onClick={onJoinAsCandidate}
                 data-testid="sidebar-join-candidate"
               >
-                <UserPlus className="w-5 h-5 text-primary" />
+                <UserPlus className="h-8 w-8 text-primary" />
               </Button>
             </TooltipTrigger>
             <TooltipContent
               side="right"
-              className="bg-primary/95 backdrop-blur-sm text-primary-foreground border-primary/50 shadow-lg"
+              className="border-primary/50 bg-primary/95 text-primary-foreground shadow-lg backdrop-blur-sm"
             >
               <p className="font-medium">Join as Candidate</p>
-              <p className="text-xs opacity-90 mt-0.5">
+              <p className="mt-0.5 text-xs opacity-90">
                 Start your career journey
               </p>
             </TooltipContent>
@@ -106,17 +98,15 @@ export default function DecorativeSidebars({
         </div>
       </motion.div>
 
-      {/* Right Sidebar - Contact Info (phone -> WhatsApp; email unchanged) */}
       <motion.div
-        className="hidden xl:flex fixed right-0 top-1/2 -translate-y-1/2 z-50 flex-col gap-3 pr-4"
-        initial={{ x: 100, opacity: 0 }}
+        className="hidden xl:flex fixed right-0 top-1/2 -translate-y-1/2 z-50 flex-col gap-4 pr-4"
+        initial={{ x: 120, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
         transition={{ duration: 0.5, delay: 0.5 }}
       >
-        <div className="flex flex-col gap-2 bg-card/80 backdrop-blur-sm rounded-l-lg border border-border/50 p-2 shadow-lg">
+        <div className="flex flex-col gap-3 rounded-l-[20px] border border-border/50 bg-card/90 p-3 shadow-[0_18px_45px_rgba(0,0,0,0.12)] backdrop-blur-sm">
           <Tooltip>
             <TooltipTrigger asChild>
-              {/* WhatsApp link opens in a new tab/window; wa.me works for mobile and desktop */}
               <a
                 href={whatsappLink}
                 target="_blank"
@@ -124,17 +114,21 @@ export default function DecorativeSidebars({
                 aria-label={`Chat on WhatsApp ${whatsappDisplay}`}
                 data-testid="sidebar-phone"
               >
-                <Button size="icon" variant="ghost" className="hover-elevate">
-                  <Phone className="w-5 h-5 text-primary" />
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="h-16 w-16 rounded-2xl hover-elevate"
+                >
+                  <Phone className="h-8 w-8 text-primary" />
                 </Button>
               </a>
             </TooltipTrigger>
             <TooltipContent
               side="left"
-              className="bg-primary/95 backdrop-blur-sm text-primary-foreground border-primary/50 shadow-lg"
+              className="border-primary/50 bg-primary/95 text-primary-foreground shadow-lg backdrop-blur-sm"
             >
               <p className="font-medium">WhatsApp</p>
-              <p className="text-xs opacity-90 mt-0.5">
+              <p className="mt-0.5 text-xs opacity-90">
                 Chat with our team: {whatsappDisplay}
               </p>
             </TooltipContent>
@@ -145,19 +139,19 @@ export default function DecorativeSidebars({
               <Button
                 size="icon"
                 variant="ghost"
-                className="hover-elevate"
+                className="h-16 w-16 rounded-2xl hover-elevate"
                 onClick={copyEmailToClipboard}
                 data-testid="sidebar-email"
               >
-                <Mail className="w-5 h-5 text-primary" />
+                <Mail className="h-8 w-8 text-primary" />
               </Button>
             </TooltipTrigger>
             <TooltipContent
               side="left"
-              className="bg-primary/95 backdrop-blur-sm text-primary-foreground border-primary/50 shadow-lg"
+              className="border-primary/50 bg-primary/95 text-primary-foreground shadow-lg backdrop-blur-sm"
             >
               <p className="font-medium">Email Us</p>
-              <p className="text-xs opacity-90 mt-0.5">Copy email address</p>
+              <p className="mt-0.5 text-xs opacity-90">Copy email address</p>
             </TooltipContent>
           </Tooltip>
         </div>
