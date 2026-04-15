@@ -79,7 +79,7 @@ const oneTimePlans: OneTimePlan[] = [
   },
 ];
 
-const subscriptionPlans: SubscriptionPlan[] = [
+const subscriptionPlans: OneTimePlan[] = [
   {
     name: "One Hire",
     price: "$1000",
@@ -175,7 +175,7 @@ function PricingCard({
           </h3>
         </div>
 
-        <div className="rounded-2xl bg-[#F3F7F4] p-3">
+        <div className="shrink-0 rounded-2xl bg-[#F3F7F4] p-3">
           {isCustom ? (
             <Handshake className="h-6 w-6 text-[#197647]" strokeWidth={1.9} />
           ) : (
@@ -197,8 +197,8 @@ function PricingCard({
 
       <div className="mt-8 space-y-4">
         {features.map((feature) => (
-          <div key={feature} className="flex gap-3">
-            <div className="mt-1 rounded-full bg-[#DEE9E3] p-1">
+          <div key={feature} className="flex items-start gap-3">
+            <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#DEE9E3]">
               <Check className="h-3.5 w-3.5 text-[#197647]" strokeWidth={3} />
             </div>
             <p className="text-sm leading-7 text-[#13201e]/78">{feature}</p>
