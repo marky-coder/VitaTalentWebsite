@@ -3,6 +3,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import DecorativeSidebars from "@/components/DecorativeSidebars";
 import Home from "@/pages/Home";
 import NotFound from "@/pages/not-found";
 import Schedule from "@/pages/Schedule";
@@ -37,10 +38,22 @@ export default function App() {
     document.documentElement.style.scrollBehavior = "smooth";
   }, []);
 
+  const handleHireTalent = () => {
+    window.location.href = "/hire";
+  };
+
+  const handleJoinAsCandidate = () => {
+    window.location.href = "/join";
+  };
+
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
+        <DecorativeSidebars
+          onHireTalent={handleHireTalent}
+          onJoinAsCandidate={handleJoinAsCandidate}
+        />
         <Router />
       </TooltipProvider>
     </QueryClientProvider>
