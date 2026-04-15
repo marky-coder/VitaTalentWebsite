@@ -70,6 +70,47 @@ const steps: Step[] = [
   },
 ];
 
+type ProcessTileProps = {
+  step: Step;
+  index: number;
+  visible: boolean;
+};
+
+function ProcessTile({ step, index, visible }: ProcessTileProps) {
+  const Icon = step.icon;
+  const baseDelay = index * 90;
+
+  return (
+    <article
+      data-step-index={index}
+      className={`workflow-tile group flex min-h-[320px] flex-col rounded-[28px] border border-black/5 bg-[#C6D8CE] p-7 shadow-[0_20px_60px_rgba(0,0,0,0.06)] transition-all duration-700 ease-out md:min-h-[340px] md:p-8 ${
+        visible ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"
+      } hover:-translate-y-2 hover:shadow-[0_24px_70px_rgba(0,0,0,0.1)]`}
+      style={{ transitionDelay: visible ? `${baseDelay}ms` : "0ms" }}
+    >
+      <div className="mb-8 flex items-start justify-between">
+        <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-[#315545] shadow-md">
+          <span className="text-xl font-bold">{step.number}</span>
+        </div>
+
+        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white/35">
+          <Icon className="h-7 w-7 text-[#13201e]/85" strokeWidth={1.8} />
+        </div>
+      </div>
+
+      <div className="flex flex-1 flex-col">
+        <h3 className="mb-4 max-w-[16rem] text-2xl font-bold leading-tight text-[#13201e]">
+          {step.title}
+        </h3>
+
+        <p className="text-base leading-8 text-[#13201e]/80">
+          {step.description}
+        </p>
+      </div>
+    </article>
+  );
+}
+
 export default function WorkflowSection() {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const [visibleStates, setVisibleStates] = useState<boolean[]>(
@@ -128,7 +169,7 @@ export default function WorkflowSection() {
 
   return (
     <section
-      className="bg-[#A0C0AF] py-20 md:py-24"
+      className="bg-[#DEE9E3] py-20 md:py-24"
       data-testid="section-workflow"
     >
       <div className="container mx-auto max-w-7xl px-4" ref={rootRef}>
@@ -143,122 +184,64 @@ export default function WorkflowSection() {
         </div>
 
         <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-          {steps.slice(0, 6).map((step, index) => {
-            const Icon = step.icon;
-            const visible = visibleStates[index];
-            const baseDelay = index * 90;
+          {steps.slice(0, 6).map((step, index) => (
+            <ProcessTile
+              key={step.number}
+              step={step}
+              index={index}
+              visible={visibleStates[index]}
+            />
+          ))}
 
-            return (
-              <article
-                key={step.number}
-                data-step-index={index}
-                className={`workflow-tile group flex min-h-[320px] flex-col rounded-[28px] border border-white/10 bg-[#8CB09D] p-7 shadow-[0_20px_60px_rgba(0,0,0,0.12)] transition-all duration-700 ease-out md:min-h-[340px] md:p-8 ${
-                  visible
+          <div className="md:col-span-2 xl:col-span-3">
+            <div className="grid gap-5 md:max-w-[860px] md:grid-cols-2 md:mx-auto">
+              <ProcessTile
+                step={steps[6]}
+                index={6}
+                visible={visibleStates[6]}
+              />
+
+              <aside
+                data-step-index={7}
+                className={`workflow-tile flex min-h-[320px] flex-col justify-between rounded-[28px] border border-black/5 bg-[#F3F7F4] p-7 text-[#13201e] shadow-[0_20px_60px_rgba(0,0,0,0.06)] transition-all duration-700 ease-out md:min-h-[340px] md:p-8 ${
+                  visibleStates[7]
                     ? "translate-y-0 opacity-100"
                     : "translate-y-8 opacity-0"
-                } hover:-translate-y-2 hover:shadow-[0_24px_70px_rgba(0,0,0,0.18)]`}
-                style={{ transitionDelay: visible ? `${baseDelay}ms` : "0ms" }}
+                }`}
+                style={{
+                  transitionDelay: visibleStates[7] ? `${7 * 90}ms` : "0ms",
+                }}
               >
-                <div className="mb-8 flex items-start justify-between">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-[#315545] shadow-lg">
-                    <span className="text-xl font-bold">{step.number}</span>
-                  </div>
-
-                  <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white/20">
-                    <Icon
-                      className="h-7 w-7 text-[#13201e]/85"
-                      strokeWidth={1.8}
-                    />
-                  </div>
-                </div>
-
-                <div className="flex flex-1 flex-col">
-                  <h3 className="mb-4 max-w-[16rem] text-2xl font-bold leading-tight text-[#13201e]">
-                    {step.title}
+                <div>
+                  <h3 className="mb-4 text-3xl font-bold leading-tight md:text-4xl">
+                    Start Hiring With Confidence
                   </h3>
 
-                  <p className="text-base leading-8 text-[#13201e]/85">
-                    {step.description}
+                  <p className="mb-5 text-lg leading-8 text-[#13201e]/80">
+                    From understanding your needs to sourcing, screening,
+                    onboarding, and long-term support, we guide every step of
+                    the process.
+                  </p>
+
+                  <p className="text-base leading-8 text-[#13201e]/75">
+                    With replacement protection and optional insurance coverage,
+                    you get a hiring partner focused on fit, speed, and
+                    long-term success.
                   </p>
                 </div>
-              </article>
-            );
-          })}
 
-          <article
-            data-step-index={6}
-            className={`workflow-tile group flex min-h-[320px] flex-col rounded-[28px] border border-white/10 bg-[#8CB09D] p-7 shadow-[0_20px_60px_rgba(0,0,0,0.12)] transition-all duration-700 ease-out md:min-h-[340px] md:p-8 md:col-span-2 md:max-w-[420px] md:justify-self-center xl:col-span-1 xl:max-w-none ${
-              visibleStates[6]
-                ? "translate-y-0 opacity-100"
-                : "translate-y-8 opacity-0"
-            } hover:-translate-y-2 hover:shadow-[0_24px_70px_rgba(0,0,0,0.18)]`}
-            style={{
-              transitionDelay: visibleStates[6] ? `${6 * 90}ms` : "0ms",
-            }}
-          >
-            <div className="mb-8 flex items-start justify-between">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-[#315545] shadow-lg">
-                <span className="text-xl font-bold">7</span>
-              </div>
-
-              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white/20">
-                <Shield className="h-7 w-7 text-[#13201e]/85" strokeWidth={1.8} />
-              </div>
+                <div className="mt-10">
+                  <a
+                    href="https://vitatalent.co/hire"
+                    className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.18em] text-[#315545] transition-opacity hover:opacity-80"
+                  >
+                    Start Hiring
+                    <ArrowRight className="h-4 w-4" strokeWidth={2.25} />
+                  </a>
+                </div>
+              </aside>
             </div>
-
-            <div className="flex flex-1 flex-col">
-              <h3 className="mb-4 max-w-[16rem] text-2xl font-bold leading-tight text-[#13201e]">
-                Insurance Coverage
-              </h3>
-
-              <p className="text-base leading-8 text-[#13201e]/85">
-                For added peace of mind, you can subscribe to our insurance
-                coverage and gain an unlimited replacement policy. It is an
-                extra layer of protection designed for companies that want more
-                hiring security as they scale.
-              </p>
-            </div>
-          </article>
-
-          <aside
-            data-step-index={7}
-            className={`workflow-tile flex min-h-[320px] flex-col justify-between rounded-[28px] bg-[#dfe8e2] p-7 text-[#13201e] shadow-[0_20px_60px_rgba(0,0,0,0.12)] transition-all duration-700 ease-out md:min-h-[340px] md:col-span-2 md:max-w-[420px] md:justify-self-center md:p-8 xl:col-span-1 xl:max-w-none ${
-              visibleStates[7]
-                ? "translate-y-0 opacity-100"
-                : "translate-y-8 opacity-0"
-            }`}
-            style={{
-              transitionDelay: visibleStates[7] ? `${7 * 90}ms` : "0ms",
-            }}
-          >
-            <div>
-              <h3 className="mb-4 text-3xl font-bold leading-tight md:text-4xl">
-                Start Hiring With Confidence
-              </h3>
-
-              <p className="mb-5 text-lg leading-8 text-[#13201e]/80">
-                From understanding your needs to sourcing, screening,
-                onboarding, and long-term support, we guide every step of the
-                process.
-              </p>
-
-              <p className="text-base leading-8 text-[#13201e]/75">
-                With replacement protection and optional insurance coverage, you
-                get a hiring partner focused on fit, speed, and long-term
-                success.
-              </p>
-            </div>
-
-            <div className="mt-10">
-              <a
-                href="https://vitatalent.co/hire"
-                className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.18em] text-[#315545] transition-opacity hover:opacity-80"
-              >
-                Start Hiring
-                <ArrowRight className="h-4 w-4" strokeWidth={2.25} />
-              </a>
-            </div>
-          </aside>
+          </div>
         </div>
       </div>
     </section>
