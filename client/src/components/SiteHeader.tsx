@@ -13,10 +13,11 @@ type NavItem = {
 };
 
 const navItems: NavItem[] = [
-  { label: "Home", href: "#home" },
-  { label: "About", href: "#about" },
-  { label: "Process", href: "#process" },
-  { label: "Testimonials", href: "#testimonials" },
+  { label: "Home", href: "/" },
+  { label: "About", href: "/#about" },
+  { label: "Process", href: "/#process" },
+  { label: "Testimonials", href: "/#testimonials" },
+  { label: "Roles We Source", href: "/roles" },
   {
     label: "Reviews",
     children: [
@@ -93,7 +94,7 @@ export default function SiteHeader() {
     <header className="sticky top-0 z-50 w-full border-b border-black/5 bg-[#DEE9E3]/95 backdrop-blur">
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <a
-          href="#home"
+          href="/"
           className="shrink-0 text-2xl font-bold tracking-tight text-[#13201e] sm:text-3xl"
         >
           Vita Talent
