@@ -1,5 +1,6 @@
-// client/src/pages/Home.tsx
 import { useState, useEffect } from "react";
+import SiteHeader from "@/components/SiteHeader";
+import SiteFooterNav from "@/components/SiteFooterNav";
 import HeroSection from "@/components/HeroSection";
 import CEOMessageSection from "@/components/CEOMessageSection";
 import WhyGlobalSection from "@/components/WhyGlobalSection";
@@ -17,11 +18,6 @@ export default function Home() {
   const [dialogType, setDialogType] = useState<"hire" | "candidate">("hire");
   const [selectedPack, setSelectedPack] = useState<string | undefined>(undefined);
 
-  /**
-   * NOTE: previously this opened the in-page dialog.
-   * Now it redirects to /hire. If a packId is provided we include it
-   * in the query so you can optionally use it on the /hire page.
-   */
   const handleHireTalent = (packId?: string) => {
     if (packId) {
       const params = new URLSearchParams({ pack: packId });
@@ -31,9 +27,6 @@ export default function Home() {
     }
   };
 
-  /**
-   * Redirect to the join page (instead of opening the dialog)
-   */
   const handleJoinAsCandidate = () => {
     window.location.href = "/join";
   };
@@ -76,13 +69,21 @@ export default function Home() {
 
   return (
     <div className="min-h-screen">
-      <DecorativeSidebars onHireTalent={() => handleHireTalent()} onJoinAsCandidate={handleJoinAsCandidate} />
-      <div id="hero">
-        <HeroSection onHireTalent={() => handleHireTalent()} onJoinAsCandidate={handleJoinAsCandidate} />
+      <SiteHeader />
+
+      <DecorativeSidebars
+        onHireTalent={() => handleHireTalent()}
+        onJoinAsCandidate={handleJoinAsCandidate}
+      />
+
+      <div id="home">
+        <HeroSection
+          onHireTalent={() => handleHireTalent()}
+          onJoinAsCandidate={handleJoinAsCandidate}
+        />
       </div>
 
-      {/* NEW: CEO message inserted between the hero (logos/socials) and Why Global */}
-      <div id="ceo-message">
+      <div id="about">
         <CEOMessageSection />
       </div>
 
@@ -103,14 +104,21 @@ export default function Home() {
       <TeamSection />
 
       <div id="contact">
-        <CTASection onHireTalent={() => handleHireTalent()} onJoinAsCandidate={handleJoinAsCandidate} />
+        <CTASection
+          onHireTalent={() => handleHireTalent()}
+          onJoinAsCandidate={handleJoinAsCandidate}
+        />
       </div>
 
+      <SiteFooterNav />
       <Footer />
 
-      {/* keep the dialog component so older deep-links or other parts of the app
-          that rely on it continue to function (the dialog isn't used by the buttons anymore) */}
-      <InquiryDialog open={dialogOpen} onOpenChange={setDialogOpen} type={dialogType} selectedPack={selectedPack} />
+      <InquiryDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        type={dialogType}
+        selectedPack={selectedPack}
+      />
     </div>
   );
 }
