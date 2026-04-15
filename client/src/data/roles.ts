@@ -140,7 +140,7 @@ export const roles: RoleData[] = [
         ],
       },
       {
-        name: "South Africa",
+        name: "Egypt",
         salary: 1100,
         why: [
           "Strong spoken English and professional communication standards.",
