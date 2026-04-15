@@ -11,6 +11,7 @@ import Terms from "@/pages/Terms";
 import Hire from "@/pages/Hire";
 import Join from "@/pages/Join";
 import Roles from "@/pages/Roles";
+import RoleDetail from "@/pages/RoleDetail";
 import { useEffect } from "react";
 
 function Router() {
@@ -23,6 +24,7 @@ function Router() {
       <Route path="/hire" component={Hire} />
       <Route path="/join" component={Join} />
       <Route path="/roles" component={Roles} />
+      <Route path="/roles/:slug" component={RoleDetail} />
       <Route component={NotFound} />
     </Switch>
   );
