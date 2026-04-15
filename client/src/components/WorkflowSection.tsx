@@ -128,22 +128,22 @@ export default function WorkflowSection() {
 
   return (
     <section
-      className="bg-[#005f5b] py-20 md:py-24"
+      className="bg-[#A0C0AF] py-20 md:py-24"
       data-testid="section-workflow"
     >
       <div className="container mx-auto max-w-7xl px-4" ref={rootRef}>
         <div className="mx-auto mb-14 max-w-3xl text-center md:mb-16">
-          <h2 className="mb-4 text-4xl font-bold tracking-tight text-white md:text-5xl">
+          <h2 className="mb-4 text-4xl font-bold tracking-tight text-[#13201e] md:text-5xl">
             Our Process
           </h2>
-          <p className="text-base font-medium leading-7 text-white/80 md:text-lg">
+          <p className="text-base font-medium leading-7 text-[#13201e]/80 md:text-lg">
             A proven approach to connecting exceptional talent with outstanding
             opportunities.
           </p>
         </div>
 
         <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-          {steps.map((step, index) => {
+          {steps.slice(0, 6).map((step, index) => {
             const Icon = step.icon;
             const visible = visibleStates[index];
             const baseDelay = index * 90;
@@ -152,7 +152,7 @@ export default function WorkflowSection() {
               <article
                 key={step.number}
                 data-step-index={index}
-                className={`workflow-tile group flex min-h-[320px] flex-col rounded-[28px] border border-white/8 bg-[#006d68] p-7 shadow-[0_20px_60px_rgba(0,0,0,0.12)] transition-all duration-700 ease-out md:min-h-[340px] md:p-8 ${
+                className={`workflow-tile group flex min-h-[320px] flex-col rounded-[28px] border border-white/10 bg-[#8CB09D] p-7 shadow-[0_20px_60px_rgba(0,0,0,0.12)] transition-all duration-700 ease-out md:min-h-[340px] md:p-8 ${
                   visible
                     ? "translate-y-0 opacity-100"
                     : "translate-y-8 opacity-0"
@@ -160,21 +160,24 @@ export default function WorkflowSection() {
                 style={{ transitionDelay: visible ? `${baseDelay}ms` : "0ms" }}
               >
                 <div className="mb-8 flex items-start justify-between">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-[#006d68] shadow-lg">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-[#315545] shadow-lg">
                     <span className="text-xl font-bold">{step.number}</span>
                   </div>
 
-                  <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white/10">
-                    <Icon className="h-7 w-7 text-white/85" strokeWidth={1.8} />
+                  <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white/20">
+                    <Icon
+                      className="h-7 w-7 text-[#13201e]/85"
+                      strokeWidth={1.8}
+                    />
                   </div>
                 </div>
 
                 <div className="flex flex-1 flex-col">
-                  <h3 className="mb-4 max-w-[16rem] text-2xl font-bold leading-tight text-white">
+                  <h3 className="mb-4 max-w-[16rem] text-2xl font-bold leading-tight text-[#13201e]">
                     {step.title}
                   </h3>
 
-                  <p className="text-base leading-8 text-white/88">
+                  <p className="text-base leading-8 text-[#13201e]/85">
                     {step.description}
                   </p>
                 </div>
@@ -182,17 +185,50 @@ export default function WorkflowSection() {
             );
           })}
 
+          <article
+            data-step-index={6}
+            className={`workflow-tile group flex min-h-[320px] flex-col rounded-[28px] border border-white/10 bg-[#8CB09D] p-7 shadow-[0_20px_60px_rgba(0,0,0,0.12)] transition-all duration-700 ease-out md:min-h-[340px] md:p-8 md:col-span-2 md:max-w-[420px] md:justify-self-center xl:col-span-1 xl:max-w-none ${
+              visibleStates[6]
+                ? "translate-y-0 opacity-100"
+                : "translate-y-8 opacity-0"
+            } hover:-translate-y-2 hover:shadow-[0_24px_70px_rgba(0,0,0,0.18)]`}
+            style={{
+              transitionDelay: visibleStates[6] ? `${6 * 90}ms` : "0ms",
+            }}
+          >
+            <div className="mb-8 flex items-start justify-between">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-[#315545] shadow-lg">
+                <span className="text-xl font-bold">7</span>
+              </div>
+
+              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white/20">
+                <Shield className="h-7 w-7 text-[#13201e]/85" strokeWidth={1.8} />
+              </div>
+            </div>
+
+            <div className="flex flex-1 flex-col">
+              <h3 className="mb-4 max-w-[16rem] text-2xl font-bold leading-tight text-[#13201e]">
+                Insurance Coverage
+              </h3>
+
+              <p className="text-base leading-8 text-[#13201e]/85">
+                For added peace of mind, you can subscribe to our insurance
+                coverage and gain an unlimited replacement policy. It is an
+                extra layer of protection designed for companies that want more
+                hiring security as they scale.
+              </p>
+            </div>
+          </article>
+
           <aside
-            data-step-index={steps.length}
-            className={`workflow-tile flex min-h-[320px] flex-col justify-between rounded-[28px] bg-[#dfe8e2] p-7 text-[#13201e] shadow-[0_20px_60px_rgba(0,0,0,0.12)] transition-all duration-700 ease-out md:min-h-[340px] md:p-8 ${
-              visibleStates[steps.length]
+            data-step-index={7}
+            className={`workflow-tile flex min-h-[320px] flex-col justify-between rounded-[28px] bg-[#dfe8e2] p-7 text-[#13201e] shadow-[0_20px_60px_rgba(0,0,0,0.12)] transition-all duration-700 ease-out md:min-h-[340px] md:col-span-2 md:max-w-[420px] md:justify-self-center md:p-8 xl:col-span-1 xl:max-w-none ${
+              visibleStates[7]
                 ? "translate-y-0 opacity-100"
                 : "translate-y-8 opacity-0"
             }`}
             style={{
-              transitionDelay: visibleStates[steps.length]
-                ? `${steps.length * 90}ms`
-                : "0ms",
+              transitionDelay: visibleStates[7] ? `${7 * 90}ms` : "0ms",
             }}
           >
             <div>
@@ -213,9 +249,14 @@ export default function WorkflowSection() {
               </p>
             </div>
 
-            <div className="mt-10 inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.18em] text-[#006d68]">
-              Explore the process
-              <ArrowRight className="h-4 w-4" strokeWidth={2.25} />
+            <div className="mt-10">
+              <a
+                href="https://vitatalent.co/hire"
+                className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.18em] text-[#315545] transition-opacity hover:opacity-80"
+              >
+                Start Hiring
+                <ArrowRight className="h-4 w-4" strokeWidth={2.25} />
+              </a>
             </div>
           </aside>
         </div>
