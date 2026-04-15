@@ -12,6 +12,7 @@ import Hire from "@/pages/Hire";
 import Join from "@/pages/Join";
 import Roles from "@/pages/Roles";
 import RoleDetail from "@/pages/RoleDetail";
+import PricingForYou from "@/pages/PricingForYou";
 import { useEffect } from "react";
 
 function Router() {
@@ -25,6 +26,7 @@ function Router() {
       <Route path="/join" component={Join} />
       <Route path="/roles" component={Roles} />
       <Route path="/roles/:slug" component={RoleDetail} />
+      <Route path="/our-pricing-for-you" component={PricingForYou} />
       <Route component={NotFound} />
     </Switch>
   );
