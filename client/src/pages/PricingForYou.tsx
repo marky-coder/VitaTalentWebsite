@@ -22,14 +22,6 @@ type OneTimePlan = {
   featured?: boolean;
 };
 
-type SubscriptionPlan = {
-  name: string;
-  price: string;
-  description: string;
-  features: string[];
-  featured?: boolean;
-};
-
 const oneTimePlans: OneTimePlan[] = [
   {
     name: "One Hire",
@@ -233,10 +225,6 @@ export default function PricingForYou() {
         <section className="bg-[#315545] text-white">
           <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
             <div className="mx-auto max-w-4xl text-center">
-              <div className="mb-5 inline-flex items-center rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-semibold text-white/90">
-                Private pricing page
-              </div>
-
               <h1 className="text-4xl font-bold leading-tight tracking-tight md:text-6xl">
                 Flexible pricing built around how you want to hire
               </h1>
