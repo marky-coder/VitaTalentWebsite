@@ -27,7 +27,7 @@ export type RoleFaq = {
 };
 
 export type RoleRegion = {
-  name: "Philippines" | "Latin America" | "South Africa";
+  name: "Philippines" | "Latin America" | "Egypt";
   salary: number;
   why: string[];
 };
@@ -238,7 +238,7 @@ export const roles: RoleData[] = [
         ],
       },
       {
-        name: "South Africa",
+        name: "Egypt",
         salary: 1200,
         why: [
           "Professional communication and good call presence for customer-facing work.",
@@ -336,7 +336,7 @@ export const roles: RoleData[] = [
         ],
       },
       {
-        name: "South Africa",
+        name: "Egypt",
         salary: 1700,
         why: [
           "Strong professional communication and polished customer-facing presence.",
@@ -434,7 +434,7 @@ export const roles: RoleData[] = [
         ],
       },
       {
-        name: "South Africa",
+        name: "Egypt",
         salary: 1750,
         why: [
           "Professional client-facing communication with strong written clarity.",
@@ -532,7 +532,7 @@ export const roles: RoleData[] = [
         ],
       },
       {
-        name: "South Africa",
+        name: "Egypt",
         salary: 1400,
         why: [
           "Strong written communication and professional stakeholder handling.",
@@ -630,7 +630,7 @@ export const roles: RoleData[] = [
         ],
       },
       {
-        name: "South Africa",
+        name: "Egypt",
         salary: 1400,
         why: [
           "Strong phone and written communication quality.",
@@ -728,7 +728,7 @@ export const roles: RoleData[] = [
         ],
       },
       {
-        name: "South Africa",
+        name: "Egypt",
         salary: 1350,
         why: [
           "Strong written communication and polished support presence.",
@@ -826,7 +826,7 @@ export const roles: RoleData[] = [
         ],
       },
       {
-        name: "South Africa",
+        name: "Egypt",
         salary: 2200,
         why: [
           "Strong professional communication and analytical support potential.",
@@ -924,7 +924,7 @@ export const roles: RoleData[] = [
         ],
       },
       {
-        name: "South Africa",
+        name: "Egypt",
         salary: 1700,
         why: [
           "Good design quality with strong written communication.",
@@ -1022,7 +1022,7 @@ export const roles: RoleData[] = [
         ],
       },
       {
-        name: "South Africa",
+        name: "Egypt",
         salary: 1450,
         why: [
           "Professional communication and solid creative support potential.",
@@ -1120,7 +1120,7 @@ export const roles: RoleData[] = [
         ],
       },
       {
-        name: "South Africa",
+        name: "Egypt",
         salary: 1550,
         why: [
           "Good professional communication with solid systems-oriented support potential.",
