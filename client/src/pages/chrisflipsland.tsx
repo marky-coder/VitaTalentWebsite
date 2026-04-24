@@ -81,27 +81,19 @@ export default function ChrisFlipsLand() {
           </p>
         </div>
 
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            padding: "28px 0",
-          }}
-        >
+        <div style={{ display: "flex", justifyContent: "center", padding: "28px 0" }}>
           <div
             style={{
-              width: "100%",
-              maxWidth: 760,
+              width: 560,
               borderRadius: 12,
               background: "#fff",
-              boxShadow: "0 30px 80px rgba(2,6,23,0.12)",
+              boxShadow: "0 30px 80px rgba(2,6,23,0.6)",
               overflow: "hidden",
-              padding: 12,
             }}
           >
             <iframe
               src="/widget/survey/wnrtoju0i0bzUmDhg6QT"
-              style={{ border: "none", width: "100%", minHeight: "900px" }}
+              style={{ border: "none", width: "100%", height: "760px", display: "block" }}
               scrolling="no"
               id="wnrtoju0i0bzUmDhg6QT"
               title="survey"
