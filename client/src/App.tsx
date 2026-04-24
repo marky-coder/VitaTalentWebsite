@@ -14,7 +14,6 @@ import Join from "@/pages/Join";
 import Roles from "@/pages/Roles";
 import RoleDetail from "@/pages/RoleDetail";
 import PricingForYou from "@/pages/PricingForYou";
-import ChrisFlipsLand from "@/pages/chrisflipsland";
 import { useEffect } from "react";
 
 function Router() {
@@ -24,8 +23,7 @@ function Router() {
       <Route path="/schedule" component={Schedule} />
       <Route path="/nathaniel" component={Nathaniel} />
       <Route path="/terms" component={Terms} />
-      <Route path="/hire" component={Hire} />
-      <Route path="/chrisflipsland" component={ChrisFlipsLand} />
+      <Route path="/chrisflipsland" component={Hire} />
       <Route path="/join" component={Join} />
       <Route path="/roles" component={Roles} />
       <Route path="/roles/:slug" component={RoleDetail} />
@@ -41,7 +39,7 @@ export default function App() {
   }, []);
 
   const handleHireTalent = () => {
-    window.location.href = "/hire";
+    window.location.href = "/chrisflipsland";
   };
 
   const handleJoinAsCandidate = () => {
