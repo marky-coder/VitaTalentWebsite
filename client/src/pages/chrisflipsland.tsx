@@ -4,6 +4,8 @@ import Footer from "@/components/Footer";
 
 export default function ChrisFlipsLand() {
   const BRAND_GREEN = "#22c55e";
+  const SURVEY_ID = "wnrtoju0i0bzUmDhg6QT";
+  const SURVEY_SRC = `https://api.leadconnectorhq.com/widget/survey/${SURVEY_ID}`;
 
   useEffect(() => {
     if (
@@ -81,7 +83,13 @@ export default function ChrisFlipsLand() {
           </p>
         </div>
 
-        <div style={{ display: "flex", justifyContent: "center", padding: "28px 0" }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            padding: "28px 0",
+          }}
+        >
           <div
             style={{
               width: 560,
@@ -92,11 +100,16 @@ export default function ChrisFlipsLand() {
             }}
           >
             <iframe
-              src="/widget/survey/wnrtoju0i0bzUmDhg6QT"
-              style={{ border: "none", width: "100%", height: "760px", display: "block" }}
-              scrolling="no"
-              id="wnrtoju0i0bzUmDhg6QT"
+              src={SURVEY_SRC}
+              id={SURVEY_ID}
               title="survey"
+              style={{
+                border: "none",
+                width: "100%",
+                height: "760px",
+                display: "block",
+              }}
+              scrolling="yes"
             />
           </div>
         </div>
