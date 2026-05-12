@@ -9,6 +9,7 @@ import partner3 from "@assets/IMG_6615.png";
 import partner4 from "@assets/IMG_6616.png";
 import partner5 from "@assets/IMG_6618.png";
 import partner6 from "@assets/Land Growth Capital.png";
+import partner7 from "@assets/finesteadland logo.png";
 
 import { Link } from "wouter";
 import ClientLogoMarquee from "@/components/ClientLogoMarquee";
@@ -26,6 +27,7 @@ export default function HeroSection({ onHireTalent, onJoinAsCandidate }: HeroSec
     partner5,
     partner3,
     partner4,
+    partner7,
   ];
 
   // Utility classes used for the "jump" animation and motion-reduce support:
