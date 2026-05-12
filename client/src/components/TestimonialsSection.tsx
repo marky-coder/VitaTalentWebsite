@@ -15,6 +15,7 @@ import videoDaniel from "@assets/Daniel Slobodyan - Land Creative Solutions.mp4"
 import videoZach from "@assets/Zach Nahas - CEO of Clear Path Land.mp4";
 import videoJoshPierce from "@assets/Josh Pierce - CEO of Higher Ground Land.mp4";
 import videoFrancisco from "@assets/Francisco Testimonial.mp4";
+import videoFinesteadland from "@assets/Finesteadland Video.mp4";
 
 import videoXimena from "@assets/WhatsApp Video 2025-11-25 at 10.45.54.mp4";
 import videoHesham from "@assets/WhatsApp Video 2025-11-25 at 10.46.13.mp4";
@@ -37,6 +38,7 @@ const clientVideoTestimonials = [
   { id: 5, name: "Zach Nahas", role: "CEO of Clear Path Land", src: videoZach },
   { id: 6, name: "Josh Pierce", role: "CEO of Higher Ground Land", src: videoJoshPierce },
   { id: 7, name: "Francisco", role: "CEO, City on a Hill", src: videoFrancisco },
+  { id: 8, name: "Finesteadland", role: "Client", src: videoFinesteadland },
 ];
 
 const candidateVideoTestimonials = [
