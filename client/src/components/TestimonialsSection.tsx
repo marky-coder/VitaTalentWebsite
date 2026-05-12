@@ -1,65 +1,44 @@
 // client/src/components/TestimonialsSection.tsx
-import { Card } from "@/components/ui/card";
 import React, { useEffect, useRef, useState } from "react";
 import { Play, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Play, Star, X } from "lucide-react";
 import { SiTrustpilot, SiGoogle } from "react-icons/si";
-import { useState, useEffect } from "react";
 
-/**
- * Imported videos — exact filenames as uploaded to attached_assets / @assets
- * (If your build fails due to spaces, rename the files and update the imports.)
- */
-import videoXimena from "@assets/WhatsApp Video 2025-11-25 at 10.45.54.mp4";
-import videoHesham from "@assets/WhatsApp Video 2025-11-25 at 10.46.13.mp4";
-import videoSherif from "@assets/WhatsApp Video 2025-11-25 at 10.47.09.mp4";
-
-/* Client video testimonials (Kevin & Sam) */
 /* =========================
   Video assets (your existing imports)
   ========================= */
+import videoRonFine from "@assets/Finesteadland Video.mp4";
 import videoKevin from "@assets/Kevin's Testimonial.mp4";
 import videoSam from "@assets/Sam's Testimonial .mov";
-
-/* New client testimonial video supplied earlier */
 import videoNewClient from "@assets/4030993537cf451ca9872ad031c744b9-1764688585496.mp4";
 import videoDaniel from "@assets/Daniel Slobodyan - Land Creative Solutions.mp4";
 import videoZach from "@assets/Zach Nahas - CEO of Clear Path Land.mp4";
 import videoJoshPierce from "@assets/Josh Pierce - CEO of Higher Ground Land.mp4";
+import videoFrancisco from "@assets/Francisco Testimonial.mp4";
 
-/* Candidate videos you previously added */
 import videoXimena from "@assets/WhatsApp Video 2025-11-25 at 10.45.54.mp4";
 import videoHesham from "@assets/WhatsApp Video 2025-11-25 at 10.46.13.mp4";
 import videoSherif from "@assets/WhatsApp Video 2025-11-25 at 10.47.09.mp4";
 import videoRuben from "@assets/Ruben.mp4";
 import videoAshleyMark from "@assets/Ashley Mark.mp4";
 import videoMary from "@assets/Mary.mp4";
-
-/* NEW: the two files you just supplied (add these exact files to @assets / attached_assets) */
-import videoDaniel from "@assets/Daniel Slobodyan - Land Creative Solutions.mp4";
-import videoZach from "@assets/Zach Nahas - CEO of Clear Path Land.mp4";
-
-/* NEW: the two candidates requested earlier */
 import videoHadeer from "@assets/Hadeer Ezz.mp4";
 import videoMohamed from "@assets/Mohamed Sobhy.mp4";
-
-/* NEW: Nina Hadidi (uploaded) */
 import videoNina from "@assets/Nina Hadidi - Acquisition Manager.mp4";
 
-/* NEW: Josh Pierce (added client testimonial) */
-import videoJoshPierce from "@assets/Josh Pierce - CEO of Higher Ground Land.mp4";
 /* =========================
   Data arrays (videos + written testimonials)
   ========================= */
 const clientVideoTestimonials = [
-  { id: 1, name: "Kevin", role: "White Stone", src: videoKevin },
-  { id: 2, name: "Sam", role: "Private Realtor", src: videoSam },
-  { id: 3, name: "Nick Staley", role: "Land Growth Capital", src: videoNewClient },
-  { id: 4, name: "Daniel Slobodyan", role: "Land Creative Solutions", src: videoDaniel },
-  { id: 5, name: "Zach Nahas", role: "CEO of Clear Path Land", src: videoZach },
-  { id: 6, name: "Josh Pierce", role: "CEO of Higher Ground Land", src: videoJoshPierce },
+  { id: 1, name: "Ron Fine", role: "Owner of Finestead Land", src: videoRonFine },
+  { id: 2, name: "Kevin", role: "White Stone", src: videoKevin },
+  { id: 3, name: "Sam", role: "Private Realtor", src: videoSam },
+  { id: 4, name: "Nick Staley", role: "Land Growth Capital", src: videoNewClient },
+  { id: 5, name: "Daniel Slobodyan", role: "Land Creative Solutions", src: videoDaniel },
+  { id: 6, name: "Zach Nahas", role: "CEO of Clear Path Land", src: videoZach },
+  { id: 7, name: "Josh Pierce", role: "CEO of Higher Ground Land", src: videoJoshPierce },
+  { id: 8, name: "Francisco", role: "CEO, City on a Hill", src: videoFrancisco },
 ];
 
 const candidateVideoTestimonials = [
@@ -98,10 +77,6 @@ const candidateTestimonials = [
   { name: "Noah Fischer", role: "Acquisitions Associate — Placed at Greenridge", quote: "They lined up excellent opportunities and helped me choose the best fit for my career." },
 ];
 
-/**
- * VideoThumbnail: captures a frame from the provided video URL on the client,
- * and returns an <img> with that data URL. Falls back to a subtle placeholder.
- */
 /* =========================
   Marquee CSS (inline)
   - includes pause-on-hover (JS + CSS) and tile hover scale 1.25x
@@ -120,48 +95,16 @@ const marqueeCss = `
   - media box has fixed pixel height and object-fit:cover
   ========================= */
 function VideoThumbnail({ src, alt }: { src: string; alt?: string }) {
-  const [thumb, setThumb] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
   const hiddenVideoRef = useRef<HTMLVideoElement | null>(null);
   const [thumbUrl, setThumbUrl] = useState<string | null>(null);
   const [captureFailed, setCaptureFailed] = useState(false);
 
-useEffect(() => {
-    let cancelled = false;
-    let videoEl: HTMLVideoElement | null = document.createElement("video");
-    videoEl.crossOrigin = "anonymous";
-    videoEl.muted = true;
-    videoEl.playsInline = true;
-    videoEl.preload = "metadata";
-
-    const cleanup = () => {
-      if (videoEl) {
-        try {
-          videoEl.pause();
-          videoEl.src = "";
-          videoEl.load();
-        } catch {
-          /* ignore */
-        }
-        videoEl = null;
-      }
-    };
+  useEffect(() => {
     let mounted = true;
     let fallbackTimer: number | undefined;
 
-    const capture = () => {
-      if (!videoEl) return;
     async function captureFrame(v: HTMLVideoElement) {
-try {
-        const vw = videoEl.videoWidth || 640;
-        const vh = videoEl.videoHeight || 360;
-        const maxW = 1200;
-        let w = vw;
-        let h = vh;
-        if (w > maxW) {
-          h = Math.round((maxW / w) * h);
-          w = maxW;
-        }
+      try {
         const t = Math.min(0.05, (v.duration && v.duration / 10) || 0.05);
         await new Promise<void>((resolve) => {
           const onSeeked = () => { v.removeEventListener("seeked", onSeeked); resolve(); };
@@ -171,60 +114,17 @@ try {
         try { v.pause(); } catch {}
         const width = v.videoWidth || 640;
         const height = v.videoHeight || Math.round((width * 9) / 16);
-const canvas = document.createElement("canvas");
-        canvas.width = w;
-        canvas.height = h;
+        const canvas = document.createElement("canvas");
         canvas.width = width; canvas.height = height;
-const ctx = canvas.getContext("2d");
-if (!ctx) throw new Error("No canvas context");
-        ctx.drawImage(videoEl as HTMLVideoElement, 0, 0, w, h);
-        const data = canvas.toDataURL("image/jpeg", 0.78);
-        if (!cancelled) {
-          setThumb(data);
-          setLoading(false);
-        }
+        const ctx = canvas.getContext("2d");
+        if (!ctx) throw new Error("No canvas context");
         ctx.drawImage(v, 0, 0, width, height);
         const dataUrl = canvas.toDataURL("image/png");
         if (mounted) setThumbUrl(dataUrl);
-} catch {
-        if (!cancelled) {
-          setLoading(false);
-          setThumb(null);
-        }
-        if (mounted) setCaptureFailed(true);
-}
-    };
-
-    const handleLoaded = () => {
-      if (!videoEl) return;
-      try {
-        const seekTime = Math.min(0.5, Math.max(0.0, (videoEl.duration || 0) / 10));
-        const onSeeked = () => {
-          capture();
-          videoEl && videoEl.removeEventListener("seeked", onSeeked);
-        };
-        videoEl.addEventListener("seeked", onSeeked);
-        videoEl.currentTime = seekTime;
       } catch {
-        capture();
+        if (mounted) setCaptureFailed(true);
       }
-    };
-
-    const fallbackTimer = window.setTimeout(() => {
-      if (!cancelled && loading) {
-        try {
-          capture();
-        } catch {
-          setLoading(false);
-        }
-      }
-    }, 2500);
-
-    if (videoEl) {
-      videoEl.addEventListener("loadeddata", handleLoaded, { once: true });
-      videoEl.src = src;
-      videoEl.load();
-}
+    }
 
     const v = hiddenVideoRef.current;
     if (!v) return;
@@ -234,28 +134,23 @@ if (!ctx) throw new Error("No canvas context");
     };
     v.addEventListener("loadeddata", onLoadedData, { once: true });
     try { v.load(); } catch {}
-return () => {
-      cancelled = true;
-      clearTimeout(fallbackTimer);
-      cleanup();
+    return () => {
       mounted = false;
       v.removeEventListener("loadeddata", onLoadedData);
       if (fallbackTimer) window.clearTimeout(fallbackTimer);
-};
-}, [src]);
+    };
+  }, [src]);
 
-  if (thumb) {
-    return <img src={thumb} alt={alt ?? "video thumbnail"} className="w-full h-full object-cover" />;
-  }
   const mediaBoxStyle: React.CSSProperties = {
     width: "100%",
-    height: 320, // reduced so body area is smaller and no big white gap
+    height: 320,
     minHeight: 320,
     maxHeight: 320,
     overflow: "hidden",
     background: "#f6f6f6",
     position: "relative",
   };
+
   const mediaInnerStyle: React.CSSProperties = {
     width: "100%",
     height: "100%",
@@ -263,13 +158,7 @@ return () => {
     objectFit: "cover" as const,
   };
 
-return (
-    <div className="w-full h-full flex items-center justify-center bg-muted text-muted-foreground">
-      <div className="flex flex-col items-center justify-center gap-2">
-        <div className="w-14 h-14 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
-          <Play className="w-6 h-6 ml-0.5" />
-        </div>
-      </div>
+  return (
     <div style={mediaBoxStyle}>
       {thumbUrl ? (
         <img src={thumbUrl} alt={alt ?? "video thumbnail"} style={mediaInnerStyle} />
@@ -293,61 +182,19 @@ return (
           )}
         </>
       )}
-</div>
-);
+    </div>
+  );
 }
 
-/* Client video testimonials (Kevin, Sam, Nick + Daniel + Zach + Josh) */
-const clientVideoTestimonials = [
-  {
-    id: 1,
-    name: "Kevin",
-    role: "White Stone",
-    src: videoKevin,
-  },
-  {
-    id: 2,
-    name: "Sam",
-    role: "Private Realtor",
-    src: videoSam,
-  },
-  {
-    id: 3,
-    name: "Nick Staley",
-    role: "Land Growth Capital",
-    src: videoNewClient,
-  },
-  {
-    id: 4,
-    name: "Daniel Slobodyan",
-    role: "Land Creative Solutions",
-    src: videoDaniel,
-  },
-  {
-    id: 5,
-    name: "Zach Nahas",
-    role: "CEO of Clear Path Land",
-    src: videoZach,
-  },
-  {
-    id: 6,
-    name: "Josh Pierce",
-    role: "CEO of Higher Ground Land",
-    src: videoJoshPierce,
-  },
-];
 /* =========================
-  WrittenTestimonialCard (bigger + restored pale-green styling)
-   - divider is now green
-   - has class 'testimonial-tile' for hover animation
-   - divider is green and tile has hover class
+  WrittenTestimonialCard
   ========================= */
 function WrittenTestimonialCard({ testimonial }: { testimonial: { name: string; role: string; quote: string } }) {
   const cardStyle: React.CSSProperties = {
     padding: 18,
     borderRadius: 8,
     boxSizing: "border-box",
-    background: "linear-gradient(90deg, rgba(236,252,245,0.95), rgba(255,255,255,0.98))", // pale-green
+    background: "linear-gradient(90deg, rgba(236,252,245,0.95), rgba(255,255,255,0.98))",
     border: "1px solid rgba(6,95,70,0.10)",
     color: "rgba(0,0,0,0.85)",
     minHeight: 170,
@@ -359,67 +206,6 @@ function WrittenTestimonialCard({ testimonial }: { testimonial: { name: string; 
   const quoteStyle: React.CSSProperties = { fontSize: 14, lineHeight: 1.4, margin: 0, color: "rgba(0,0,0,0.85)" };
   const metaStyle: React.CSSProperties = { marginTop: 12, paddingTop: 10, borderTop: "2px solid rgba(6,95,70,0.22)", fontSize: 13, color: "#374151" };
 
-/* Candidate video testimonials — existing + previous additions + NEW entries */
-const candidateVideoTestimonials = [
-  {
-    id: 1,
-    name: "Ximena Jimenez",
-    role: "Lead Manager",
-    src: videoXimena,
-  },
-  {
-    id: 2,
-    name: "Sherif Daoud",
-    role: "Acquisition Manager",
-    src: videoSherif,
-  },
-  {
-    id: 3,
-    name: "Hesham Salama",
-    role: "Acquisition Manager",
-    src: videoHesham,
-  },
-  {
-    id: 4,
-    name: "Ruben",
-    role: "Sales Closer",
-    src: videoRuben,
-  },
-  {
-    id: 5,
-    name: "Ashley Mark",
-    role: "Appointment Setter",
-    src: videoAshleyMark,
-  },
-  {
-    id: 6,
-    name: "Mary Jane",
-    role: "Lead Manager",
-    src: videoMary,
-  },
-
-  // NEW two candidates requested:
-  {
-    id: 7,
-    name: "Hadeer Ezz",
-    role: "Acquisition Manager",
-    src: videoHadeer,
-  },
-  {
-    id: 8,
-    name: "Mohamed Sobhy",
-    role: "Land Acquisition Manager",
-    src: videoMohamed,
-  },
-
-  // NEW: Nina Hadidi - Acquisition Manager
-  {
-    id: 9,
-    name: "Nina Hadidi",
-    role: "Acquisition Manager",
-    src: videoNina,
-  },
-];
   return (
     <div className="testimonial-tile" style={cardStyle}>
       <p style={quoteStyle}>{testimonial.quote}</p>
@@ -433,16 +219,12 @@ const candidateVideoTestimonials = [
 
 /* =========================
    TestimonialsMarquee
-   - wrapped in centered container (maxWidth:1200) and clips overflow
-   - pause is controlled via state for robust pause-on-hover
-   TestimonialsMarquee - centered/clipped + JS pause + CSS hover transform
   ========================= */
 function TestimonialsMarquee({ items }: { items: { name: string; role: string; quote: string }[] }) {
   const duplicated = [...items, ...items];
   const [paused, setPaused] = useState(false);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
 
-  // Track style will be adjusted with paused state
   const marqueeWrapperStyle: React.CSSProperties = {
     maxWidth: 1200,
     margin: "0 auto",
@@ -461,26 +243,6 @@ function TestimonialsMarquee({ items }: { items: { name: string; role: string; q
     animationPlayState: paused ? "paused" : "running",
   };
 
-const writtenTestimonials = {
-  clients: [
-    { name: "James Wilson", role: "CTO, InnovateLabs", quote: "Vita Talent found us the perfect engineering team in just 3 weeks. Their process is thorough and professional." },
-    { name: "Lisa Martinez", role: "Founder, StartupHub", quote: "The quality of candidates exceeded our expectations. They truly understand what we need." },
-    { name: "Robert Kim", role: "Operations Manager, ScaleUp Inc", quote: "Working with Vita Talent has transformed how we approach global hiring. Exceptional service." },
-  ],
-  candidates: [
-    { name: "Maria Santos", role: "UX Designer", quote: "Vita Talent helped me land my dream job. They supported me throughout the entire process." },
-    { name: "Ahmed Hassan", role: "Backend Developer", quote: "Professional, caring, and genuinely invested in my success. Highly recommend!" },
-    { name: "Sophie Dubois", role: "Marketing Manager", quote: "They matched me with a company that perfectly aligns with my values and career goals." },
-  ],
-};
-
-/** Utility: chunk an array into rows of size n */
-function chunkRows<T>(arr: T[], size: number) {
-  const rows: T[][] = [];
-  for (let i = 0; i < arr.length; i += size) {
-    rows.push(arr.slice(i, i + size));
-  }
-  return rows;
   return (
     <div
       ref={wrapperRef}
@@ -508,15 +270,8 @@ function chunkRows<T>(arr: T[], size: number) {
   );
 }
 
-export default function TestimonialsSection() {
-  const [activeVideo, setActiveVideo] = useState<string | null>(null);
 /* =========================
   VideoCarousel
-  - track alignItems: 'flex-start'
-   - removed bottom Play button
-   - removed bottom Play button and removed fixed card height
-  - center play icon is a real button that calls onPlay()
-   - reduced card & media height (to remove large empty white area)
   ========================= */
 function VideoCarousel({ videos, onPlay }: { videos: { id: number; name: string; role: string; src: string }[]; onPlay: (src: string) => void; }) {
   const [startIndex, setStartIndex] = useState(0);
@@ -524,14 +279,7 @@ function VideoCarousel({ videos, onPlay }: { videos: { id: number; name: string;
   const viewportRef = useRef<HTMLDivElement | null>(null);
   const [viewportWidth, setViewportWidth] = useState(0);
 
-  // ESC to close
-useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setActiveVideo(null);
-    };
-    if (activeVideo) window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [activeVideo]);
+  useEffect(() => {
     function update() {
       let newItemsPerView = 3;
       if (window.innerWidth < 640) newItemsPerView = 1;
@@ -547,26 +295,13 @@ useEffect(() => {
       const w = viewportRef.current?.clientWidth ?? window.innerWidth;
       setViewportWidth(w);
     }
+
     update();
     window.addEventListener("resize", update);
     return () => window.removeEventListener("resize", update);
   }, [videos.length]);
 
-  // prevent body scroll while modal open
-useEffect(() => {
-    const prev = document.body.style.overflow;
-    if (activeVideo) document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = prev;
-    };
-  }, [activeVideo]);
-
-  // Google Reviews link (GBP)
-  const googleReviewUrl = "https://g.page/r/CXjNZjj4Vu59EBM/review";
-
-  // Prepare rows for candidates and clients
-  const candidateRows = chunkRows(candidateVideoTestimonials, 3);
-  const clientRows = chunkRows(clientVideoTestimonials, 3);
+  useEffect(() => {
     if (!viewportRef.current) return;
     const ro = new ResizeObserver(() => {
       setViewportWidth(viewportRef.current?.clientWidth ?? window.innerWidth);
@@ -581,7 +316,7 @@ useEffect(() => {
   const goNext = () => setStartIndex(s => (s >= maxStart ? 0 : s + 1));
 
   const cardStyle: React.CSSProperties = {
-    height: 480, // reduced from 540 to remove large empty bottom area (media 320 + body ~160)
+    height: 480,
     maxHeight: 480,
     display: "flex",
     flexDirection: "column",
@@ -599,66 +334,7 @@ useEffect(() => {
     boxSizing: "border-box",
   };
 
-return (
-    <section className="py-24 bg-gradient-to-br from-primary/18 via-primary/10 to-background" data-testid="section-testimonials">
-      <div className="container max-w-7xl mx-auto px-4">
-        {/* Header */}
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-foreground mb-4">What Our Clients & Candidates Say</h2>
-          <p className="text-lg font-medium text-muted-foreground">Real stories from businesses and professionals we've helped</p>
-        </div>
-
-        {/* Client Testimonials */}
-        <div>
-          <h3 className="text-2xl font-bold text-foreground mb-6 text-center">Client Testimonials</h3>
-
-          {/* Client video grid — chunk into rows of 3 and center any row with <3 items */}
-          <div className="mb-8">
-            {clientRows.map((row, rowIndex) => {
-              // full row with 3 items
-              if (row.length === 3) {
-                return (
-                  <div key={rowIndex} className="grid md:grid-cols-3 gap-6 mb-6">
-                    {row.map((video) => (
-                      <Card key={video.id} className="relative overflow-hidden group cursor-pointer hover-elevate" onClick={() => setActiveVideo(video.src)} data-testid={`client-video-testimonial-${video.id}`}>
-                        <div className="aspect-video bg-muted relative">
-                          <VideoThumbnail src={video.src} alt={video.name} />
-                          <div className="absolute inset-0 bg-background/60 flex items-center justify-center pointer-events-none">
-                            <div className="w-16 h-16 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
-                              <Play className="w-8 h-8 ml-1" fill="currentColor" />
-                            </div>
-                          </div>
-                        </div>
-                        <div className="p-4">
-                          <p className="font-bold text-foreground">{video.name}</p>
-                          <p className="text-sm font-medium text-muted-foreground">{video.role}</p>
-                        </div>
-                      </Card>
-                    ))}
-                  </div>
-                );
-              }
-
-              // row length 1 or 2 — center them and size to match a row of 3
-              return (
-                <div key={rowIndex} className="flex justify-center mb-6">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full max-w-4xl">
-                    {row.map((video) => (
-                      <Card key={video.id} className="relative overflow-hidden group cursor-pointer hover-elevate" onClick={() => setActiveVideo(video.src)} data-testid={`client-video-testimonial-${video.id}`}>
-                        <div className="aspect-video bg-muted relative">
-                          <VideoThumbnail src={video.src} alt={video.name} />
-                          <div className="absolute inset-0 bg-background/60 flex items-center justify-center pointer-events-none">
-                            <div className="w-16 h-16 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
-                              <Play className="w-8 h-8 ml-1" fill="currentColor" />
-                            </div>
-                          </div>
-                        </div>
-                        <div className="p-4">
-                          <p className="font-bold text-foreground">{video.name}</p>
-                          <p className="text-sm font-medium text-muted-foreground">{video.role}</p>
-                        </div>
-                      </Card>
-                    ))}
+  return (
     <div style={carouselContainerStyle}>
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
         <button aria-label="Previous" onClick={goPrev} style={{ padding: 8, borderRadius: 999, background: "white", border: "1px solid rgba(0,0,0,0.06)" }}>
@@ -666,7 +342,6 @@ return (
         </button>
 
         <div ref={viewportRef} style={{ overflow: "hidden", width: "100%" }}>
-          {/* IMPORTANT: prevent children from stretching to the tallest item */}
           <div style={{ display: "flex", alignItems: "flex-start", width: `${itemWidth * videos.length}px`, transform: `translateX(-${startIndex * itemWidth}px)`, transition: "transform 300ms ease" }}>
             {videos.map(v => (
               <div key={v.id} style={{ flex: `0 0 ${itemWidth}px`, maxWidth: `${itemWidth}px`, boxSizing: "border-box", padding: 12 }}>
@@ -674,7 +349,6 @@ return (
                   <div style={{ width: "100%", height: 320, minHeight: 320, maxHeight: 320, overflow: "hidden", position: "relative", background: "#f6f6f6" }}>
                     <VideoThumbnail src={v.src} alt={v.name} />
 
-                    {/* Center play button: real button that opens modal */}
                     <button
                       aria-label={`Play ${v.name}`}
                       onClick={() => onPlay(v.src)}
@@ -697,94 +371,18 @@ return (
                     >
                       <Play style={{ width: 20, height: 20, color: "white" }} />
                     </button>
-</div>
-                </div>
-              );
-            })}
-          </div>
+                  </div>
 
-          {/* Existing written client testimonials */}
-          <div className="grid md:grid-cols-3 gap-6">
-            {writtenTestimonials.clients.map((testimonial, index) => (
-              <Card key={index} className="p-6 bg-gradient-to-br from-card to-primary/12 border-primary/20" data-testid={`client-testimonial-${index}`}>
-                <div className="flex gap-1 mb-4">
-                  {[...Array(5)].map((_, i) => <Star key={i} className="w-4 h-4 fill-primary text-primary" />)}
-                </div>
-                <p className="text-base font-medium text-foreground mb-4 leading-relaxed">"{testimonial.quote}"</p>
-                <div className="border-t border-border pt-4">
-                  <p className="font-bold text-foreground text-sm">{testimonial.name}</p>
-                  <p className="text-sm font-medium text-muted-foreground">{testimonial.role}</p>
-                </div>
-              </Card>
-                  {/* compact body: no flex:1 so it won't create large whitespace */}
                   <div style={{ padding: 12 }}>
                     <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 6 }}>{v.name}</div>
                     <div style={{ color: "#6b7280", fontSize: 12 }}>{v.role}</div>
-                    {/* "Play" button removed from here by design */}
                   </div>
                 </article>
               </div>
-))}
-</div>
-</div>
+            ))}
+          </div>
+        </div>
 
-        {/* Candidate Testimonials: videos first, then written testimonials */}
-        <div className="space-y-12 mt-12">
-          <div>
-            <h3 className="text-2xl font-bold text-foreground mb-6 text-center">Candidate Testimonials</h3>
-
-            {/* Candidate video rows — render row-by-row so we can center a 2-up final row */}
-            <div className="mb-8 space-y-6">
-              {candidateRows.map((row, rowIndex) => {
-                if (row.length === 3) {
-                  // full row with 3 items
-                  return (
-                    <div key={rowIndex} className="grid md:grid-cols-3 gap-6">
-                      {row.map((video) => (
-                        <Card key={video.id} className="relative overflow-hidden group cursor-pointer hover-elevate" onClick={() => setActiveVideo(video.src)} data-testid={`candidate-video-testimonial-${video.id}`}>
-                          <div className="aspect-video bg-muted relative">
-                            <VideoThumbnail src={video.src} alt={video.name} />
-                            <div className="absolute inset-0 bg-background/60 flex items-center justify-center pointer-events-none">
-                              <div className="w-16 h-16 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
-                                <Play className="w-8 h-8 ml-1" fill="currentColor" />
-                              </div>
-                            </div>
-                          </div>
-                          <div className="p-4">
-                            <p className="font-bold text-foreground">{video.name}</p>
-                            <p className="text-sm font-medium text-muted-foreground">{video.role}</p>
-                          </div>
-                        </Card>
-                      ))}
-                    </div>
-                  );
-                }
-
-                // row length 1 or 2 — center them and size to match a row of 3
-                return (
-                  <div key={rowIndex} className="flex justify-center">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full max-w-4xl">
-                      {row.map((video) => (
-                        <Card key={video.id} className="relative overflow-hidden group cursor-pointer hover-elevate" onClick={() => setActiveVideo(video.src)} data-testid={`candidate-video-testimonial-${video.id}`}>
-                          <div className="aspect-video bg-muted relative">
-                            <VideoThumbnail src={video.src} alt={video.name} />
-                            <div className="absolute inset-0 bg-background/60 flex items-center justify-center pointer-events-none">
-                              <div className="w-16 h-16 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
-                                <Play className="w-8 h-8 ml-1" fill="currentColor" />
-                              </div>
-                            </div>
-                          </div>
-                          <div className="p-4">
-                            <p className="font-bold text-foreground">{video.name}</p>
-                            <p className="text-sm font-medium text-muted-foreground">{video.role}</p>
-                          </div>
-                        </Card>
-                      ))}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
         <button aria-label="Next" onClick={goNext} style={{ padding: 8, borderRadius: 999, background: "white", border: "1px solid rgba(0,0,0,0.06)" }}>
           <ChevronRight style={{ width: 18, height: 18 }} />
         </button>
@@ -793,22 +391,6 @@ return (
   );
 }
 
-            {/* Written candidate testimonials */}
-            <div className="grid md:grid-cols-3 gap-6">
-              {writtenTestimonials.candidates.map((testimonial, index) => (
-                <Card key={index} className="p-6 bg-gradient-to-br from-card to-primary/12 border-primary/20" data-testid={`candidate-testimonial-${index}`}>
-                  <div className="flex gap-1 mb-4">
-                    {[...Array(5)].map((_, i) => <Star key={i} className="w-4 h-4 fill-primary text-primary" />)}
-                  </div>
-                  <p className="text-base font-medium text-foreground mb-4 leading-relaxed">"{testimonial.quote}"</p>
-                  <div className="border-t border-border pt-4">
-                    <p className="font-bold text-foreground text-sm">{testimonial.name}</p>
-                    <p className="text-sm font-medium text-muted-foreground">{testimonial.role}</p>
-                  </div>
-                </Card>
-              ))}
-            </div>
-          </div>
 /* =========================
   Main component
   ========================= */
@@ -829,7 +411,6 @@ export default function TestimonialsSection() {
     marginBottom: 18,
   };
 
-  // Google Reviews link (kept as the g.page you used previously)
   const googleReviewUrl = "https://g.page/r/CXjNZjj4Vu59EBM/review";
   const trustpilotUrl = "https://www.trustpilot.com/review/vitatalent.co";
 
@@ -839,65 +420,19 @@ export default function TestimonialsSection() {
         <div style={{ marginBottom: 56 }}>
           <h2 style={headingStyle}>Client Video Testimonials</h2>
           <VideoCarousel videos={clientVideoTestimonials} onPlay={src => setPlayingSrc(src)} />
-</div>
+        </div>
 
-        {/* NEW: Primary green review buttons BELOW the candidate testimonial cards */}
-        <div className="mt-12 text-center">
-          <p className="text-base font-medium text-muted-foreground mb-4">Read more reviews on</p>
-          <div className="flex items-center justify-center gap-6">
-            {/* Trustpilot - primary green button (same style as Hire Talent) */}
-            <Button size="lg" asChild data-testid="link-trustpilot">
-              <a
-                href="https://www.trustpilot.com/review/vitatalent.co"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2"
-                title="Trustpilot"
-              >
-                <SiTrustpilot className="w-5 h-5" />
-                <span>Trustpilot</span>
-              </a>
-            </Button>
-
-            {/* Google - primary green button */}
-            <Button size="lg" asChild data-testid="link-google">
-              <a
-                href={googleReviewUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2"
-                title="Google Reviews"
-              >
-                <SiGoogle className="w-5 h-5" />
-                <span>Google</span>
-              </a>
-            </Button>
-          </div>
         <div style={{ marginBottom: 56 }}>
           <h2 style={headingStyle}>Candidate Video Testimonials</h2>
           <VideoCarousel videos={candidateVideoTestimonials} onPlay={src => setPlayingSrc(src)} />
-</div>
-      </div>
+        </div>
 
-      {/* Video modal / overlay */}
-      {activeVideo && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
-          <div className="relative w-full max-w-3xl bg-transparent">
-            <button
-              onClick={() => setActiveVideo(null)}
-              aria-label="Close video"
-              className="absolute -top-8 right-0 text-white bg-transparent p-2 rounded-md hover:opacity-80"
-            >
-              <X className="w-6 h-6" />
-            </button>
         {/* WRITTEN TESTIMONIALS */}
         <div style={{ marginBottom: 40 }}>
           <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 12, textAlign: "center" }}>Client Testimonials</h2>
           <TestimonialsMarquee items={clientWrittenTestimonials} />
         </div>
 
-            <div className="aspect-video bg-black rounded-md overflow-hidden">
-              <video src={activeVideo} controls autoPlay style={{ width: "100%", height: "100%" }} />
         <div style={{ marginBottom: 40 }}>
           <h2 style={{ fontSize: 18, fontWeight: 700, marginBottom: 12, textAlign: "center" }}>Candidate Testimonials</h2>
           <TestimonialsMarquee items={candidateTestimonials} />
@@ -932,10 +467,9 @@ export default function TestimonialsSection() {
                   <span>Google</span>
                 </a>
               </Button>
-</div>
-</div>
-</div>
-      )}
+            </div>
+          </div>
+        </div>
       </div>
 
       <AnimatePresence>
@@ -955,7 +489,6 @@ export default function TestimonialsSection() {
               onClick={e => e.stopPropagation()}
             >
               <div style={{ position: "relative", display: "flex", justifyContent: "center", alignItems: "center", padding: 20 }}>
-                {/* Keep original aspect and resolution — contain inside max dims */}
                 <video
                   src={playingSrc || undefined}
                   controls
@@ -977,6 +510,6 @@ export default function TestimonialsSection() {
           </motion.div>
         )}
       </AnimatePresence>
-</section>
-);
+    </section>
+  );
 }
